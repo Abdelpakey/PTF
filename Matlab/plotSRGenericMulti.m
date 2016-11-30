@@ -64,7 +64,7 @@ plot_data_type = 3;
 % 2: average error on successfull frames
 % 3: average number of frames between consecutive failures
 % 4: fraction of frames tracked successfully
-plot_types = [0, 1, 2];
+plot_types = [0];
 reinit_frame_skip = 5;
 reinit_err_thresh = 20;
 plot_area_under_sr = 0;
@@ -80,7 +80,7 @@ read_from_bin = 1;
 genericConfigsAM;
 % genericConfigsSM;
 % genericConfigsSSM;
-plot_ids = [1913];
+plot_ids = [192, 1921];
 % plot_ids = [1981,1982,198];
 % CRV
 % plot_ids = [4911];

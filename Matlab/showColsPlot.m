@@ -21,5 +21,6 @@ n_cols = length(colors);
 y_data=zeros(n_cols, plot_res);
 for col_id = 1:n_cols
     col=col_rgb{strcmp(col_names,colors{bar_id})};
-    
+    y_data(col_id, :) = y_data_base;
+    plot()
 end

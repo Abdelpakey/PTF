@@ -300,6 +300,7 @@ if __name__ == '__main__':
     reinit_from_gt = 0
     reinit_frame_skip = 5
     reinit_err_thresh = 20
+    reinit_at_each_frame = 0
     # mtf_am = 'miIN50r10i8b'
     # mtf_am = 'miIN50r10i1i5000s'
     enable_subseq = 0
@@ -380,6 +381,9 @@ if __name__ == '__main__':
         arg_id += 1
     if len(sys.argv) > arg_id:
         reinit_err_thresh = float(sys.argv[arg_id])
+        arg_id += 1
+    if len(sys.argv) > arg_id:
+        reinit_at_each_frame = float(sys.argv[arg_id])
         arg_id += 1
     if len(sys.argv) > arg_id:
         enable_subseq = int(sys.argv[arg_id])
@@ -510,7 +514,10 @@ if __name__ == '__main__':
     cmb_tracking_err = []
 
     total_frame_count = 0
-    if reinit_from_gt:
+    if reinit_at_each_frame:
+        in_arch_path = '{:s}/reinit'.format(in_arch_path)
+        tracking_root_dir = '{:s}/reinit'.format(tracking_root_dir)
+    elif reinit_from_gt:
         if reinit_err_thresh == int(reinit_err_thresh):
             in_arch_path = '{:s}/reinit_{:d}_{:d}'.format(in_arch_path, int(reinit_err_thresh), reinit_frame_skip)
             tracking_root_dir = '{:s}/reinit_{:d}_{:d}'.format(tracking_root_dir, int(reinit_err_thresh),

@@ -1757,6 +1757,20 @@ def arrangeCornersWithIDs(orig_corners):
     return new_corners, rearrangement_ids
 
 
+def getSyntheticSeqName(source_name, syn_ssm, syn_ssm_sigma_id, syn_ilm='0',
+                        syn_am_sigma_id=0, syn_frame_id=0, syn_add_noise=0,
+                        syn_noise_mean=0, syn_noise_sigma=10, syn_out_suffix=None):
+    if syn_out_suffix is None:
+        syn_out_suffix = 'warped_{:s}_s{:d}'.format(syn_ssm, syn_ssm_sigma_id)
+        if syn_ilm != "0":
+            syn_out_suffix = '{:s}_{:s}_s{:d}'.format(syn_out_suffix,
+                                                      syn_ilm, syn_am_sigma_id
+            if syn_add_noise:
+                syn_out_suffix = '{:s}_gauss_{:4.2f}_{:4.2f}'.format(syn_out_suffix,
+                                                                     syn_noise_mean, syn_noise_sigma)
+    return '{:s}_{:d}_{:s}'.format(source_name, syn_frame_id, syn_out_suffix)
+
+
 def getParamDict():
     tracker_types = {0: 'gt',
                      1: 'esm',

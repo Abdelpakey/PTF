@@ -8,7 +8,7 @@ if __name__ == '__main__':
 
     use_arch = 1
     arch_root_dir = './C++/MTF/log/archives'
-    arch_name = 'resh_grid_rkl_eslm10rLMS25p10Ki5t_ssd_scv_rscv_zncc_ncc_ssim_spss_riu_50r_30i_4u_subseq10'
+    arch_name = 'resf_esmDJcw1_all_AMs_50r_200i_4u_subseq10_tulp'
     in_arch_path = 'tracking_data'
     gt_root_dir = '../Datasets'
     tracking_root_dir = './C++/MTF/log/tracking_data'
@@ -27,9 +27,11 @@ if __name__ == '__main__':
     enable_subseq = 1
     n_subseq = 10
 
-    reinit_from_gt = 1
+    reinit_from_gt = 0
     reinit_frame_skip = 5
+    reinit_at_each_frame = 0
     err_type = 0
+
 
     jaccard_err_thresh = 0.90
 
@@ -64,6 +66,9 @@ if __name__ == '__main__':
         reinit_err_thresh = float(sys.argv[arg_id])
         arg_id += 1
     if len(sys.argv) > arg_id:
+        reinit_at_each_frame = int(sys.argv[arg_id])
+        arg_id += 1
+    if len(sys.argv) > arg_id:
         arch_root_dir = sys.argv[arg_id]
         arg_id += 1
     if len(sys.argv) > arg_id:
@@ -84,7 +89,7 @@ if __name__ == '__main__':
     # use_reinit_gt = use_reinit_gt or reinit_from_gt
 
     # sub sequence tests only run without reinitialization
-    enable_subseq = enable_subseq and not reinit_from_gt
+    enable_subseq = enable_subseq and not reinit_from_gt and not reinit_at_each_frame
 
     arch_path = '{:s}/{:s}.zip'.format(arch_root_dir, arch_name)
     print 'Reading tracking data from zip archive: {:s}'.format(arch_path)
@@ -116,7 +121,9 @@ if __name__ == '__main__':
                 seq_name = sequences[actor][overriding_seq_id]
             else:
                 seq_name = sequences[actor][0]
-            if reinit_from_gt:
+            if reinit_at_each_frame:
+                    proc_file_path = '{:s}/reinit/{:s}/{:s}'.format(in_arch_path, actor, seq_name)
+            elif reinit_from_gt:
                 if reinit_err_thresh == int(reinit_err_thresh):
                     proc_file_path = '{:s}/reinit_{:d}_{:d}/{:s}/{:s}'.format(
                         in_arch_path, int(reinit_err_thresh), reinit_frame_skip, actor, seq_name)
@@ -160,9 +167,9 @@ if __name__ == '__main__':
             arguments = '{:s} {:s} {:s} {:s} {:s} {:s} {:s}'.format(
                 arguments, arch_name, in_arch_path, arch_root_dir, gt_root_dir,
                 tracking_root_dir, out_dir)
-            arguments = '{:s} {:s} {:d} {:d} {:d} {:f} {:d} {:d} {:d}'.format(
+            arguments = '{:s} {:s} {:d} {:d} {:d} {:f} {:d} {:d} {:d} {:d}'.format(
                 arguments, opt_gt_ssm, use_reinit_gt, reinit_from_gt, reinit_frame_skip,
-                reinit_err_thresh, enable_subseq, n_subseq, overriding_seq_id)
+                reinit_err_thresh, reinit_at_each_frame, enable_subseq, n_subseq, overriding_seq_id)
             arguments = '{:s} {:f} {:f} {:d} {:d} {:d} {:f} {:d}'.format(
                 arguments, err_min, err_max, err_res, err_type, write_err,
                 overflow_err, write_to_bin)
