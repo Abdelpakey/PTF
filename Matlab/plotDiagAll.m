@@ -103,7 +103,7 @@ for state_id = state_ids
     
     if plot_only_norm
        if plot_num_jac
-        title('%s Numerical Jacobian', upper(am_name));
+        title(sprintf('%s Numerical Jacobian', upper(am_name)));
        end       
        continue;
     end       

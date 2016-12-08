@@ -8,31 +8,31 @@ img_root_dir=sprintf('../../Image Data');
 root_dir='../C++/MTF/log';
 
 actor_id = 0;
-seq_id = 3;
+seq_id = 4;
 update_type = 0;
 opt_type = 0;
 out_prefix = '';
 % out_prefix = 'riu_2_a500';
-am_name = 'ssd';
+am_name = 'spss';
 ilm_name = '0';
-ssm_name = '8';
+ssm_name = '2';
 frame_gap = 0;
 start_id = 1;
 file_start_id = 101;
-file_end_id = 301;
+file_end_id = 102;
 state_ids = 0;
 use_inv_data = 0;
 
 plot_only_norm = 0;
 plot_feat_norm = 0;
 plot_likelihood = 0;
-plot_num_likelihood = 1;
+plot_num_likelihood = 0;
 likelihood_alpha = 100;
 likelihood_beta = 1;
 likelihood_type = 1;
 
 plot_only_jac = 0;
-plot_num_jac = 0;
+plot_num_jac = 1;
 
 plot_only_hess = 1;
 plot_num_hess = 1;

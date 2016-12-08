@@ -1757,17 +1757,26 @@ def arrangeCornersWithIDs(orig_corners):
     return new_corners, rearrangement_ids
 
 
+def getSyntheticSeqSuffix(syn_ssm, syn_ssm_sigma_id, syn_ilm='0',
+                        syn_am_sigma_id=0, syn_add_noise=0,
+                        syn_noise_mean=0, syn_noise_sigma=10):
+    syn_out_suffix = 'warped_{:s}_s{:d}'.format(syn_ssm, syn_ssm_sigma_id)
+    if syn_ilm != "0":
+        syn_out_suffix = '{:s}_{:s}_s{:d}'.format(syn_out_suffix,
+                                                  syn_ilm, syn_am_sigma_id)
+    if syn_add_noise:
+        syn_out_suffix = '{:s}_gauss_{:4.2f}_{:4.2f}'.format(syn_out_suffix,
+                                                             syn_noise_mean, syn_noise_sigma)
+    return syn_out_suffix
+
+
 def getSyntheticSeqName(source_name, syn_ssm, syn_ssm_sigma_id, syn_ilm='0',
                         syn_am_sigma_id=0, syn_frame_id=0, syn_add_noise=0,
                         syn_noise_mean=0, syn_noise_sigma=10, syn_out_suffix=None):
     if syn_out_suffix is None:
-        syn_out_suffix = 'warped_{:s}_s{:d}'.format(syn_ssm, syn_ssm_sigma_id)
-        if syn_ilm != "0":
-            syn_out_suffix = '{:s}_{:s}_s{:d}'.format(syn_out_suffix,
-                                                      syn_ilm, syn_am_sigma_id
-            if syn_add_noise:
-                syn_out_suffix = '{:s}_gauss_{:4.2f}_{:4.2f}'.format(syn_out_suffix,
-                                                                     syn_noise_mean, syn_noise_sigma)
+        syn_out_suffix = getSyntheticSeqSuffix(syn_ssm, syn_ssm_sigma_id, syn_ilm,
+                                               syn_am_sigma_id, syn_add_noise, syn_noise_mean, syn_noise_sigma)
+
     return '{:s}_{:d}_{:s}'.format(source_name, syn_frame_id, syn_out_suffix)
 
 
@@ -2463,10 +2472,40 @@ def getParamDict():
         15: 'poster_8',
         16: 'poster_9'
     }
+
+    sequences_misc = {
+        0: 'uav_sim',
+        1: 'chess_board_1',
+        2: 'chess_board_2',
+        3: 'chess_board_3',
+        4: 'chess_board_4'
+    }
     sequences_synthetic = {
-        0: 'line_rot2',
-        1: 'line',
-        2: 'line_rot'
+        0:	'bear',
+        1:	'board_robot',
+        2:	'book4',
+        3:	'box',
+        4:	'box_robot',
+        5:	'building_dynamic_lighting',
+        6:	'cat_cylinder',
+        7:	'cube',
+        8:	'dft_still',
+        9:	'lemming',
+        10:	'mission_dynamic_lighting',
+        11:	'mouse_pad',
+        12:	'nl_bookI_s3',
+        13:	'nl_bus',
+        14:	'nl_cereal_s3',
+        15:	'nl_juice_s3',
+        16:	'nl_letter',
+        17:	'nl_mugI_s3',
+        18:	'nl_newspaper',
+        19:	'paris_dynamic_lighting',
+        20:	'phone',
+        21:	'sunset_dynamic_lighting',
+        22:	'sylvester',
+        23:	'towel',
+        24:	'wood_dynamic_lighting'
     }
 
     sequences_live = {
@@ -2489,8 +2528,9 @@ def getParamDict():
         11: 'TrakMark',
         12: 'TMT_FINE',
         13: 'Mosaic',
-        14: 'Synthetic',
-        15: 'Live'
+        14: 'Misc',
+        15: 'Synthetic',
+        16: 'Live'
     }
     challenges = {0: 'angle',
                   1: 'fast_close',
@@ -2560,6 +2600,7 @@ def getParamDict():
                           sequences_trakmark,
                           sequences_tmt_fine,
                           sequences_mosaic,
+                          sequences_misc,
                           sequences_synthetic,
                           sequences_live]))
 

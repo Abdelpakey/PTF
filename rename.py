@@ -5,7 +5,7 @@ import sys
 src_dir = '.'
 src_substr = '4u'
 dst_substr = ''
-replace_if_exists = 1
+replace_existing = 0
 
 arg_id = 1
 if len(sys.argv) > arg_id:
@@ -15,7 +15,7 @@ if len(sys.argv) > arg_id:
     dst_substr = sys.argv[arg_id]
     arg_id += 1
 if len(sys.argv) > arg_id:
-    replace_if_exists = int(sys.argv[arg_id])
+    replace_existing = int(sys.argv[arg_id])
     arg_id += 1
 if len(sys.argv) > arg_id:
     src_dir = sys.argv[arg_id]
@@ -33,8 +33,11 @@ for root, dirnames, filenames in os.walk(src_dir):
 print 'Found {:d} matches'.format(len(src_fnames))
 for src_fname in src_fnames:
     dst_fname = src_fname.replace(src_substr, dst_substr)
-    if os.path.exists(dst_fname) and replace_if_exists:
-        print 'Destination file: {:s} already exists. Removing it...'.format(dst_fname)
-        os.remove(dst_fname)
+    if os.path.exists(dst_fname):
+        if replace_existing:
+            print 'Destination file: {:s} already exists. Removing it...'.format(dst_fname)
+            os.remove(dst_fname)
+        else:
+            print 'Destination file: {:s} already exists. Skipping it...'.format(dst_fname)
     os.rename(src_fname, dst_fname)
     # print matches

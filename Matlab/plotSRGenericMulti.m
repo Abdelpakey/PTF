@@ -36,7 +36,6 @@ line_width = 3;
 
 adaptive_axis_range = 1;
 title_as_text_box = 0;
-plot_sr = 1;
 
 out_dir = 'plots';
 save_plot = 0;
@@ -70,6 +69,7 @@ reinit_err_thresh = 20;
 plot_area_under_sr = 0;
 show_area_in_legend = 1;
 show_failures_in_legend = 1;
+reinit_at_each_frame = 0;
 
 min_err_thr = 1;
 
@@ -77,10 +77,10 @@ overriding_error_type = -2;
 read_from_bin = 1;
 
 %load all generic plot configurations
-genericConfigsAM;
+genericConfigsAM_thesis;
 % genericConfigsSM;
 % genericConfigsSSM;
-plot_ids = [192, 1921];
+plot_ids = [3130, 3131, 3132];
 % plot_ids = [1981,1982,198];
 % CRV
 % plot_ids = [4911];
@@ -112,6 +112,22 @@ plot_ids = [192, 1921];
 
 % plot_ids = [1762];
 % plot_ids = [6, 7, 8, 9, 10];
+
+axis_label_x = 'Error Threshold';
+axis_label_y = 'Success Rate';
+
+% settings for synthetic sequences
+syn_ssm = 'c8';
+syn_ssm_sigma_ids = [19, 20, 21, 22, 23, 24, 25, 26, 27, 28];
+syn_ssm_sigmas = 1:10;
+syn_ilm = '0';
+syn_am_sigma_id = 9;
+syn_add_noise = 1;
+syn_noise_mean = 0;
+syn_noise_sigma = 10;
+syn_frame_id = 0;
+syn_err_thresh = 2;
+syn_plot_type = 0;
 
 n_rows=size(plot_ids, 1);
 n_cols=size(plot_ids, 2);
@@ -158,56 +174,9 @@ for plot_type_ = plot_types
             
             if plot_data_desc{1}('actor_id')<0
                 % bar plot
-                labels=cell(n_lines, 1);
-                bars_per_group=length(plot_data_desc{1}('value'));
-                colors=plot_data_desc{1}('color');
-                values=zeros(n_lines, bars_per_group);
-                for line_id=1:n_lines
-                    desc=plot_data_desc{line_id};
-                    labels{line_id}=desc('label');
-                    values(line_id, :)=desc('value');
-                    if annotate_bars
-                        for bar_id=1:bars_per_group
-                            if isempty(annotation_col)
-                                bar_annotation_col=col_rgb{strcmp(col_names,colors{bar_id})};
-                            else
-                                bar_annotation_col = annotation_col;
-                            end                                
-                            annotation('textbox',...
-                                [0 0 0.3 0.15],...
-                                'String',num2str(values(line_id, bar_id)),...
-                                'FontSize',20,...
-                                'FontWeight','bold',...
-                                'FontName','Times New Roman',...
-                                'LineStyle','-',...
-                                'EdgeColor','none',...
-                                'LineWidth',2,...
-                                'BackgroundColor','none',...
-                                'Color',bar_annotation_col,...
-                                'FitBoxToText','on');
-                        end
-                    end
-                end
-                if horz_bar_plot
-                    b = barh(values);
-                    set(gca, 'YTick', 1:n_lines);
-                    set(gca, 'YTickLabel', labels, 'DefaultTextInterpreter', 'none');
-                    xlabel('MCD Error');
-                else
-                    b=bar(values);
-                    set(gca, 'XTick', 1:n_lines);
-                    ylabel('MCD Error');
-                    set(gca, 'XTickLabel', labels, 'DefaultTextInterpreter', 'none');
-                end                
-                line_styles=plot_data_desc{1}('line_style');
-                for bar_id=1:bars_per_group
-                    set(b(bar_id), 'LineStyle', line_styles{bar_id});
-                    set(b(bar_id), 'FaceColor', col_rgb{strcmp(col_names,colors{bar_id})});
-                    set(b(bar_id), 'EdgeColor', col_rgb{strcmp(col_names,'black')});
-                end
-                continue;
-            end
-            
+                plotSRBar;
+                continue;                
+            end            
             min_sr = 1.0;
             max_sr = 0.0;
             plot_legend={};
@@ -224,8 +193,10 @@ for plot_type_ = plot_types
                 plot_type=plot_type_;
                 
             end
-            reinit_from_gt=plot_type;
-            if reinit_from_gt
+            reinit_on_failure=plot_type;
+            if reinit_at_each_frame
+                root_dir=sprintf('%s/reinit',root_dir);
+            elseif reinit_on_failure
                 if reinit_err_thresh==int32(reinit_err_thresh)
                     root_dir=sprintf('%s/reinit_%d_%d',root_dir, reinit_err_thresh, reinit_frame_skip);
                 else
@@ -233,9 +204,8 @@ for plot_type_ = plot_types
                 end
                 ax2 = ax1;
                 failure_data=zeros(n_lines, 1);
-                plot_sr = 0;
-            end
-            
+            end           
+            plot_synthetic_sr = 0;
             for line_id=1:n_lines
                 desc=plot_data_desc{line_id};
                 actor_ids=desc('actor_id');
@@ -247,7 +217,7 @@ for plot_type_ = plot_types
                     error_type=overriding_error_type;
                 end
                 
-                if reinit_from_gt
+                if reinit_on_failure
                     enable_subseq = 0;
                 end
                 if length(actor_ids)>1
@@ -256,7 +226,7 @@ for plot_type_ = plot_types
                 data_sr{line_id}=[];
                 total_frames=0;
                 scuccessful_frames=[];
-                if reinit_from_gt
+                if reinit_on_failure
                     total_valid_frames=0;
                     total_failures=0;
                     total_error=0;
@@ -273,167 +243,121 @@ for plot_type_ = plot_types
                 for actor_ids_id=1:n_actors
                     actor_id=actor_ids(actor_ids_id);
                     actor=actors{actor_id+1};
-                    actor_n_frames=importdata(sprintf('%s/%s/n_frames.txt', db_root_dir, actor));
-                    seq_idxs=actor_idxs{actor_id+1}{seq_idxs_ids(actor_ids_id)+1};
-                    data_fname=sprintf('%s/sr_%s', root_dir, actor);
-                    %                     if overriding_seq_id>=0
-                    %                         data_fname=sprintf('%s_%s', data_fname, sequences{actor_id+1}{overriding_seq_id+1});
-                    %                         seq_idxs = [overriding_seq_id];
-                    %                     end
-                    if ~isempty(file_name)
-                        data_fname=sprintf('%s_%s', data_fname, file_name);
+                    data_fname=sprintf('%s/%s/sr',root_dir, actor);
+                    %if overriding_seq_id>=0
+                        %data_fname=sprintf('%s_%s', data_fname, sequences{actor_id+1}{overriding_seq_id+1});
+                        %seq_idxs = [overriding_seq_id];
+                    %end
+                    if strcmp(actor, 'Synthetic')
+                        plotSRSynthetic;
+                        continue;
                     else
-                        data_fname=sprintf('%s_%s_%s_%s_%d', data_fname,...
-                            desc('mtf_sm'), desc('mtf_am'), desc('mtf_ssm'), desc('iiw'));
-                    end
-                    if(opt_gt_ssm ~= '0')
-                        data_fname=sprintf('%s_%s', data_fname, opt_gt_ssm);
-                    end
-                    if(enable_subseq)
-                        data_fname=sprintf('%s_subseq_%d', data_fname, n_subseq);
-                    end
-                    if error_type
-                        data_fname=sprintf('%s_%s', data_fname, error_types{error_type + 1});
-                    end
-                    if read_from_bin
-                        data_fname=sprintf('%s.bin', data_fname);
-                    else
-                        data_fname=sprintf('%s.txt', data_fname);
-                    end
-                    
-                    fprintf('Reading data for plot line %d actor %d from: %s\n',...
-                        line_id, actor_id, data_fname);
-                    if read_from_bin
-                        data_fid=fopen(data_fname);
-                        data_rows=fread(data_fid, 1, 'uint32', 'a');  
-                        data_cols=fread(data_fid, 1, 'uint32', 'a');
-                        actor_data_sr=fread(data_fid, [data_cols, data_rows], 'float64', 'a');    
-                        actor_data_sr = actor_data_sr';
-                        fclose(data_fid);
-                    else
-                        actor_data_sr=importdata(data_fname);
-                    end
-                    if reinit_from_gt
-                        % exclude the 0s in the first column and
-                        % include combined data in last column
-                        % reinit_seq_idxs=[seq_idxs+1 size(actor_data_sr, 2)];
-                        reinit_seq_idxs = seq_idxs + 1;
-                        frames_per_failure=actor_data_sr(end, reinit_seq_idxs);
-                        failure_counts=actor_data_sr(end-1, reinit_seq_idxs);
-                        avg_err=actor_data_sr(end-2, reinit_seq_idxs);
-                        
-                        valid_frames=round((failure_counts+1).*frames_per_failure);
-                        
-                        % actor_total_failures=failure_counts(end);
-                        actor_total_failures=sum(failure_counts);
-                        % actor_valid_frames=round((actor_total_failures+1)*cmb_frames_per_failure);
-                        actor_valid_frames=sum(valid_frames);
-                        % cmd_avg_err=avg_err(end);
-                        actor_total_error=sum(valid_frames.*avg_err);
-                        
-                        total_failures = total_failures + actor_total_failures;
-                        total_valid_frames = total_valid_frames + actor_valid_frames;
-                        total_error = total_error + actor_total_error;
-                        
-                        failure_data(line_id, 1) = actor_total_failures;
-                        % remove the last 3 lines specific to reinit data
-                        actor_data_sr(end-2:end, :)=[];
-                    end
-                    % first frame in each sequence where tracker is initialized
-                    % is not considered for computing the total tracked frames
-                    
-                    if enable_subseq
-                        actor_subseq_n_frames=importdata(sprintf('%s/%s/subseq_n_frames_%d.txt',...
-                            db_root_dir, actor, n_subseq));
-                        seq_n_frames = actor_subseq_n_frames(seq_idxs).';
-                        actor_total_frames = sum(seq_n_frames);
-                    else
-                        % actor_total_frames=sum(actor_n_frames.data)-length(actor_n_frames.data);
-                        seq_n_frames = actor_n_frames.data(seq_idxs).';
-                        actor_total_frames = sum(seq_n_frames)- length(seq_idxs);
-                    end
-                    total_frames = total_frames + actor_total_frames;
-                    
-                    % actor_combined_sr = actor_data_sr(:, end);
-                    % actor_successful_frames = actor_combined_sr.*actor_total_frames;
-                    seq_sr = actor_data_sr(:, seq_idxs + 1); % first column contains the thresholds
-                    seq_successful_frames = repmat(seq_n_frames, size(seq_sr, 1), 1).*seq_sr;
-                    actor_successful_frames = sum(seq_successful_frames, 2);
-                    if isempty(scuccessful_frames)
-                        scuccessful_frames = actor_successful_frames;
-                    else
-                        scuccessful_frames = scuccessful_frames + actor_successful_frames;
-                    end
-                    
-                    if isempty(data_sr{line_id})
-                        % assume that the error thresholds are same for all
-                        % datasets
-                        % data_sr{line_id}=actor_data_sr(:, 1:end-1);
-                        data_sr{line_id}=actor_data_sr(:, [1 seq_idxs + 1]);
-                    else
-                        % omit the first and last columns ontaining the error
-                        % thresholds and the combined SR respectively
-                        % data_sr{line_id}=horzcat(data_sr{line_id}, actor_data_sr(:, 2:end-1));
-                        data_sr{line_id}=horzcat(data_sr{line_id}, actor_data_sr(:, seq_idxs + 1));
+                        actor_n_frames=importdata(sprintf('%s/%s/n_frames.txt', db_root_dir, actor));
+                        seq_idxs=actor_idxs{actor_id+1}{seq_idxs_ids(actor_ids_id)+1};
+                        if ~isempty(file_name)
+                            data_fname=sprintf('%s_%s', data_fname, file_name);
+                        else
+                            data_fname=sprintf('%s_%s_%s_%s_%d', data_fname,...
+                                desc('mtf_sm'), desc('mtf_am'), desc('mtf_ssm'), desc('iiw'));
+                        end
+                        if(opt_gt_ssm ~= '0')
+                            data_fname=sprintf('%s_%s', data_fname, opt_gt_ssm);
+                        end
+                        if(enable_subseq)
+                            data_fname=sprintf('%s_subseq_%d', data_fname, n_subseq);
+                        end
+                        if error_type
+                            data_fname=sprintf('%s_%s', data_fname, error_types{error_type + 1});
+                        end
+                        if read_from_bin
+                            data_fname=sprintf('%s.bin', data_fname);
+                        else
+                            data_fname=sprintf('%s.txt', data_fname);
+                        end
+
+                        fprintf('Reading data for plot line %d actor %d from: %s\n',...
+                            line_id, actor_id, data_fname);
+                        if read_from_bin
+                            data_fid=fopen(data_fname);
+                            data_rows=fread(data_fid, 1, 'uint32', 'a');  
+                            data_cols=fread(data_fid, 1, 'uint32', 'a');
+                            actor_data_sr=fread(data_fid, [data_cols, data_rows], 'float64', 'a');    
+                            actor_data_sr = actor_data_sr';
+                            fclose(data_fid);
+                        else
+                            actor_data_sr=importdata(data_fname);
+                        end
+                        if reinit_on_failure
+                            % exclude the 0s in the first column and
+                            % include combined data in last column
+                            % reinit_seq_idxs=[seq_idxs+1 size(actor_data_sr, 2)];
+                            reinit_seq_idxs = seq_idxs + 1;
+                            frames_per_failure=actor_data_sr(end, reinit_seq_idxs);
+                            failure_counts=actor_data_sr(end-1, reinit_seq_idxs);
+                            avg_err=actor_data_sr(end-2, reinit_seq_idxs);
+
+                            valid_frames=round((failure_counts+1).*frames_per_failure);
+
+                            % actor_total_failures=failure_counts(end);
+                            actor_total_failures=sum(failure_counts);
+                            % actor_valid_frames=round((actor_total_failures+1)*cmb_frames_per_failure);
+                            actor_valid_frames=sum(valid_frames);
+                            % cmd_avg_err=avg_err(end);
+                            actor_total_error=sum(valid_frames.*avg_err);
+
+                            total_failures = total_failures + actor_total_failures;
+                            total_valid_frames = total_valid_frames + actor_valid_frames;
+                            total_error = total_error + actor_total_error;
+
+                            failure_data(line_id, 1) = actor_total_failures;
+                            % remove the last 3 lines specific to reinit data
+                            actor_data_sr(end-2:end, :)=[];
+                        end
+                        % first frame in each sequence where tracker is initialized
+                        % is not considered for computing the total tracked frames
+
+                        if enable_subseq
+                            actor_subseq_n_frames=importdata(sprintf('%s/%s/subseq_n_frames_%d.txt',...
+                                db_root_dir, actor, n_subseq));
+                            seq_n_frames = actor_subseq_n_frames(seq_idxs).';
+                            actor_total_frames = sum(seq_n_frames);
+                        else
+                            % actor_total_frames=sum(actor_n_frames.data)-length(actor_n_frames.data);
+                            seq_n_frames = actor_n_frames.data(seq_idxs).';
+                            actor_total_frames = sum(seq_n_frames)- length(seq_idxs);
+                        end
+                        total_frames = total_frames + actor_total_frames;
+
+                        % actor_combined_sr = actor_data_sr(:, end);
+                        % actor_successful_frames = actor_combined_sr.*actor_total_frames;
+                        seq_sr = actor_data_sr(:, seq_idxs + 1); % first column contains the thresholds
+                        seq_successful_frames = repmat(seq_n_frames, size(seq_sr, 1), 1).*seq_sr;
+                        actor_successful_frames = sum(seq_successful_frames, 2);
+                        if isempty(scuccessful_frames)
+                            scuccessful_frames = actor_successful_frames;
+                        else
+                            scuccessful_frames = scuccessful_frames + actor_successful_frames;
+                        end
+
+                        if isempty(data_sr{line_id})
+                            % assume that the error thresholds are same for all
+                            % datasets
+                            % data_sr{line_id}=actor_data_sr(:, 1:end-1);
+                            data_sr{line_id}=actor_data_sr(:, [1 seq_idxs + 1]);
+                        else
+                            % omit the first and last columns ontaining the error
+                            % thresholds and the combined SR respectively
+                            % data_sr{line_id}=horzcat(data_sr{line_id}, actor_data_sr(:, 2:end-1));
+                            data_sr{line_id}=horzcat(data_sr{line_id}, actor_data_sr(:, seq_idxs + 1));
+                        end
                     end
                 end
-                if reinit_from_gt
-                    if plot_type==1
-                        reinit_data = total_failures;
-                    elseif plot_type==2
-                        overall_avg_error = total_error / total_valid_frames;
-                        reinit_data = overall_avg_error;
-                    elseif plot_type==3
-                        total_frames_per_failure = total_frames / total_failures;
-                        reinit_data=total_valid_frames / total_failures;
-                    elseif plot_type==4
-                        reinit_data = total_valid_frames / (total_frames-total_failures);
-                    else
-                        error('Invalid plot_type: %d', plot_type);
-                    end
-                    bar(line_id, reinit_data,...
-                        'Parent', ax2,...
-                        'BarWidth', bar_width,...
-                        'LineStyle', desc('line_style'),...
-                        'LineWidth', bar_line_width,...
-                        'FaceColor', col_rgb{strcmp(col_names,desc('color'))},...
-                        'EdgeColor', col_rgb{strcmp(col_names,'black')});
-                    if annotate_bars
-                        annotation('textbox',...
-                            [0 0 0.3 0.15],...
-                            'String',sprintf('%d', round(failure_data(line_id))),...
-                            'FontSize',20,...
-                            'FontWeight','bold',...
-                            'FontName','Times New Roman',...
-                            'LineStyle','-',...
-                            'EdgeColor','none',...
-                            'LineWidth',2,...
-                            'BackgroundColor','none',...
-                            'Color',[0 0 0],...
-                            'FitBoxToText','on');
-                    end
-                    if line_id==1
-                        hold on;
-                    end
-                end
-                data_sr{line_id}=horzcat(data_sr{line_id}, scuccessful_frames./total_frames);
-                err_thr=data_sr{line_id}(:, 1);
-                if plot_combined_data
-                    line_data{line_id}=data_sr{line_id}(:, end);
-                else
-                    % first column has error thresholds and last one has
-                    % combined SR
-                    line_data{line_id} = mean(data_sr{line_id}(:, 2:end-1), 2);
-                end
-                if plot_sr
-                    if min_err_thr>0
-                        valid_idx=err_thr>=min_err_thr;
-                        err_thr=err_thr(valid_idx);
-                        line_data{line_id}=line_data{line_id}(valid_idx);
-                    end
-                    sr_area_data(1, line_id) = trapz(err_thr,line_data{line_id});
-                    plot(err_thr, line_data{line_id},...
-                        'Parent',ax1,...
+                if plot_synthetic_sr
+                    x_min = syn_ssm_sigmas(1);
+                    x_max = syn_ssm_sigmas(end);
+                    sr_area_data(1, line_id) = trapz(syn_ssm_sigmas,line_data{line_id});
+                    plot(syn_ssm_sigmas, line_data{line_id},...
+                        'Parent', ax1,...
                         'Color', col_rgb{strcmp(col_names,desc('color'))},...
                         'LineStyle', desc('line_style'),...
                         'LineWidth', line_width);
@@ -446,10 +370,92 @@ for plot_type_ = plot_types
                         if min_line_data < min_sr
                             min_sr = min_line_data;
                         end
+                        if syn_plot_type ~= 0
+                            ytick_gap = (max_sr - min_sr)/10.0;
+                        end
+                    end
+                    if syn_plot_type==0
+                        axis_label_y = sprintf('Success Rate with threshold %4.2f',...
+                            syn_err_thresh);
+                    else
+                        axis_label_y = 'Average Error';
+                    end
+                    axis_label_x = 'Sigma';
+                else
+                    if reinit_on_failure
+                        if plot_type==1
+                            reinit_data = total_failures;
+                        elseif plot_type==2
+                            overall_avg_error = total_error / total_valid_frames;
+                            reinit_data = overall_avg_error;
+                        elseif plot_type==3
+                            total_frames_per_failure = total_frames / total_failures;
+                            reinit_data=total_valid_frames / total_failures;
+                        elseif plot_type==4
+                            reinit_data = total_valid_frames / (total_frames-total_failures);
+                        else
+                            error('Invalid plot_type: %d', plot_type);
+                        end
+                        bar(line_id, reinit_data,...
+                            'Parent', ax2,...
+                            'BarWidth', bar_width,...
+                            'LineStyle', desc('line_style'),...
+                            'LineWidth', bar_line_width,...
+                            'FaceColor', col_rgb{strcmp(col_names,desc('color'))},...
+                            'EdgeColor', col_rgb{strcmp(col_names,'black')});
+                        if annotate_bars
+                            annotation('textbox',...
+                                [0 0 0.3 0.15],...
+                                'String',sprintf('%d', round(failure_data(line_id))),...
+                                'FontSize',20,...
+                                'FontWeight','bold',...
+                                'FontName','Times New Roman',...
+                                'LineStyle','-',...
+                                'EdgeColor','none',...
+                                'LineWidth',2,...
+                                'BackgroundColor','none',...
+                                'Color',[0 0 0],...
+                                'FitBoxToText','on');
+                        end
+                        if line_id==1
+                            hold on;
+                        end
+                    end
+                    data_sr{line_id}=horzcat(data_sr{line_id}, scuccessful_frames./total_frames);
+                    err_thr=data_sr{line_id}(:, 1);
+                    if plot_combined_data
+                        line_data{line_id}=data_sr{line_id}(:, end);
+                    else
+                        % first column has error thresholds and last one has
+                        % combined SR
+                        line_data{line_id} = mean(data_sr{line_id}(:, 2:end-1), 2);
+                    end
+                    if ~reinit_on_failure
+                        if min_err_thr>0
+                            valid_idx=err_thr>=min_err_thr;
+                            err_thr=err_thr(valid_idx);
+                            line_data{line_id}=line_data{line_id}(valid_idx);
+                        end
+                        sr_area_data(1, line_id) = trapz(err_thr,line_data{line_id});
+                        plot(err_thr, line_data{line_id},...
+                            'Parent',ax1,...
+                            'Color', col_rgb{strcmp(col_names,desc('color'))},...
+                            'LineStyle', desc('line_style'),...
+                            'LineWidth', line_width);
+                        if adaptive_axis_range
+                            max_line_data=max(line_data{line_id});
+                            if max_line_data>max_sr
+                                max_sr=max_line_data;
+                            end
+                            min_line_data=min(line_data{line_id});
+                            if min_line_data < min_sr
+                                min_sr = min_line_data;
+                            end
+                        end
                     end
                 end
                 if ~isempty(desc('legend'))
-                    if plot_sr && show_area_in_legend
+                    if ~reinit_on_failure && show_area_in_legend
                         curr_legend=sprintf('%s:%6.3f', desc('legend'), sr_area_data(1, line_id));
                     elseif plot_type==1 && show_failures_in_legend
                         curr_legend=sprintf('%s:%d', desc('legend'), total_failures);
@@ -466,26 +472,29 @@ for plot_type_ = plot_types
             end
             set(h_legend,'FontSize',legend_font_size);
             set(h_legend,'FontWeight','bold');
-            if plot_sr
+            if ~reinit_on_failure
                 if adaptive_axis_range
                     y_min=floor(min_sr*ytick_precision)/ytick_precision;
                     y_max=ceil(max_sr*ytick_precision)/ytick_precision;
                     fprintf('min_sr: %f\t max_sr: %f\n', min_sr, max_sr);
                     fprintf('y_min: %f\t y_max: %f\n', y_min, y_max);
                 end
-                set(ax1,'YLim', [y_min y_max]);
-                set(ax1,'XLim', [x_min x_max]);
-                set(ax1,'YTick', y_min:ytick_gap:y_max);
-                if reinit_from_gt
+                if y_min~=y_max
+                    set(ax1,'YLim', [y_min y_max]);
+                    set(ax1,'YTick', y_min:ytick_gap:y_max);
+                end
+                if x_min~=x_max
+                    set(ax1,'XLim', [x_min x_max]);
+                end                
+                if reinit_on_failure
                     set(ax1, 'XAxisLocation', 'bottom');
                     set(ax1, 'YAxisLocation', 'right');
                 end
                 %         set(ax1,'Color', 'r');
-                xlabel(ax1, 'Error Threshold');
-                ylabel(ax1, 'Success Rate');
-                
+                xlabel(ax1, axis_label_x);
+                ylabel(ax1, axis_label_y);
             end
-            if reinit_from_gt
+            if reinit_on_failure
                 labels=cell(n_lines, 1);
                 %             ax2 = axes;
                 %             bar plot of failure counts
@@ -528,13 +537,13 @@ for plot_type_ = plot_types
                 set(ax2, 'XTick', 1:n_lines);
                 set(ax2, 'XTickLabel', []);
                 set(ax2,'box','off')
-                if reinit_from_gt==1
+                if reinit_on_failure==1
                     y_label= 'Number of Failures';
-                elseif reinit_from_gt==2
+                elseif reinit_on_failure==2
                     y_label= 'Average alignment error';
-                elseif reinit_from_gt==3
+                elseif reinit_on_failure==3
                     y_label= 'Average Frames between Failures';
-                elseif reinit_from_gt==4
+                elseif reinit_on_failure==4
                     y_label='Fraction of frames tracked successfully';
                 end
                 if plot_type_in_title

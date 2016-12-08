@@ -2,6 +2,9 @@ from Misc import getParamDict
 from Misc import readDistGridParams
 from Misc import readReinitGT
 from Misc import readGT
+from Misc import getSyntheticSeqName
+from Misc import getSyntheticSeqSuffix
+
 from DecompUtils import getBinaryPtsImage2
 import itertools as it
 
@@ -297,7 +300,7 @@ if __name__ == '__main__':
     use_reinit_gt = 1
     write_to_bin = 0
 
-    reinit_from_gt = 0
+    reinit_on_failure = 0
     reinit_frame_skip = 5
     reinit_err_thresh = 20
     reinit_at_each_frame = 0
@@ -315,6 +318,16 @@ if __name__ == '__main__':
     write_err = 1
 
     show_jaccard_img = 0
+
+    # settings for synthetic sequences
+    syn_ssm = 'c8'
+    syn_ssm_sigma_id = 19
+    syn_ilm = '0'
+    syn_am_sigma_id = 0
+    syn_add_noise = 0
+    syn_noise_mean = 0
+    syn_noise_sigma = 10
+    syn_frame_id = 0
 
     params_dict = getParamDict()
     param_ids = readDistGridParams()
@@ -374,7 +387,7 @@ if __name__ == '__main__':
         use_reinit_gt = int(sys.argv[arg_id])
         arg_id += 1
     if len(sys.argv) > arg_id:
-        reinit_from_gt = int(sys.argv[arg_id])
+        reinit_on_failure = int(sys.argv[arg_id])
         arg_id += 1
     if len(sys.argv) > arg_id:
         reinit_frame_skip = int(sys.argv[arg_id])
@@ -414,6 +427,30 @@ if __name__ == '__main__':
         arg_id += 1
     if len(sys.argv) > arg_id:
         write_to_bin = int(sys.argv[arg_id])
+        arg_id += 1
+    if len(sys.argv) > arg_id:
+        syn_ssm = sys.argv[arg_id]
+        arg_id += 1
+    if len(sys.argv) > arg_id:
+        syn_ssm_sigma_id = int(sys.argv[arg_id])
+        arg_id += 1
+    if len(sys.argv) > arg_id:
+        syn_ilm = sys.argv[arg_id]
+        arg_id += 1
+    if len(sys.argv) > arg_id:
+        syn_am_sigma_id = int(sys.argv[arg_id])
+        arg_id += 1
+    if len(sys.argv) > arg_id:
+        syn_add_noise = int(sys.argv[arg_id])
+        arg_id += 1
+    if len(sys.argv) > arg_id:
+        syn_noise_mean = int(sys.argv[arg_id])
+        arg_id += 1
+    if len(sys.argv) > arg_id:
+        syn_noise_sigma = int(sys.argv[arg_id])
+        arg_id += 1
+    if len(sys.argv) > arg_id:
+        syn_frame_id = int(sys.argv[arg_id])
         arg_id += 1
 
     use_opt_gt = 0
@@ -517,7 +554,8 @@ if __name__ == '__main__':
     if reinit_at_each_frame:
         in_arch_path = '{:s}/reinit'.format(in_arch_path)
         tracking_root_dir = '{:s}/reinit'.format(tracking_root_dir)
-    elif reinit_from_gt:
+        out_dir = '{:s}/reinit'.format(out_dir)
+    elif reinit_on_failure:
         if reinit_err_thresh == int(reinit_err_thresh):
             in_arch_path = '{:s}/reinit_{:d}_{:d}'.format(in_arch_path, int(reinit_err_thresh), reinit_frame_skip)
             tracking_root_dir = '{:s}/reinit_{:d}_{:d}'.format(tracking_root_dir, int(reinit_err_thresh),
@@ -528,10 +566,13 @@ if __name__ == '__main__':
             tracking_root_dir = '{:s}/reinit_{:4.2f}_{:d}'.format(tracking_root_dir, reinit_err_thresh,
                                                                   reinit_frame_skip)
             out_dir = '{:s}/reinit_{:4.2f}_{:d}'.format(out_dir, reinit_err_thresh, reinit_frame_skip)
-        cmb_tracking_err_list = []
-        cmb_failure_count = np.zeros((1, n_seq + 2), dtype=np.float64)
-        frames_per_failure = np.zeros((1, n_seq + 2), dtype=np.float64)
-        cmb_avg_err = np.zeros((1, n_seq + 2), dtype=np.float64)
+
+    cmb_tracking_err_list = []
+    cmb_failure_count = np.zeros((1, n_seq + 2), dtype=np.float64)
+    frames_per_failure = np.zeros((1, n_seq + 2), dtype=np.float64)
+    cmb_avg_err = np.zeros((1, n_seq + 2), dtype=np.float64)
+
+    out_dir = '{:s}/{:s}'.format(out_dir, actor)
 
     print 'tracking_root_dir: ', tracking_root_dir
     print 'in_arch_path: ', in_arch_path
@@ -540,6 +581,10 @@ if __name__ == '__main__':
     for j in xrange(n_seq):
         seq_id = seq_ids[j]
         seq_name = sequences[seq_id]
+        if actor == 'Synthetic':
+            seq_name = getSyntheticSeqName(seq_name, syn_ssm, syn_ssm_sigma_id, syn_ilm,
+                                syn_am_sigma_id, syn_frame_id, syn_add_noise,
+                                syn_noise_mean, syn_noise_sigma)
         # print 'seq_name: {:s}'.format(seq_name)
         if use_arch:
             tracking_res_path = '{:s}/{:s}/{:s}/{:s}_{:s}_{:s}_{:d}.txt'.format(
@@ -568,13 +613,17 @@ if __name__ == '__main__':
         if enable_subseq:
             start_ids = subseq_start_ids[seq_id, :]
         tracking_err, failure_count = getTrackingErrors(tracking_res_path, gt_path, arch_fid,
-                                                        reinit_from_gt, reinit_frame_skip, use_reinit_gt, start_ids,
+                                                        reinit_on_failure, reinit_frame_skip, use_reinit_gt, start_ids,
                                                         err_type, overflow_err, show_jaccard_img)
         if tracking_err is None:
             raise StandardError('Tracking error could not be computed for sequence {:d}: {:s}'.format(j, seq_name))
         total_frame_count += len(tracking_err)
         cmb_tracking_err.append(tracking_err)
-        if reinit_from_gt:
+        if reinit_at_each_frame:
+            avg_err = float(sum(tracking_err)) / float(len(tracking_err))
+            cmb_avg_err[0, j + 1] = avg_err
+            cmb_tracking_err_list.extend(tracking_err)
+        if reinit_on_failure:
             cmb_tracking_err_list.extend(tracking_err)
             cmb_failure_count[0, j + 1] = failure_count
             frames_per_failure[0, j + 1] = float(len(tracking_err)) / float(failure_count + 1)
@@ -585,9 +634,11 @@ if __name__ == '__main__':
                 avg_err = float(sum(tracking_err)) / float(len(tracking_err))
             cmb_avg_err[0, j + 1] = avg_err
     print 'total_frame_count: ', total_frame_count
-    if reinit_from_gt:
+    if reinit_at_each_frame:
+        cmb_avg_err[0, n_seq + 1] = float(sum(cmb_tracking_err_list)) / float(len(cmb_tracking_err_list))
+    if reinit_on_failure:
         total_failure_count = np.sum(cmb_failure_count)
-        if reinit_from_gt:
+        if reinit_on_failure:
             print 'total_failure_count: {:d}'.format(int(total_failure_count))
         print 'total_error_count: ', len(cmb_tracking_err_list)
         cmb_failure_count[0, n_seq + 1] = total_failure_count
@@ -596,11 +647,19 @@ if __name__ == '__main__':
 
     # write tracking errors
     if write_err:
-        if not os.path.exists(err_out_dir):
-            print 'Tracking error directory: {:s} does not exist. Creating it...'.format(err_out_dir)
-            os.makedirs(err_out_dir)
-        err_out_path = '{:s}/err_{:s}_{:s}_{:s}_{:s}_{:d}'.format(
-            err_out_dir, actor, mtf_sm, mtf_am, mtf_ssm, iiw)
+        if reinit_at_each_frame:
+            actor_err_out_dir = '{:s}/reinit'.format(err_out_dir)
+        elif reinit_on_failure:
+            if reinit_err_thresh == int(reinit_err_thresh):
+                actor_err_out_dir = '{:s}/reinit_{:d}_{:d}'.format(err_out_dir, int(reinit_err_thresh), reinit_frame_skip)
+            else:
+                actor_err_out_dir = '{:s}/reinit_{:4.2f}_{:d}'.format(err_out_dir, reinit_err_thresh, reinit_frame_skip)
+        actor_err_out_dir = '{:s}/{:s}'.format(actor_err_out_dir, actor)
+        if not os.path.exists(actor_err_out_dir):
+            print 'Tracking error directory: {:s} does not exist. Creating it...'.format(actor_err_out_dir)
+            os.makedirs(actor_err_out_dir)
+        err_out_path = '{:s}/err_{:s}_{:s}_{:s}_{:d}'.format(
+            actor_err_out_dir, mtf_sm, mtf_am, mtf_ssm, iiw)
         if use_opt_gt:
             err_out_path = '{:s}_{:s}'.format(err_out_path, opt_gt_ssm)
         if enable_subseq:
@@ -635,7 +694,12 @@ if __name__ == '__main__':
         print 'Output directory: {:s} does not exist. Creating it...'.format(out_dir)
         os.makedirs(out_dir)
 
-    out_path = '{:s}/sr_{:s}'.format(out_dir, actor)
+    out_path = '{:s}/sr'.format(out_dir)
+    if actor == 'Synthetic':
+        syn_out_suffix = getSyntheticSeqSuffix(syn_ssm, syn_ssm_sigma_id, syn_ilm,syn_am_sigma_id,
+                                      syn_add_noise, syn_noise_mean, syn_noise_sigma)
+        out_path = '{:s}_{:s}'.format(out_path, syn_out_suffix)
+
     if overriding_seq_id >= 0:
         out_path = '{:s}_{:s}'.format(out_path, sequences[overriding_seq_id])
 
@@ -653,7 +717,9 @@ if __name__ == '__main__':
     else:
         out_path = '{:s}.txt'.format(out_path)
     print 'Saving success rate data to {:s}'.format(out_path)
-    if reinit_from_gt:
+    if reinit_at_each_frame:
+        out_data = np.vstack((success_rates, cmb_avg_err))
+    elif reinit_on_failure:
         out_data = np.vstack((success_rates, cmb_avg_err, cmb_failure_count, frames_per_failure))
     else:
         out_data = success_rates

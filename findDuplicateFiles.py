@@ -1,8 +1,12 @@
 import os
 import shutil
 
-src_folder = 'C:/Users/Tommy/Desktop/Done'
-dst_folder = 'C:/Users/Tommy/Desktop/New/abb'
+# src_folder = 'C:/Users/Tommy/Desktop/Done'
+# dst_folder = 'C:/Users/Tommy/Desktop/New/abb'
+
+src_folder = 'E:/UofA/Thesis/Code/TrackingFramework/C++/MTF/log/success_rates'
+dst_folder = 'E:/UofA/Thesis/Code/TrackingFramework/C++/MTF/log/success_rates/TMT'
+
 duplicate_folder = 'duplicates'
 
 src_files = [f for f in os.listdir(src_folder) if os.path.isfile(os.path.join(src_folder, f))]

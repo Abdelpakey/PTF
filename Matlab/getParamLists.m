@@ -401,11 +401,6 @@ sequences_metaio = {
     'wall_illumination',...%38
     'wall_range'%39
     };
-sequences_synthetic = {
-    'line_rot2',...%0
-    'line',...%1
-    'line_rot'%2
-    };
 
 sequences_vivid = {
     'pktest03',...%0
@@ -509,7 +504,6 @@ sequences_vot16 = {
     'tunnel',...%58
     'wiper'...%59
     };
-
 
 sequences_vtb = {
     'Basketball',...%0
@@ -685,6 +679,62 @@ sequences_tmt_fine_full = {
     'hexagon_task_fast_cam2',...%23
     };
 
+sequences_mosaic = {
+    'book_1',...%0
+    'book_2',...%1
+    'book_3',...%2
+    'book_4',...%3
+    'book_5',...%4
+    'book_6',...%5
+    'book_7',...%6
+    'book_8',...%7
+    'poster_1',...%8
+    'poster_2',...%9
+    'poster_3',...%10
+    'poster_4',...%11
+    'poster_5',...%12
+    'poster_6',...%13
+    'poster_7',...%14
+    'poster_8',...%15
+    'poster_9'%16
+    };
+
+sequences_misc = {
+    'uav_sim',...%0
+    'chess_board_1',...%1
+    'chess_board_2',...%2
+    'chess_board_3',...%3
+    'chess_board_4'%4
+    };
+
+sequences_synthetic = {
+    'bear',...%0
+    'board_robot',...%1
+    'book4',...%2
+    'box',...%3
+    'box_robot',...%4
+    'building_dynamic_lighting',...%5
+    'cat_cylinder',...%6
+    'cube',...%7
+    'dft_still',...%8
+    'lemming',...%9
+    'mission_dynamic_lighting',...%10
+    'mouse_pad',...%11
+    'nl_bookI_s3',...%12
+    'nl_bus',...%13
+    'nl_cereal_s3',...%14
+    'nl_juice_s3',...%15
+    'nl_letter',...%16
+    'nl_mugI_s3',...%17
+    'nl_newspaper',...%18
+    'paris_dynamic_lighting',...%19
+    'phone',...%20
+    'sunset_dynamic_lighting',...%21
+    'sylvester',...%22
+    'towel',...%23
+    'wood_dynamic_lighting'%24
+    };
+
 
 challenges = {
     'angle',...%0
@@ -853,14 +903,6 @@ ucsb_idx_types={
 
 lintrack_idx_all=1:3;
 lintrack_short_idx_all=1:14;
-pami_idx_all=1:25;
-cmt_idx_all=1:20;
-metaio_idx_all=1:40;
-vivid_idx_all=1:9;
-vot_idx_all=1:25;
-vot16_idx_all=1:length(sequences_vot16);
-vtb_idx_all=1:100;
-trakmark_idx_all=1:21;
 
 lintrack_idxs={
     lintrack_idx_all,...
@@ -902,54 +944,6 @@ lintrack_short_idx_types={
     'mouse_pad',...%1
     'phone',...%2
     'towel'%3
-    };
-pami_idxs={
-    pami_idx_all
-    };
-pami_idx_types={
-    'all'
-    };
-cmt_idxs={
-    cmt_idx_all
-    };
-cmt_idx_types={
-    'all'
-    };
-metaio_idxs={
-    metaio_idx_all
-    };
-metaio_idx_types={
-    'all'
-    };
-vivid_idxs={
-    vivid_idx_all
-    };
-vivid_idx_types={
-    'all'
-    };
-vot_idxs={
-    vot_idx_all
-    };
-vot_idx_types={
-    'all'
-    };
-vot16_idxs={
-    vot16_idx_all
-    };
-vot16_idx_types={
-    'all'
-    };
-vtb_idxs={
-    vtb_idx_all
-    };
-vtb_idx_types={
-    'all'
-    };
-trakmark_idxs={
-    trakmark_idx_all
-    };
-trakmark_idx_types={
-    'all'
     };
 
 tmt_fine_idx_all=1:24;
@@ -1004,6 +998,86 @@ tmt_fine_idx_types={
     'key_task_left',...%14    
     };
 
+pami_idx_all=1:25;
+cmt_idx_all=1:20;
+metaio_idx_all=1:40;
+vivid_idx_all=1:9;
+vot_idx_all=1:25;
+vot16_idx_all=1:length(sequences_vot16);
+vtb_idx_all=1:100;
+trakmark_idx_all=1:21;
+
+pami_idxs={
+    pami_idx_all
+    };
+pami_idx_types={
+    'all'
+    };
+cmt_idxs={
+    cmt_idx_all
+    };
+cmt_idx_types={
+    'all'
+    };
+metaio_idxs={
+    metaio_idx_all
+    };
+metaio_idx_types={
+    'all'
+    };
+vivid_idxs={
+    vivid_idx_all
+    };
+vivid_idx_types={
+    'all'
+    };
+vot_idxs={
+    vot_idx_all
+    };
+vot_idx_types={
+    'all'
+    };
+vot16_idxs={
+    vot16_idx_all
+    };
+vot16_idx_types={
+    'all'
+    };
+vtb_idxs={
+    vtb_idx_all
+    };
+vtb_idx_types={
+    'all'
+    };
+trakmark_idxs={
+    trakmark_idx_all
+    };
+trakmark_idx_types={
+    'all'
+    };
+
+mosic_idx_all=1:length(sequences_mosaic);
+misc_idx_all=1:length(sequences_misc);
+synthetic_idx_all=1:length(sequences_synthetic);
+
+mosaic_idxs={
+    trakmark_idx_all
+    };
+mosaic_idx_types={
+    'all'
+    };
+misc_idxs={
+    misc_idx_all
+    };
+misc_idx_types={
+    'all'
+    };
+synthetic_idxs={
+    synthetic_idx_all
+    };
+synthetic_idx_types={
+    'all'
+    };
 actor_idxs={
     tmt_idxs,...%0
     ucsb_idxs,...%1
@@ -1017,22 +1091,28 @@ actor_idxs={
     vtb_idxs,...%9
     vivid_idxs,...%10
     trakmark_idxs,...%11
-    tmt_fine_idxs%12
+    tmt_fine_idxs,...%12
+    mosaic_idxs,...%13
+    misc_idxs,...%14
+    synthetic_idxs%15    
     };
 actor_idx_types={
-    tmt_idx_types,...
-    ucsb_idx_types,...
-    lintrack_idx_types,...
-    pami_idx_types,...
-    lintrack_short_idx_types,...
-    metaio_idx_types,...
-    cmt_idx_types,...
-    vot_idx_types,...
-    vot16_idx_types,...
-    vtb_idx_types,...
-    vivid_idx_types,...
-    trakmark_idx_types,...
-    tmt_fine_idx_types
+    tmt_idx_types,...%0
+    ucsb_idx_types,...%1
+    lintrack_idx_types,...%2
+    pami_idx_types,...%3
+    lintrack_short_idx_types,...%4
+    metaio_idx_types,...%5
+    cmt_idx_types,...%6
+    vot_idx_types,...%7
+    vot16_idx_types,...%8
+    vtb_idx_types,...%9
+    vivid_idx_types,...%10
+    trakmark_idx_types,...%11
+    tmt_fine_idx_types,...%12
+    mosaic_idx_types,...%13
+    misc_idx_types,...%14
+    synthetic_idx_types%15  
     };
 
 sequences={
@@ -1049,8 +1129,10 @@ sequences={
     sequences_vivid,...%10
     sequences_trakmark,...%11
     sequences_tmt_fine,...%12
-    sequences_synthetic,...%13
-    sequences_live%14
+    sequences_mosaic,...%13
+    sequences_misc,...%14
+    sequences_synthetic,...%16
+    sequences_live%16
     };
 
 actors = {
@@ -1067,6 +1149,8 @@ actors = {
     'VIVID',...%10
     'TrakMark',...%11
     'TMT_FINE',...%12
-    'Synthetic',...%13
-    'Live'%14
+    'Mosaic',...%13
+    'Misc',...%14    
+    'Synthetic',...%15
+    'Live'%16
     };

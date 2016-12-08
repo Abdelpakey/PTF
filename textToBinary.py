@@ -9,13 +9,13 @@ if __name__ == '__main__':
     # reinit_0.60_5
 
 
-    in_dir = './C++/MTF/log/success_rates/reinit_40_5'
-    out_dir = './C++/MTF/log/success_rates/reinit_40_5/bin'
+    in_dir = './C++/MTF/log/success_rates_txt/success_rates'
+    out_dir = './C++/MTF/log/success_rates_txt/bin'
     # in_dir = './C++/MTF/log/success_rates'
     # out_dir = './C++/MTF/log/success_rates'
 
-    list_fname = None
-    # list_fname = 'list.txt'
+    # list_fname = None
+    list_fname = 'list.txt'
 
     if not os.path.exists(out_dir):
         print 'Output directory: {:s} does not exist. Creating it...'.format(out_dir)
