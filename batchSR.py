@@ -9,7 +9,7 @@ if __name__ == '__main__':
 
     use_arch = 1
     arch_root_dir = './C++/MTF/log/archives'
-    arch_name = 'resl_esm_ccre16b_mi10b_ssd_ncc_ssim_ngf_spss_riu_50r_30i_4u_subseq10_syn_chom_s19_28_noise_10_rbf_s9'
+    arch_name = 'resh_fc_all_AMs_25r_30i_4u_subseq10_tulp'
     in_arch_path = 'tracking_data'
     gt_root_dir = '../Datasets'
     tracking_root_dir = './C++/MTF/log/tracking_data'
@@ -18,8 +18,8 @@ if __name__ == '__main__':
     list_fname = None
     list_in_arch = 0
     # list_fname = '{:s}/{:s}.txt'.format(arch_root_dir, arch_name)
-    # actor_ids = [0, 1, 2, 3]
-    actor_ids = [15]
+    actor_ids = [0, 1, 2, 3]
+    # actor_ids = [15]
     opt_gt_ssms = None
     opt_gt_ssms = ['0']
 
@@ -27,8 +27,8 @@ if __name__ == '__main__':
 
     enable_subseq = 1
 
-    reinit_on_failure = 1
-    reinit_at_each_frame = 1
+    reinit_on_failure = 0
+    reinit_at_each_frame = 0
 
     n_subseq = 10
     err_type = 0
@@ -39,15 +39,15 @@ if __name__ == '__main__':
     use_reinit_gt = 0
     err_min = 0
     err_res = 100
-    write_err = 1
+    write_err = 0
     overriding_seq_id = -1
 
     # settings for synthetic sequences
     syn_ssm = 'c8'
     syn_ssm_sigma_ids = [19, 20, 21, 22, 23, 24, 25, 26, 27, 28]
-    syn_ilm = 'rbf'
+    syn_ilm = '0'
     syn_am_sigma_ids = [9]
-    syn_add_noise = 1
+    syn_add_noise = 0
     syn_noise_mean = 0
     syn_noise_sigma = 10
     syn_frame_id = 0

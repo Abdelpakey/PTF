@@ -77,10 +77,13 @@ overriding_error_type = -2;
 read_from_bin = 1;
 
 %load all generic plot configurations
-genericConfigsAM_thesis;
+genericConfigsAM_gd;
+genericConfigsSM_stochastic;
+genericConfigsSM_composite;
+
 % genericConfigsSM;
 % genericConfigsSSM;
-plot_ids = [3130, 3131, 3132];
+plot_ids = [4010, 4011, 4012];
 % plot_ids = [1981,1982,198];
 % CRV
 % plot_ids = [4911];
@@ -126,7 +129,7 @@ syn_add_noise = 1;
 syn_noise_mean = 0;
 syn_noise_sigma = 10;
 syn_frame_id = 0;
-syn_err_thresh = 2;
+syn_err_thresh = 5;
 syn_plot_type = 0;
 
 n_rows=size(plot_ids, 1);

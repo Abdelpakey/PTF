@@ -5,26 +5,53 @@ line_data_idx = 1;
 for syn_ssm_sigma_id = syn_ssm_sigma_ids
     if ~isempty(file_name)
         if ~isempty(desc('mtf_sm'))
-            syn_add_noise = desc('mtf_sm');
+            syn_add_noise = st2double(desc('mtf_sm'));
+            if isempty(syn_add_noise)
+                error('Invalid value specified for boolean syn_add_noise');
+            else
+                syn_add_noise = logical(syn_add_noise);
+            end
         end
         if ~isempty(desc('mtf_am'))
             syn_ilm = desc('mtf_am');
         end
         if ~isempty(desc('mtf_ssm'))
             syn_am_sigma_id = desc('mtf_ssm');
+            if isempty(syn_am_sigma_id)
+                error('Invalid value specified for integral syn_am_sigma_id');
+            else
+                syn_am_sigma_id = uint32(syn_am_sigma_id);
+            end
         end
         if ~isempty(desc('iiw'))
-            syn_plot_type = desc('mtf_sm');
+            syn_plot_type = st2double(desc('mtf_sm'));
+            if isempty(syn_plot_type)
+                error('Invalid value specified for boolean syn_plot_type');
+            else
+                syn_plot_type = logical(syn_plot_type);
+            end
         end
+        syn_out_suffix = getSyntheticSeqSuffix(syn_ssm, syn_ssm_sigma_id,...
+            syn_ilm,syn_am_sigma_id, syn_add_noise, syn_noise_mean,...
+            syn_noise_sigma);
+    else
+        syn_out_suffix = getSyntheticSeqSuffix(syn_ssm, syn_ssm_sigma_id,...
+            syn_ilm,syn_am_sigma_id, syn_add_noise, syn_noise_mean,...
+            syn_noise_sigma);
+        syn_data_fname=sprintf('%s_%s_%s_%s_%s_%d', data_fname, syn_out_suffix,...
+            desc('mtf_sm'), desc('mtf_am'), desc('mtf_ssm'), desc('iiw'));
     end
-    syn_out_suffix = getSyntheticSeqSuffix(syn_ssm, syn_ssm_sigma_id,...
-        syn_ilm,syn_am_sigma_id, syn_add_noise, syn_noise_mean,...
-        syn_noise_sigma);
     if ~isempty(file_name)
         syn_data_fname=sprintf('%s_%s_%s', data_fname, syn_out_suffix, file_name);
     else
-        syn_data_fname=sprintf('%s_%s_%s_%s_%s_%d', data_fname, syn_out_suffix,...
-            desc('mtf_sm'), desc('mtf_am'), desc('mtf_ssm'), desc('iiw'));
+    end
+    syn_out_suffix = sprintf('warped_%s_s%d',syn_ssm, syn_ssm_sigma_id);
+    if ~strcmp(syn_ilm, '0')
+        syn_out_suffix = sprintf('%s_%s_s%d',syn_out_suffix, syn_ilm, syn_am_sigma_id);
+    end
+    if syn_add_noise
+        syn_out_suffix = sprintf('%s_gauss_%4.2f_%4.2f',...
+            syn_out_suffix, syn_noise_mean, syn_noise_sigma);
     end
     if read_from_bin
         syn_data_fname=sprintf('%s.bin', syn_data_fname);

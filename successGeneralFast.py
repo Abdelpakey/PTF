@@ -330,7 +330,7 @@ if __name__ == '__main__':
     syn_frame_id = 0
 
     params_dict = getParamDict()
-    param_ids = readDistGridParams()
+    # param_ids = readDistGridParams()
 
     actors = params_dict['actors']
     sequences = params_dict['sequences']
@@ -654,6 +654,8 @@ if __name__ == '__main__':
                 actor_err_out_dir = '{:s}/reinit_{:d}_{:d}'.format(err_out_dir, int(reinit_err_thresh), reinit_frame_skip)
             else:
                 actor_err_out_dir = '{:s}/reinit_{:4.2f}_{:d}'.format(err_out_dir, reinit_err_thresh, reinit_frame_skip)
+        else:
+            actor_err_out_dir = err_out_dir
         actor_err_out_dir = '{:s}/{:s}'.format(actor_err_out_dir, actor)
         if not os.path.exists(actor_err_out_dir):
             print 'Tracking error directory: {:s} does not exist. Creating it...'.format(actor_err_out_dir)
