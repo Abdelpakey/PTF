@@ -9,7 +9,7 @@ if __name__ == '__main__':
 
     use_arch = 1
     arch_root_dir = './C++/MTF/log/archives'
-    arch_name = 'resh_fc_all_AMs_25r_30i_4u_subseq10_tulp'
+    arch_name = 'resf_falm_all_AMs_50r_30i_4u_iiw0_subseq10_tulp'
     in_arch_path = 'tracking_data'
     gt_root_dir = '../Datasets'
     tracking_root_dir = './C++/MTF/log/tracking_data'

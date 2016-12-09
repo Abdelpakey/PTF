@@ -330,7 +330,7 @@ if __name__ == '__main__':
     syn_frame_id = 0
 
     params_dict = getParamDict()
-    # param_ids = readDistGridParams()
+    param_ids = readDistGridParams()
 
     actors = params_dict['actors']
     sequences = params_dict['sequences']

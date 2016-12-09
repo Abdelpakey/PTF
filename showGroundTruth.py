@@ -9,6 +9,7 @@ from Misc import drawGrid
 from Misc import getPixValsRGB
 from Misc import stackImages
 from Misc import col_rgb
+from Misc import getSyntheticSeqName
 
 import sys
 import cv2
@@ -55,8 +56,8 @@ if __name__ == '__main__':
     use_opt_gt = 1
     use_reinit_gt = 0
 
-    actor_id = 3
-    seq_id = 26
+    actor_id = 15
+    seq_id = 20
     init_frame_id = 0
 
     show_all_seq = 0
@@ -67,6 +68,17 @@ if __name__ == '__main__':
     write_img = 1
     show_frame_id = 0
     dst_root_dir = '../../Reports/ICRA17/video'
+
+    # settings for synthetic sequences
+    syn_ssm = 'c8'
+    syn_ssm_sigma_id = 28
+    syn_ilm = 'rbf'
+    syn_am_sigma_id = 9
+    syn_add_noise = 1
+    syn_noise_mean = 0
+    syn_noise_sigma = 10
+    syn_frame_id = 0
+    syn_err_thresh = 5.0
 
     actor = actors[actor_id]
     print 'actor: ', actor
@@ -108,6 +120,10 @@ if __name__ == '__main__':
 
     for curr_seq_id in seq_ids:
         seq_name = sequences[curr_seq_id]
+        if actor == 'Synthetic':
+            seq_name = getSyntheticSeqName(seq_name, syn_ssm, syn_ssm_sigma_id, syn_ilm,
+                                syn_am_sigma_id, syn_frame_id, syn_add_noise,
+                                syn_noise_mean, syn_noise_sigma)
         # seq_name = 'nl_mugII_s1'
 
         dst_folder = '{:s}/{:s}'.format(dst_root_dir, seq_name)

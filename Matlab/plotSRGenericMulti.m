@@ -78,8 +78,8 @@ read_from_bin = 1;
 
 %load all generic plot configurations
 genericConfigsAM_gd;
-genericConfigsSM_stochastic;
-genericConfigsSM_composite;
+% genericConfigsSM_stochastic;
+% genericConfigsSM_composite;
 
 % genericConfigsSM;
 % genericConfigsSSM;
