@@ -9,13 +9,13 @@ if __name__ == '__main__':
 
     use_arch = 1
     arch_root_dir = './C++/MTF/log/archives'
-    arch_name = 'resl_fa_all_AMs_50r_30_100i_4u_iiw0_subseq10_tulp'
+    arch_name = 'resf_ia_all_AMs_50r_30_100i_4u_subseq10_tmt_ucsb_lint_pami'
     in_arch_path = 'tracking_data'
     gt_root_dir = '../Datasets'
     tracking_root_dir = './C++/MTF/log/tracking_data'
     out_dir = './C++/MTF/log/success_rates'
-    list_fname = 'list.txt'
-    # list_fname = None
+    # list_fname = 'list.txt'
+    list_fname = None
     list_in_arch = 0
     # list_fname = '{:s}/{:s}.txt'.format(arch_root_dir, arch_name)
     actor_ids = [0, 1, 2, 3]
