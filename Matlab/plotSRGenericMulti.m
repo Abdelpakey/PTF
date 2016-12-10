@@ -83,7 +83,7 @@ genericConfigsAM_gd;
 
 % genericConfigsSM;
 % genericConfigsSSM;
-plot_ids = [4010, 4011, 4012];
+plot_ids = [4020, 4021, 4022];
 % plot_ids = [1981,1982,198];
 % CRV
 % plot_ids = [4911];
