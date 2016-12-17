@@ -1,11 +1,18 @@
-function [img_mat] = getAnnotatedImages(img_fname, no_of_frames)
-fprintf('Reading and annotating images...');
+fprintf('Reading and annotating images...\n');
 % shapeInserter = vision.ShapeInserter('Shape', 'Lines');
-img_mat=cell(no_of_frames, 1);
+img_data=dir(src_img_fname_bin);
+img_data_size=img_data.bytes;
 
-img_fid=fopen(img_fname);
+img_fid=fopen(src_img_fname_bin);
 img_width=fread(img_fid, 1, 'uint32', 'a');
 img_height=fread(img_fid, 1, 'uint32', 'a');
+no_of_frames = (img_data_size - 8)/(img_width*img_height);
+
+fprintf('no_of_frames: %d\n', no_of_frames);
+
+
+img_mat=cell(no_of_frames, 1);
+
 % figure;
 for frame_id=1:no_of_frames  
     %fprintf('frame_id: %d\n', frame_id);
@@ -23,5 +30,5 @@ for frame_id=1:no_of_frames
 end
 fclose(img_fid);
 fprintf('Done\n');
-end
+
 

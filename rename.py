@@ -6,6 +6,9 @@ src_dir = '.'
 src_substr = '4u'
 dst_substr = ''
 replace_existing = 0
+show_names = 0
+add_as_prefix = 0
+add_as_suffix = 0
 
 arg_id = 1
 if len(sys.argv) > arg_id:
@@ -18,26 +21,57 @@ if len(sys.argv) > arg_id:
     replace_existing = int(sys.argv[arg_id])
     arg_id += 1
 if len(sys.argv) > arg_id:
+    show_names = int(sys.argv[arg_id])
+    arg_id += 1
+if len(sys.argv) > arg_id:
     src_dir = sys.argv[arg_id]
     arg_id += 1
 
-if dst_substr == '__space__':
-    dst_substr = ' '
+if src_substr == '__prefix__' or src_substr == '__pf__':
+    src_substr=''
+    add_as_prefix = 1
+elif src_substr == '__suffix__' or src_substr == '__sf__':
+    src_substr=''
+    add_as_suffix = 1
+elif src_substr == '__space__' or src_substr == '__sp__':
+    src_substr = ' '
 
+if dst_substr == '__space__' or dst_substr == '__sp__':
+    dst_substr = ' '
+if dst_substr == '__none__' or dst_substr == '__n__':
+    dst_substr = ''
 
 print 'Searching for {:s} to replace with {:s} in {:s}'.format(src_substr, dst_substr, src_dir)
-src_fnames = []
+src_file_paths = []
 for root, dirnames, filenames in os.walk(src_dir):
     for filename in fnmatch.filter(filenames, '*{:s}*'.format(src_substr)):
-        src_fnames.append(os.path.join(root, filename))
-print 'Found {:d} matches'.format(len(src_fnames))
-for src_fname in src_fnames:
-    dst_fname = src_fname.replace(src_substr, dst_substr)
-    if os.path.exists(dst_fname):
+        src_file_paths.append(os.path.join(root, filename))
+print 'Found {:d} matches'.format(len(src_file_paths))
+for src_path in src_file_paths:
+    if add_as_prefix:
+        dst_path = os.path.join(os.path.dirname(src_path), '{:s}{:s}'.format(dst_substr, os.path.basename(src_path)))
+    elif add_as_suffix:
+        dst_path = os.path.join(os.path.dirname(src_path), '{:s}{:s}'.format(os.path.basename(src_path), dst_substr))
+    else:
+        dst_path = src_path.replace(src_substr, dst_substr)
+
+    src_fname_dir = os.path.dirname(src_path)
+    dst_fname_dir = os.path.dirname(dst_path)
+    #
+    # if src_fname_dir != dst_fname_dir:
+    # if show_names:
+    #         print 'renaming folder {:s} to {:s}'.format(src_fname_dir, dst_fname_dir)
+    #         os.rename(src_fname_dir, dst_fname_dir)
+    #     dst_fname = src_fname.replace(src_substr, dst_substr)
+
+    if show_names:
+        print 'renaming {:s} to {:s}'.format(src_path, dst_path)
+    if os.path.exists(dst_path):
         if replace_existing:
-            print 'Destination file: {:s} already exists. Removing it...'.format(dst_fname)
-            os.remove(dst_fname)
+            print 'Destination file: {:s} already exists. Removing it...'.format(dst_path)
+            os.remove(dst_path)
         else:
-            print 'Destination file: {:s} already exists. Skipping it...'.format(dst_fname)
-    os.rename(src_fname, dst_fname)
+            print 'Destination file: {:s} already exists. Skipping it...'.format(dst_path)
+            continue
+    os.rename(src_path, dst_path)
     # print matches

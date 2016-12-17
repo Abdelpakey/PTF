@@ -49,11 +49,12 @@ for state_id = state_ids
     % matlab_Std=gradient(StdJac_data(:, 2*state_id));  
     
     if plot_feat_norm
-        plot_title=sprintf('%s FeatNorm', upper(am_name));
+        plot_title=sprintf('%s FeatNorm', upper(am_name_disp));
     elseif plot_likelihood
-        plot_title=sprintf('%s Likelihood', upper(am_name));
+        plot_title=sprintf('%s Likelihood', upper(am_name_disp));
     else
-        plot_title=sprintf('%s Norm', upper(am_name));
+        plot_title=sprintf('%s %s frame %d', upper(am_name_disp), seq_name, frame_id);
+        y_label=sprintf('f_{%s}', lower(am_name_disp));
         if plot_num_likelihood && isempty(diag_lkl_figs{state_id})
             diag_lkl_figs{state_id}=figure;
         end
@@ -62,27 +63,52 @@ for state_id = state_ids
         Norm_likelihood_data = getLikelihood(Norm_data(:, 2*state_id),...
             likelihood_alpha,likelihood_beta,likelihood_type);
     end
-    if frame_id==start_id
-        if ~isempty(diag_lkl_figs{state_id})
-            figure(diag_lkl_figs{state_id}), hold off;
-            lkl_plot_title=sprintf('%s Norm Likelihood %.2fa%.2fb',...
-                upper(am_name), likelihood_alpha, likelihood_beta);  
-            lkl_plot_handles{plot_id} = plot(Norm_data(:, 2*state_id-1), Norm_likelihood_data,...
-            'LineWidth', line_width);
-            title(lkl_plot_title, 'Interpreter', 'none'), grid on, xlabel(x_label), ylabel(lkl_plot_title, 'Interpreter', 'none');
+    
+    if plot_norm_in_one_fig
+        if frame_id==start_id
+            figure(diag_figs{1});
+            if state_id==1
+                hold off;
+            else
+                hold on;
+            end 
+            plot_handles{plot_id}=plot(Norm_data(:, 2*state_id-1), Norm_data(:, 2*state_id),...
+                'LineWidth', line_width,...
+                'Color', col_rgb{strcmp(col_names,plot_cols_123(state_id))});
+            grid on;
+            x_label = sprintf('t_x / t_y');
+            if state_id==state_id(end)
+                title(plot_title, 'interpreter', 'none'), xlabel(x_label), ylabel(y_label), legend(plot_legend_123);   
+            end
+        else
+            set(plot_handles{plot_id},'ydata',Norm_data(:, 2*state_id));
+            figure(diag_figs{1});
+            title(plot_title, 'interpreter', 'none')
         end
-        figure(diag_fig), hold off;
-        axes_handles{axis_id}=subplot(plot_rows,plot_cols,1);
-        plot_handles{plot_id}=plot(Norm_data(:, 2*state_id-1), Norm_data(:, 2*state_id),...
-            'LineWidth', line_width);
-        title(plot_title, 'Interpreter', 'none'), grid on, xlabel(x_label), ylabel(plot_title, 'Interpreter', 'none');
     else
-        set(plot_handles{plot_id},'ydata',Norm_data(:, 2*state_id));
-        %             set(axes_handles{axis_id},'title',plot_title);
-        if ~isempty(lkl_plot_handles{plot_id})
-            set(lkl_plot_handles{plot_id},'ydata',Norm_likelihood_data);
+        if frame_id==start_id
+            if ~isempty(diag_lkl_figs{state_id})
+                figure(diag_lkl_figs{state_id}), hold off;
+                lkl_plot_title=sprintf('%s Norm Likelihood %.2fa%.2fb',...
+                    upper(am_name), likelihood_alpha, likelihood_beta);  
+                lkl_plot_handles{plot_id} = plot(Norm_data(:, 2*state_id-1), Norm_likelihood_data,...
+                'LineWidth', line_width);
+                title(lkl_plot_title, 'Interpreter', 'none'), grid on, xlabel(x_label), ylabel(lkl_plot_title, 'Interpreter', 'none');
+            end
+            figure(diag_fig), hold off;
+            axes_handles{axis_id}=subplot(plot_rows,plot_cols,1);
+            plot_handles{plot_id}=plot(Norm_data(:, 2*state_id-1), Norm_data(:, 2*state_id),...
+                'LineWidth', line_width);
+            title(plot_title), grid on, xlabel(x_label), ylabel(plot_title);
+        else
+            set(plot_handles{plot_id},'ydata',Norm_data(:, 2*state_id));
+            %             set(axes_handles{axis_id},'title',plot_title);
+            if ~isempty(lkl_plot_handles{plot_id})
+                set(lkl_plot_handles{plot_id},'ydata',Norm_likelihood_data);
+            end
         end
     end
+
     axis_id=axis_id+1;
     plot_id=plot_id+1;
 

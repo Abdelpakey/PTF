@@ -29,10 +29,11 @@ if __name__ == '__main__':
     tracking_data_root_dir = 'C++/MTF/log'
     out_root_dir = 'C++/MTF/log'
 
-    data_config_id = 0
-    n_trackers = 6
-    actor_id = 2
-    start_id = 0
+    data_config_id = 16
+    n_trackers = 1
+
+    actor_id = 1
+    start_id = 48
     end_id = -1
     actor = 'Live'
     seq_name = 'usb_cam'
@@ -64,11 +65,11 @@ if __name__ == '__main__':
     legend_bkg_col = (0, 0, 0)
     legend_gap = 0
 
-    header_location = (0, 20)
+    header_location = (0, 30)
     header_font_face = cv2.FONT_HERSHEY_COMPLEX_SMALL
     header_col = (255, 255, 255)
     header_bkg_col = (0, 0, 0)
-    header_font_size = 1
+    header_font_size = 1.3
     header_font_thickness = 1
 
     actors = params_dict['actors']
@@ -206,7 +207,7 @@ if __name__ == '__main__':
         tracking_data_win_name = seq_name
         cv2.namedWindow(tracking_data_win_name)
 
-        for i in xrange(no_of_frames):
+        for frame_id in xrange(no_of_frames):
 
             ret, curr_img = cap.read()
             if not ret:
@@ -220,7 +221,7 @@ if __name__ == '__main__':
 
             curr_img_list = []
 
-            fps_text = '{:s}: {:d}'.format(seq_name, i + 1)
+            fps_text = '{:s}: frame {:d}'.format(seq_name, frame_id + 1)
             header_text_size, header_baseline = cv2.getTextSize(fps_text, header_font_face,
                                                                 header_font_size, header_font_thickness)
             legend_x = header_location[0]
@@ -233,10 +234,10 @@ if __name__ == '__main__':
             for tracker_id in xrange(n_trackers):
                 tracker = trackers[tracker_id]
                 tracking_data = tracking_data_list[tracker_id]
-                curr_corners = np.asarray([tracking_data[i, 0:2].tolist(),
-                                           tracking_data[i, 2:4].tolist(),
-                                           tracking_data[i, 4:6].tolist(),
-                                           tracking_data[i, 6:8].tolist()]).T
+                curr_corners = np.asarray([tracking_data[frame_id, 0:2].tolist(),
+                                           tracking_data[frame_id, 2:4].tolist(),
+                                           tracking_data[frame_id, 4:6].tolist(),
+                                           tracking_data[frame_id, 6:8].tolist()]).T
                 if show_grid:
                     try:
                         curr_hom_mat = np.mat(util.compute_homography(std_corners, curr_corners))
@@ -300,7 +301,7 @@ if __name__ == '__main__':
                             header_col, header_font_thickness)
             cv2.imshow(tracking_data_win_name, displayed_img)
             if write_img:
-                out_fname = '{:s}/{:s}_frame{:05d}.jpg'.format(dst_folder, seq_name, i + 1)
+                out_fname = '{:s}/{:s}_frame{:05d}.jpg'.format(dst_folder, seq_name, frame_id + 1)
                 cv2.imwrite(out_fname, displayed_img)
 
             key = cv2.waitKey(1 - pause_seq)

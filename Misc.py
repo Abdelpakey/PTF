@@ -11,6 +11,7 @@ from matplotlib.mlab import PCA
 from matplotlib import animation
 import copy
 import struct
+from DecompUtils import getBinaryPtsImage2
 
 from mpl_toolkits.mplot3d import Axes3D
 from Homography import *
@@ -1654,7 +1655,268 @@ def readReinitGT(gt_path, reinit_frame_id):
     gt_fid.close()
     return n_gt_frames, reinit_gt
 
+def getMeanCornerDistanceError(tracker_pos, gt_pos, _overflow_err=1e3):
+    # mean corner distance error
+    err = 0
+    for corner_id in xrange(4):
+        try:
+            # err += math.sqrt(
+            # (float(tracking_data_line[2 * corner_id + 1]) - float(gt_line[2 * corner_id + 1])) ** 2
+            # + (float(tracking_data_line[2 * corner_id + 2]) - float(gt_line[2 * corner_id + 2])) ** 2
+            # )
+            err += math.sqrt(
+                (tracker_pos[2 * corner_id] - gt_pos[2 * corner_id]) ** 2
+                + (tracker_pos[2 * corner_id + 1] - gt_pos[2 * corner_id + 1]) ** 2
+            )
+        except OverflowError:
+            err += _overflow_err
+            continue
+    err /= 4.0
+    # for corner_id in range(1, 9):
+    # try:
+    # err += (float(tracking_data_line[corner_id]) - float(gt_line[corner_id])) ** 2
+    # except OverflowError:
+    # continue
+    # err = math.sqrt(err / 4)
+    return err
 
+
+def getCenterLocationError(tracker_pos, gt_pos):
+    # center location error
+    # centroid_tracker_x = (float(tracking_data_line[1]) + float(tracking_data_line[3]) + float(
+    # tracking_data_line[5]) + float(tracking_data_line[7])) / 4.0
+    # centroid2_x = (float(gt_line[1]) + float(gt_line[3]) + float(gt_line[5]) + float(
+    # gt_line[7])) / 4.0
+
+    centroid_tracker_x = (tracker_pos[0] + tracker_pos[2] + tracker_pos[4] +
+                          tracker_pos[6]) / 4.0
+    centroid_gt_x = (gt_pos[0] + gt_pos[2] + gt_pos[4] + gt_pos[6]) / 4.0
+
+    # centroid_tracker_y = (float(tracking_data_line[2]) + float(tracking_data_line[4]) + float(
+    # tracking_data_line[6]) + float(tracking_data_line[8])) / 4.0
+    # centroid2_y = (float(gt_line[2]) + float(gt_line[4]) + float(gt_line[6]) + float(
+    # gt_line[8])) / 4.0
+
+    centroid_tracker_y = (tracker_pos[1] + tracker_pos[3] + tracker_pos[5] +
+                          tracker_pos[7]) / 4.0
+    centroid_gt_y = (gt_pos[1] + gt_pos[3] + gt_pos[5] + gt_pos[7]) / 4.0
+
+    err = math.sqrt((centroid_tracker_x - centroid_gt_x) ** 2 + (centroid_tracker_y - centroid_gt_y) ** 2)
+    # print 'tracking_data_line: ', tracking_data_line
+    # print 'gt_line: ', gt_line
+    # print 'centroid1_x: {:15.9f} centroid1_y:  {:15.9f}'.format(centroid1_x, centroid1_y)
+    # print 'centroid2_x: {:15.9f} centroid2_y:  {:15.9f}'.format(centroid2_x, centroid2_y)
+    # print 'err: {:15.9f}'.format(err)
+
+    return err
+
+
+def getJaccardError(tracker_pos, gt_pos, show_img=0, border_size=100, min_thresh=0, max_thresh=2000):
+    min_x = int(min([tracker_pos[0], tracker_pos[2], tracker_pos[4], tracker_pos[6],
+                     gt_pos[0], gt_pos[2], gt_pos[4], gt_pos[6]]))
+    min_y = int(min([tracker_pos[1], tracker_pos[3], tracker_pos[5], tracker_pos[7],
+                     gt_pos[1], gt_pos[3], gt_pos[5], gt_pos[7]]))
+    max_x = int(max([tracker_pos[0], tracker_pos[2], tracker_pos[4], tracker_pos[6],
+                     gt_pos[0], gt_pos[2], gt_pos[4], gt_pos[6]]))
+    max_y = int(max([tracker_pos[1], tracker_pos[3], tracker_pos[5], tracker_pos[7],
+                     gt_pos[1], gt_pos[3], gt_pos[5], gt_pos[7]]))
+
+    if min_x < min_thresh:
+        min_x = min_thresh
+    if min_y < min_thresh:
+        min_y = min_thresh
+    if max_x > max_thresh:
+        max_x = max_thresh
+    if max_y > max_thresh:
+        max_y = max_thresh
+
+    if min_x > max_x or min_y > max_y:
+        print 'tracker_pos: ', tracker_pos
+        print 'gt_pos: ', gt_pos
+        raise StandardError('Invalid Tracker and/or GT position')
+
+    img_size = (max_y - min_y + 2 * border_size + 1, max_x - min_x + 2 * border_size + 1)
+
+    tracker_pos_pts = np.asarray(
+        [[tracker_pos[0] + border_size - min_x, tracker_pos[2] + border_size - min_x,
+          tracker_pos[4] + border_size - min_x, tracker_pos[6] + border_size - min_x],
+         [tracker_pos[1] + border_size - min_y, tracker_pos[3] + border_size - min_y,
+          tracker_pos[5] + border_size - min_y, tracker_pos[7] + border_size - min_y]]
+    )
+    gt_pos_pts = np.asarray(
+        [[gt_pos[0] + border_size - min_x, gt_pos[2] + border_size - min_x,
+          gt_pos[4] + border_size - min_x, gt_pos[6] + border_size - min_x],
+         [gt_pos[1] + border_size - min_y, gt_pos[3] + border_size - min_y,
+          gt_pos[5] + border_size - min_y, gt_pos[7] + border_size - min_y]]
+    )
+
+    tracker_img = getBinaryPtsImage2(img_size, tracker_pos_pts)
+    gt_img = getBinaryPtsImage2(img_size, gt_pos_pts)
+
+    intersection_img = cv2.bitwise_and(tracker_img, gt_img)
+    union_img = cv2.bitwise_or(tracker_img, gt_img)
+    n_intersectio_pix = np.sum(intersection_img)
+    n_union_pix = np.sum(union_img)
+    jacc_error = 1.0 - float(n_intersectio_pix) / float(n_union_pix)
+
+    if show_img:
+        legend_font_size = 1
+        legend_font_thickness = 1
+        legend_font_face = cv2.FONT_HERSHEY_COMPLEX_SMALL
+        legend_font_line_type = cv2.CV_AA
+        header_location = (0, 20)
+
+        cv2.putText(tracker_img, '{:f}'.format(jacc_error), header_location, legend_font_face,
+                    legend_font_size, col_rgb['white'], legend_font_thickness, legend_font_line_type)
+        cv2.putText(intersection_img, '{:d}'.format(n_intersectio_pix), header_location, legend_font_face,
+                    legend_font_size, col_rgb['white'], legend_font_thickness, legend_font_line_type)
+        cv2.putText(union_img, '{:d}'.format(n_union_pix), header_location, legend_font_face,
+                    legend_font_size, col_rgb['white'], legend_font_thickness, legend_font_line_type)
+        cv2.imshow('tracker_img', tracker_img)
+        cv2.imshow('gt_img', gt_img)
+        cv2.imshow('intersection_img', intersection_img)
+        cv2.imshow('union_img', union_img)
+
+        if cv2.waitKey(1) == 27:
+            sys.exit(0)
+    return jacc_error
+
+
+def getTrackingErrors(tracker_path_orig, gt_path, _arch_fid=None, _reinit_from_gt=0,
+                      _reinit_frame_skip=5, _use_reinit_gt=0, start_ids=None, _err_type=0,
+                      _overflow_err=1e3, _show_jaccard_img=0):
+    print 'Reading ground truth from: {:s}...'.format(gt_path)
+    if _use_reinit_gt:
+        n_gt_frames, gt_data = readReinitGT(gt_path, 0)
+    else:
+        n_gt_frames, gt_data = readGT(gt_path)
+
+    if n_gt_frames is None or gt_data is None:
+        print "Ground truth could not be read successfully"
+        return None, None
+
+    if start_ids is None:
+        start_ids = [0]
+
+    tracking_errors = []
+    failure_count = 0
+    for start_id in start_ids:
+        if start_id == 0:
+            tracker_path = tracker_path_orig
+        else:
+            tracker_path = tracker_path_orig.replace('.txt', '_init_{:d}.txt'.format(start_id))
+        print 'Reading tracking data for start_id {:d} from: {:s}...'.format(start_id, tracker_path)
+        if _arch_fid is not None:
+            tracking_data = _arch_fid.open(tracker_path, 'r').readlines()
+        else:
+            tracking_data = open(tracker_path, 'r').readlines()
+        if len(tracking_data) < 2:
+            print 'Tracking data file is invalid.'
+            return None, None
+        # remove header
+        del (tracking_data[0])
+        n_lines = len(tracking_data)
+
+        if not _reinit_from_gt and n_lines != n_gt_frames - start_id:
+            print "No. of frames in tracking result ({:d}) and the ground truth ({:d}) do not match".format(
+                n_lines, n_gt_frames)
+            return None, None
+
+        reinit_gt_id = 0
+        reinit_start_id = 0
+        # ignore the first frame where tracker was initialized
+        line_id = 1
+        invalid_tracker_state_found = False
+        is_initialized = True
+        # id of the last frame where tracking failure was detected
+        failure_frame_id = -1
+
+        while line_id < n_lines:
+            tracking_data_line = tracking_data[line_id].strip().split()
+            frame_fname = str(tracking_data_line[0])
+            fname_len = len(frame_fname)
+            frame_fname_1 = frame_fname[0:5]
+            frame_fname_2 = frame_fname[- 4:]
+            if frame_fname_1 != 'frame' or frame_fname_2 != '.jpg':
+                print 'Invaid formatting on tracking data line {:d}: {:s}'.format(line_id + 1, tracking_data_line)
+                print 'frame_fname: {:s} fname_len: {:d} frame_fname_1: {:s} frame_fname_2: {:s}'.format(
+                    frame_fname, fname_len, frame_fname_1, frame_fname_2)
+                return None, None
+            frame_id_str = frame_fname[5:-4]
+            frame_num = int(frame_id_str)
+            if not _reinit_from_gt and frame_num != start_id + line_id + 1:
+                print "Unexpected frame number {:d} found in line {:d} of tracking result for start_id {:d}: {:s}".format(
+                    frame_num, line_id + 1, start_id, tracking_data_line)
+                return None, None
+            if is_initialized:
+                # id of the frame in which the tracker is reinitialized
+                reinit_start_id = frame_num - 2
+                if failure_frame_id >= 0 and reinit_start_id != failure_frame_id + _reinit_frame_skip:
+                    print 'Tracker was reinitialized in frame {:d} rather than {:d} where it should have been with {:d} frames being skipped'.format(
+                        reinit_start_id + 1, failure_frame_id + _reinit_frame_skip + 1, _reinit_frame_skip
+                    )
+                    return None, None
+                is_initialized = False
+
+            # print 'line_id: {:d} frame_id_str: {:s} frame_num: {:d}'.format(
+            # line_id, frame_id_str, frame_num)
+            if len(tracking_data_line) != 9:
+                if _reinit_from_gt and len(tracking_data_line) == 2 and tracking_data_line[1] == 'tracker_failed':
+                    print 'tracking failure detected in frame: {:d} at line {:d}'.format(frame_num, line_id + 1)
+                    failure_count += 1
+                    failure_frame_id = frame_num - 1
+                    # skip the frame where the tracker failed as well as the one where it was reinitialized
+                    # whose result will (or should) be in the line following this one
+                    line_id += 2
+                    is_initialized = True
+                    continue
+                elif len(tracking_data_line) == 2 and tracking_data_line[1] == 'invalid_tracker_state':
+                    if not invalid_tracker_state_found:
+                        print 'invalid tracker state detected in frame: {:d} at line {:d}'.format(frame_num,
+                                                                                                  line_id + 1)
+                        invalid_tracker_state_found = True
+                    line_id += 1
+                    tracking_errors.append(_overflow_err)
+                    continue
+                else:
+                    print 'Invalid formatting on line {:d}: {:s}'.format(line_id, tracking_data[line_id])
+                    return None, None
+            # if is_initialized:frame_num
+            # is_initialized = False
+            # line_id += 1
+            # continue
+
+
+            if _use_reinit_gt:
+                if reinit_gt_id != reinit_start_id:
+                    n_gt_frames, gt_data = readReinitGT(gt_path, reinit_start_id)
+                    reinit_gt_id = reinit_start_id
+                curr_gt = gt_data[frame_num - reinit_start_id - 1]
+            else:
+                curr_gt = gt_data[frame_num - 1]
+
+            curr_tracking_data = [float(tracking_data_line[1]), float(tracking_data_line[2]),
+                                  float(tracking_data_line[3]), float(tracking_data_line[4]),
+                                  float(tracking_data_line[5]), float(tracking_data_line[6]),
+                                  float(tracking_data_line[7]), float(tracking_data_line[8])]
+            # print 'line_id: {:d} gt: {:s}'.format(line_id, gt_line)
+
+            if _err_type == 0:
+                err = getMeanCornerDistanceError(curr_tracking_data, curr_gt, _overflow_err)
+            elif _err_type == 1:
+                err = getCenterLocationError(curr_tracking_data, curr_gt)
+            elif _err_type == 2:
+                err = getJaccardError(curr_tracking_data, curr_gt, _show_jaccard_img)
+            else:
+                print 'Invalid error type provided: {:d}'.format(_err_type)
+                return None, None
+            tracking_errors.append(err)
+            line_id += 1
+        if _reinit_from_gt and n_lines < n_gt_frames - failure_count * (_reinit_frame_skip - 1):
+            print "Unexpected no. of frames in reinit tracking result ({:d}) which should be at least {:d}".format(
+                n_lines, n_gt_frames - failure_count * (_reinit_frame_skip - 1))
+            return None, None
+    return tracking_errors, failure_count
 def arrangeCorners(orig_corners):
     # print 'orig_corners:\n', orig_corners
     # print 'orig_corners.shape:\n', orig_corners.shape

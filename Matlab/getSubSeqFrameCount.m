@@ -5,7 +5,7 @@ getParamLists;
 colRGBDefs;
 write_data = 0;
 db_root_dir = '../../Datasets';
-actor_ids = [3];
+actor_ids = [2];
 n_sub_seqs = 10;
 
 % n_frames_list = [];

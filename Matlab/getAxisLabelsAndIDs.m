@@ -2,18 +2,18 @@ function [x_label, y_label, x_id, y_id] = getAxisLabelsAndIDs(grid_type)
 if strcmp(grid_type,'trans')
     y_id=2;
     x_id=3;
-    y_label='tx';
-    x_label='ty';
+    y_label='t_x';
+    x_label='t_y';
 elseif strcmp(grid_type,'rtx')
     y_id=4;
     x_id=2;
     y_label='theta';
-    x_label='tx';
+    x_label='t_x';
 elseif strcmp(grid_type,'rty')
     y_id=4;
     x_id=3;
     y_label='theta';
-    x_label='ty';
+    x_label='t_y';
 elseif strcmp(grid_type,'rs')
     y_id=5;
     x_id=4;
@@ -32,8 +32,8 @@ elseif strcmp(grid_type,'proj')
 elseif strcmp(grid_type,'trans2')
     y_id=2;
     x_id=3;
-    y_label='tx';
-    x_label='ty';
+    y_label='t_x';
+    x_label='t_y';
 else
     error('Invalid grid type: %s', grid_type);
 end

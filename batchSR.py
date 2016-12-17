@@ -9,7 +9,7 @@ if __name__ == '__main__':
 
     use_arch = 1
     arch_root_dir = './C++/MTF/log/archives'
-    arch_name = 'resf_ia_all_AMs_50r_30_100i_4u_subseq10_tmt_ucsb_lint_pami'
+    arch_name = 'resl_pf500s7car_ncc_zncc_ssim_spss_50r_30i_50a_4u_no_ss_tulp'
     in_arch_path = 'tracking_data'
     gt_root_dir = '../Datasets'
     tracking_root_dir = './C++/MTF/log/tracking_data'
@@ -20,15 +20,14 @@ if __name__ == '__main__':
     # list_fname = '{:s}/{:s}.txt'.format(arch_root_dir, arch_name)
     actor_ids = [0, 1, 2, 3]
     # actor_ids = [15]
-    opt_gt_ssms = None
+    # opt_gt_ssms = None
     opt_gt_ssms = ['0']
 
-    write_to_bin = 1
+    enable_subseq = 0
 
-    enable_subseq = 1
-
-    reinit_on_failure = 1
+    reinit_on_failure = 0
     reinit_at_each_frame = 0
+    n_runs = 1
 
     n_subseq = 10
     err_type = 0
@@ -52,6 +51,8 @@ if __name__ == '__main__':
     syn_noise_sigma = 10
     syn_frame_id = 0
     syn_err_thresh = 5.0
+
+    write_to_bin = 1
 
     arg_id = 1
     if len(sys.argv) > arg_id:
@@ -86,7 +87,7 @@ if __name__ == '__main__':
     actors = params_dict['actors']
     sequences = params_dict['sequences']
 
-    if actors[actor_ids[0]] and len(actor_ids) == 1:
+    if actors[actor_ids[0]] == 'Synthetic' and len(actor_ids) == 1:
         enable_subseq = 0
         mcd_err_thresh = syn_err_thresh
 
@@ -195,7 +196,11 @@ if __name__ == '__main__':
             arguments = '{:s} {:f} {:f} {:d} {:d} {:d} {:f} {:d}'.format(
                 arguments, err_min, err_max, err_res, err_type, write_err,
                 overflow_err, write_to_bin)
-            full_command = 'python successGeneralFast.py {:s}'.format(arguments)
+            if n_runs > 1:
+                arguments = '{:s} {:d}'.format(arguments, n_runs)
+                full_command = 'python successGeneralFastMR.py {:s}'.format(arguments)
+            else:
+                full_command = 'python successGeneralFast.py {:s}'.format(arguments)
 
             # full_command = \
             # 'python successGeneralFast.py {:d} {:s} {:s} {:s} {:s} {:s} {:s} {:s} {:s} {:s} {:s} {:s} {:d} {:d} {:d} {:f} {:d} {:d} {:f} {:f} {:d} {:d} {:d} {:f}'.format(

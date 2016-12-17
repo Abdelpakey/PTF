@@ -188,3 +188,9 @@ out_dirs[config_id] = 'Live'
 tracker_configs[config_id] = [
      {'fname': 'rkl400636591_ncc_8_0', 'use-arch': 0, 'legend': 'Live', 'col': 'red'}
 ]
+
+config_id = 16
+out_dirs[config_id] = 'Live'
+tracker_configs[config_id] = [
+     {'sm': 'gt', 'am': '50r30i4u', 'ssm': '4', 'iiw': 0, 'legend': '', 'col': 'red'},
+]

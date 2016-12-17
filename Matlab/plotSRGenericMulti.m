@@ -52,17 +52,22 @@ annotate_bars = 0;
 % annotation_col = [0, 0, 0];
 annotation_col = [];
 horz_bar_plot = 1;
+scatter_size = 128;
 
 n_subseq = 10;
 mcd_err_thresh = 20;
 jaccard_err_thresh = 0.90;
 plot_data_type = 3;
 
+scatter_markers = ['o', '+', '*', 's', 'x',...
+    'd', '^', 'v', '>', '<', 'p', 'h'];
+
 % 0: SR without reinitialization
 % 1: total number of failures
 % 2: average error on successfull frames
 % 3: average number of frames between consecutive failures
 % 4: fraction of frames tracked successfully
+% 5: Scatter plot with SR area on x axis and no. of failures on y axis
 plot_types = [0];
 reinit_frame_skip = 5;
 reinit_err_thresh = 20;
@@ -70,7 +75,7 @@ plot_area_under_sr = 0;
 show_area_in_legend = 1;
 show_failures_in_legend = 1;
 reinit_at_each_frame = 0;
-
+n_runs = 1;
 min_err_thr = 1;
 
 overriding_error_type = -2;
@@ -78,12 +83,13 @@ read_from_bin = 1;
 
 %load all generic plot configurations
 genericConfigsAM_gd;
-% genericConfigsSM_stochastic;
-% genericConfigsSM_composite;
+% genericConfigsAM_stochastic;
+% genericConfigsSM_robust
 
+% genericConfigsAM;
 % genericConfigsSM;
 % genericConfigsSSM;
-plot_ids = [5030, 5031, 5032];
+plot_ids = [2120, 2121, 2122];
 % plot_ids = [1981,1982,198];
 % CRV
 % plot_ids = [4911];
@@ -163,8 +169,8 @@ for plot_type_ = plot_types
             plot_data_desc=plot_data_descs{plot_data_type, plot_id};
             if isempty(plot_data_desc)
                 error('Invalid plot id specified: %d', plot_id);
-            end
-            
+            end          
+                       
             
             subplot(plot_rows, plot_cols, subplot_id), hold on, grid on;
             plot_title=plot_titles{plot_data_type, plot_id};
@@ -179,7 +185,8 @@ for plot_type_ = plot_types
                 % bar plot
                 plotSRBar;
                 continue;                
-            end            
+            end  
+            
             min_sr = 1.0;
             max_sr = 0.0;
             plot_legend={};
@@ -196,6 +203,10 @@ for plot_type_ = plot_types
                 plot_type=plot_type_;
                 
             end
+            if plot_type == 5
+                plotSRScatter;
+                continue;
+            end
             reinit_on_failure=plot_type;
             if reinit_at_each_frame
                 root_dir=sprintf('%s/reinit',root_dir);
@@ -209,13 +220,14 @@ for plot_type_ = plot_types
                 failure_data=zeros(n_lines, 1);
             end           
             plot_synthetic_sr = 0;
-            for line_id=1:n_lines
+            for line_id=1:n_lines                
                 desc=plot_data_desc{line_id};
                 actor_ids=desc('actor_id');
                 n_actors=length(actor_ids);
                 opt_gt_ssm = desc('opt_gt_ssm');
                 enable_subseq = desc('enable_subseq');
                 error_type=desc('error_type');
+                curr_n_runs = n_runs;
                 if overriding_error_type>=0
                     error_type=overriding_error_type;
                 end
@@ -259,6 +271,9 @@ for plot_type_ = plot_types
                         seq_idxs=actor_idxs{actor_id+1}{seq_idxs_ids(actor_ids_id)+1};
                         if ~isempty(file_name)
                             data_fname=sprintf('%s_%s', data_fname, file_name);
+                            if ~isempty(desc('mtf_sm'))
+                                curr_n_runs=desc('mtf_sm');
+                            end
                         else
                             data_fname=sprintf('%s_%s_%s_%s_%d', data_fname,...
                                 desc('mtf_sm'), desc('mtf_am'), desc('mtf_ssm'), desc('iiw'));
@@ -271,6 +286,9 @@ for plot_type_ = plot_types
                         end
                         if error_type
                             data_fname=sprintf('%s_%s', data_fname, error_types{error_type + 1});
+                        end
+                        if curr_n_runs > 1
+                            data_fname=sprintf('%s_%s_runs', data_fname, curr_n_runs);
                         end
                         if read_from_bin
                             data_fname=sprintf('%s.bin', data_fname);
@@ -616,7 +634,7 @@ for plot_type_ = plot_types
                 set(gca, 'YTick', 1:n_lines);
                 set(gca, 'YTickLabel', labels, 'DefaultTextInterpreter', 'none');
                 subplot_id = subplot_id + 1;
-            end
+            end            
         end
     end
     set(plot_fig, 'Name', plot_title);

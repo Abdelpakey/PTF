@@ -3,6 +3,7 @@ from Misc import readDistGridParams
 from Misc import getTrackingErrors
 from Misc import getSyntheticSeqName
 from Misc import getSyntheticSeqSuffix
+
 import itertools as it
 
 import numpy as np
@@ -27,6 +28,7 @@ if __name__ == '__main__':
     opt_gt_ssm = '0'
     use_reinit_gt = 1
     write_to_bin = 0
+    n_runs = 1
 
     reinit_on_failure = 0
     reinit_frame_skip = 5
@@ -157,6 +159,9 @@ if __name__ == '__main__':
         write_to_bin = int(sys.argv[arg_id])
         arg_id += 1
     if len(sys.argv) > arg_id:
+        n_runs = int(sys.argv[arg_id])
+        arg_id += 1
+    if len(sys.argv) > arg_id:
         syn_ssm = sys.argv[arg_id]
         arg_id += 1
     if len(sys.argv) > arg_id:
@@ -180,6 +185,9 @@ if __name__ == '__main__':
     if len(sys.argv) > arg_id:
         syn_frame_id = int(sys.argv[arg_id])
         arg_id += 1
+
+    if n_runs <= 1:
+        raise StandardError('successGeneralFastMR :: no. of runs must be greater than 1')
 
     use_opt_gt = 0
 
@@ -234,6 +242,8 @@ if __name__ == '__main__':
         raise StandardError('Invalid error type provided: {:d}'.format(err_type))
 
     print 'Using {:s} error to evaluate tracking performance'.format(err_name)
+
+    print 'Average trackking errors over {:d} runs'.format(n_runs)
 
     print 'actor: {:s}'.format(actor)
     print 'mtf_sm: {:s}'.format(mtf_sm)
@@ -295,132 +305,152 @@ if __name__ == '__main__':
     print 'in_arch_path: ', in_arch_path
     print 'out_dir: ', out_dir
 
-    success_rates = np.zeros((n_err_thr, n_seq + 2), dtype=np.float64)
-    success_rates[:, 0] = err_thresholds
+    mr_success_rates = []
+    mr_cmb_tracking_err = []
+    mr_cmb_tracking_err_list = []
+    mr_cmb_failure_count = []
+    mr_frames_per_failure = []
+    mr_cmb_avg_err = []
 
-    cmb_tracking_err = []
-    cmb_tracking_err_list = []
+    for run_id in xrange(n_runs):
+        success_rates = np.zeros((n_err_thr, n_seq + 2), dtype=np.float64)
+        success_rates[:, 0] = err_thresholds
 
-    cmb_failure_count = np.zeros((1, n_seq + 2), dtype=np.float64)
-    frames_per_failure = np.zeros((1, n_seq + 2), dtype=np.float64)
-    cmb_avg_err = np.zeros((1, n_seq + 2), dtype=np.float64)
+        cmb_tracking_err = []
+        cmb_tracking_err_list = []
 
-    total_frame_count = 0
+        cmb_failure_count = np.zeros((1, n_seq + 2), dtype=np.float64)
+        frames_per_failure = np.zeros((1, n_seq + 2), dtype=np.float64)
+        cmb_avg_err = np.zeros((1, n_seq + 2), dtype=np.float64)
 
-    for j in xrange(n_seq):
-        seq_id = seq_ids[j]
-        seq_name = sequences[seq_id]
-        if actor == 'Synthetic':
-            seq_name = getSyntheticSeqName(seq_name, syn_ssm, syn_ssm_sigma_id, syn_ilm,
-                                syn_am_sigma_id, syn_frame_id, syn_add_noise,
-                                syn_noise_mean, syn_noise_sigma)
+        total_frame_count = 0
 
-        if use_reinit_gt:
-            if use_opt_gt:
-                gt_path = '{:s}/{:s}_{:s}.bin'.format(gt_dir, seq_name, opt_gt_ssm)
-            else:
-                gt_path = '{:s}/{:s}.bin'.format(gt_dir, seq_name)
-        else:
-            if use_opt_gt:
-                gt_path = '{:s}/{:s}_{:s}.txt'.format(gt_dir, seq_name, opt_gt_ssm)
-            else:
-                gt_path = '{:s}/{:s}.txt'.format(gt_dir, seq_name)
-        if use_arch:
-            tracking_res_path = '{:s}/{:s}/{:s}/{:s}_{:s}_{:s}_{:d}'.format(
-                in_arch_path, actor, seq_name, mtf_sm, mtf_am, mtf_ssm, iiw)
-        else:
-            if using_pf:
-                tracking_res_path = '{:s}/pf/{:s}'.format(
-                    tracking_root_dir, seq_name)
-            else:
-                tracking_res_path = '{:s}/{:s}/{:s}/{:s}_{:s}_{:s}_{:d}'.format(
-                    tracking_root_dir, actor, seq_name, mtf_sm, mtf_am, mtf_ssm, iiw)
-        if enable_subseq:
-            start_ids = subseq_start_ids[seq_id, :]
-            # print 'seq_name: {:s}'.format(seq_name)
-        tracking_res_path = '{:s}.txt'.format(tracking_res_path)
-        if not use_arch and not os.path.isfile(tracking_res_path):
-            print 'tracking result file not found for: {:s} in: \n {:s} '.format(seq_name, tracking_res_path)
-            sys.exit(0)
-        tracking_err, failure_count = getTrackingErrors(tracking_res_path, gt_path, arch_fid,
-                                                        reinit_on_failure, reinit_frame_skip, use_reinit_gt,
-                                                        start_ids, err_type, overflow_err, show_jaccard_img)
-        if tracking_err is None:
-            raise StandardError('Tracking error could not be computed for sequence {:d}: {:s}'.format(
-                j, seq_name))
-        total_frame_count += len(tracking_err)
-        cmb_tracking_err.append(tracking_err)
-        if reinit_at_each_frame:
-            avg_err = float(sum(tracking_err)) / float(len(tracking_err))
-            cmb_avg_err[0, j + 1] = avg_err
-            cmb_tracking_err_list.extend(tracking_err)
-        if reinit_on_failure:
-            cmb_tracking_err_list.extend(tracking_err)
-            cmb_failure_count[0, j + 1] = failure_count
-            frames_per_failure[0, j + 1] = float(len(tracking_err)) / float(failure_count + 1)
-            if len(tracking_err) == 0:
-                print 'Tracker failed in all frames so setting the average error to the threshold'
-                avg_err = reinit_err_thresh
-            else:
-                avg_err = float(sum(tracking_err)) / float(len(tracking_err))
-            cmb_avg_err[0, j + 1] = avg_err
-    print 'total_frame_count: ', total_frame_count
-    if reinit_at_each_frame:
-        cmb_avg_err[0, n_seq + 1] = float(sum(cmb_tracking_err_list)) / float(len(cmb_tracking_err_list))
-    if reinit_on_failure:
-        total_failure_count = np.sum(cmb_failure_count)
-        if reinit_on_failure:
-            print 'total_failure_count: {:d}'.format(int(total_failure_count))
-        print 'total_error_count: ', len(cmb_tracking_err_list)
-        cmb_failure_count[0, n_seq + 1] = total_failure_count
-        cmb_avg_err[0, n_seq + 1] = float(sum(cmb_tracking_err_list)) / float(len(cmb_tracking_err_list))
-        frames_per_failure[0, n_seq + 1] = float(total_frame_count) / float(total_failure_count + 1)
-
-    # write tracking errors
-    if write_err:
-        if reinit_at_each_frame:
-            actor_err_out_dir = '{:s}/reinit'.format(err_out_dir)
-        elif reinit_on_failure:
-            if reinit_err_thresh == int(reinit_err_thresh):
-                actor_err_out_dir = '{:s}/reinit_{:d}_{:d}'.format(err_out_dir, int(reinit_err_thresh), reinit_frame_skip)
-            else:
-                actor_err_out_dir = '{:s}/reinit_{:4.2f}_{:d}'.format(err_out_dir, reinit_err_thresh, reinit_frame_skip)
-        else:
-            actor_err_out_dir = err_out_dir
-        actor_err_out_dir = '{:s}/{:s}'.format(actor_err_out_dir, actor)
-        if not os.path.exists(actor_err_out_dir):
-            print 'Tracking error directory: {:s} does not exist. Creating it...'.format(actor_err_out_dir)
-            os.makedirs(actor_err_out_dir)
-        err_out_path = '{:s}/err_{:s}_{:s}_{:s}_{:d}'.format(
-            actor_err_out_dir, mtf_sm, mtf_am, mtf_ssm, iiw)
-        if use_opt_gt:
-            err_out_path = '{:s}_{:s}'.format(err_out_path, opt_gt_ssm)
-        if enable_subseq:
-            err_out_path = '{:s}_subseq_{:d}'.format(err_out_path, n_subseq)
-        if err_type:
-            err_out_path = '{:s}_{:s}'.format(err_out_path, err_postfix)
-        err_out_path = '{:s}.txt'.format(err_out_path)
-
-        print 'Writing tracking errors to: {:s}'.format(err_out_path)
-        # np.savetxt(err_out_path, np.array([np.array(err) for err in cmb_tracking_err]), fmt='%15.9f', delimiter='\t')
-        cmb_tracking_err_arr = list(it.izip_longest(*cmb_tracking_err, fillvalue=-1))
-        # print 'cmb_tracking_err_arr: ', cmb_tracking_err_arr
-        np.savetxt(err_out_path, np.array([k for k in cmb_tracking_err_arr]), fmt='%15.9f', delimiter='\t')
-
-    # compute success rates for different thresholds
-    for i in xrange(n_err_thr):
-        success_frame_count = 0
-        err_thr = err_thresholds[i]
         for j in xrange(n_seq):
-            seq_success_count = sum(err <= err_thr for err in cmb_tracking_err[j])
-            success_frame_count += seq_success_count
-            if len(cmb_tracking_err[j]) == 0:
-                success_rates[i, j + 1] = 0
+            seq_id = seq_ids[j]
+            seq_name = sequences[seq_id]
+            if actor == 'Synthetic':
+                seq_name = getSyntheticSeqName(seq_name, syn_ssm, syn_ssm_sigma_id, syn_ilm,
+                                               syn_am_sigma_id, syn_frame_id, syn_add_noise,
+                                               syn_noise_mean, syn_noise_sigma)
+
+            if use_reinit_gt:
+                if use_opt_gt:
+                    gt_path = '{:s}/{:s}_{:s}.bin'.format(gt_dir, seq_name, opt_gt_ssm)
+                else:
+                    gt_path = '{:s}/{:s}.bin'.format(gt_dir, seq_name)
             else:
-                success_rates[i, j + 1] = float(seq_success_count) / float(len(cmb_tracking_err[j]))
-        success_rates[i, n_seq + 1] = float(success_frame_count) / float(total_frame_count)
-        print 'err_thr: {:15.9f} sfc: {:6d} tfc: {:6d} sr: {:15.9f}'.format(
-            err_thr, success_frame_count, total_frame_count, success_rates[i, n_seq + 1])
+                if use_opt_gt:
+                    gt_path = '{:s}/{:s}_{:s}.txt'.format(gt_dir, seq_name, opt_gt_ssm)
+                else:
+                    gt_path = '{:s}/{:s}.txt'.format(gt_dir, seq_name)
+            if use_arch:
+                tracking_res_path = '{:s}/{:s}/{:s}/{:s}_{:s}_{:s}_{:d}'.format(
+                    in_arch_path, actor, seq_name, mtf_sm, mtf_am, mtf_ssm, iiw)
+            else:
+                if using_pf:
+                    tracking_res_path = '{:s}/pf/{:s}'.format(
+                        tracking_root_dir, seq_name)
+                else:
+                    tracking_res_path = '{:s}/{:s}/{:s}/{:s}_{:s}_{:s}_{:d}'.format(
+                        tracking_root_dir, actor, seq_name, mtf_sm, mtf_am, mtf_ssm, iiw)
+            if enable_subseq:
+                start_ids = subseq_start_ids[seq_id, :]
+                # print 'seq_name: {:s}'.format(seq_name)
+
+            tracking_res_path = '{:s}_run_{:d}.txt'.format(tracking_res_path, run_id + 1)
+            if not use_arch and not os.path.isfile(tracking_res_path):
+                print 'tracking result file not found for: {:s} in: \n {:s} '.format(seq_name, tracking_res_path)
+                sys.exit(0)
+            tracking_err, failure_count = getTrackingErrors(tracking_res_path, gt_path, arch_fid,
+                                                            reinit_on_failure, reinit_frame_skip, use_reinit_gt,
+                                                            start_ids, err_type, overflow_err, show_jaccard_img)
+            if tracking_err is None:
+                raise StandardError('Tracking error could not be computed for sequence {:d}: {:s}'.format(
+                    j, seq_name))
+            total_frame_count += len(tracking_err)
+            cmb_tracking_err.append(tracking_err)
+            if reinit_at_each_frame:
+                avg_err = float(sum(tracking_err)) / float(len(tracking_err))
+                cmb_avg_err[0, j + 1] = avg_err
+                cmb_tracking_err_list.extend(tracking_err)
+            if reinit_on_failure:
+                cmb_tracking_err_list.extend(tracking_err)
+                cmb_failure_count[0, j + 1] = failure_count
+                frames_per_failure[0, j + 1] = float(len(tracking_err)) / float(failure_count + 1)
+                if len(tracking_err) == 0:
+                    print 'Tracker failed in all frames so setting the average error to the threshold'
+                    avg_err = reinit_err_thresh
+                else:
+                    avg_err = float(sum(tracking_err)) / float(len(tracking_err))
+                cmb_avg_err[0, j + 1] = avg_err
+        print 'total_frame_count: ', total_frame_count
+        if reinit_at_each_frame:
+            cmb_avg_err[0, n_seq + 1] = float(sum(cmb_tracking_err_list)) / float(len(cmb_tracking_err_list))
+        if reinit_on_failure:
+            total_failure_count = np.sum(cmb_failure_count)
+            if reinit_on_failure:
+                print 'total_failure_count: {:d}'.format(int(total_failure_count))
+            print 'total_error_count: ', len(cmb_tracking_err_list)
+            cmb_failure_count[0, n_seq + 1] = total_failure_count
+            cmb_avg_err[0, n_seq + 1] = float(sum(cmb_tracking_err_list)) / float(len(cmb_tracking_err_list))
+            frames_per_failure[0, n_seq + 1] = float(total_frame_count) / float(total_failure_count + 1)
+
+        # write tracking errors
+        if write_err:
+            if reinit_at_each_frame:
+                actor_err_out_dir = '{:s}/reinit'.format(err_out_dir)
+            elif reinit_on_failure:
+                if reinit_err_thresh == int(reinit_err_thresh):
+                    actor_err_out_dir = '{:s}/reinit_{:d}_{:d}'.format(err_out_dir, int(reinit_err_thresh),
+                                                                       reinit_frame_skip)
+                else:
+                    actor_err_out_dir = '{:s}/reinit_{:4.2f}_{:d}'.format(err_out_dir, reinit_err_thresh, reinit_frame_skip)
+            else:
+                actor_err_out_dir = err_out_dir
+            actor_err_out_dir = '{:s}/{:s}'.format(actor_err_out_dir, actor)
+            if not os.path.exists(actor_err_out_dir):
+                print 'Tracking error directory: {:s} does not exist. Creating it...'.format(actor_err_out_dir)
+                os.makedirs(actor_err_out_dir)
+            err_out_path = '{:s}/err_{:s}_{:s}_{:s}_{:d}'.format(
+                actor_err_out_dir, mtf_sm, mtf_am, mtf_ssm, iiw)
+            if use_opt_gt:
+                err_out_path = '{:s}_{:s}'.format(err_out_path, opt_gt_ssm)
+            if enable_subseq:
+                err_out_path = '{:s}_subseq_{:d}'.format(err_out_path, n_subseq)
+            if err_type:
+                err_out_path = '{:s}_{:s}'.format(err_out_path, err_postfix)
+            err_out_path = '{:s}_{:d}.txt'.format(err_out_path, run_id + 1)
+
+            print 'Writing tracking errors to: {:s}'.format(err_out_path)
+            # np.savetxt(err_out_path, np.array([np.array(err) for err in cmb_tracking_err]), fmt='%15.9f', delimiter='\t')
+            cmb_tracking_err_arr = list(it.izip_longest(*cmb_tracking_err, fillvalue=-1))
+            # print 'cmb_tracking_err_arr: ', cmb_tracking_err_arr
+            np.savetxt(err_out_path, np.array([k for k in cmb_tracking_err_arr]), fmt='%15.9f', delimiter='\t')
+
+        # compute success rates for different thresholds
+        for i in xrange(n_err_thr):
+            success_frame_count = 0
+            err_thr = err_thresholds[i]
+            for j in xrange(n_seq):
+                seq_success_count = sum(err <= err_thr for err in cmb_tracking_err[j])
+                success_frame_count += seq_success_count
+                if len(cmb_tracking_err[j]) == 0:
+                    success_rates[i, j + 1] = 0
+                else:
+                    success_rates[i, j + 1] = float(seq_success_count) / float(len(cmb_tracking_err[j]))
+            success_rates[i, n_seq + 1] = float(success_frame_count) / float(total_frame_count)
+            print 'err_thr: {:15.9f} sfc: {:6d} tfc: {:6d} sr: {:15.9f}'.format(
+                err_thr, success_frame_count, total_frame_count, success_rates[i, n_seq + 1])
+        mr_success_rates.append(success_rates)
+        mr_cmb_tracking_err.append(cmb_tracking_err)
+        mr_cmb_failure_count.append(cmb_failure_count)
+        mr_frames_per_failure.append(frames_per_failure)
+        mr_cmb_avg_err.append(cmb_avg_err)
+
+    success_rates = np.mean(np.dstack(mr_success_rates), axis=2)
+    cmb_failure_count = np.mean(np.asarray(mr_cmb_failure_count), axis=0)
+    frames_per_failure = np.mean(np.asarray(mr_frames_per_failure), axis=0)
+    cmb_avg_err = np.mean(np.asarray(mr_cmb_avg_err), axis=0)
 
     # write success rates (and other results if available)
     if not os.path.exists(out_dir):
@@ -429,8 +459,8 @@ if __name__ == '__main__':
 
     out_path = '{:s}/sr'.format(out_dir)
     if actor == 'Synthetic':
-        syn_out_suffix = getSyntheticSeqSuffix(syn_ssm, syn_ssm_sigma_id, syn_ilm,syn_am_sigma_id,
-                                      syn_add_noise, syn_noise_mean, syn_noise_sigma)
+        syn_out_suffix = getSyntheticSeqSuffix(syn_ssm, syn_ssm_sigma_id, syn_ilm, syn_am_sigma_id,
+                                               syn_add_noise, syn_noise_mean, syn_noise_sigma)
         out_path = '{:s}_{:s}'.format(out_path, syn_out_suffix)
 
     if overriding_seq_id >= 0:
@@ -444,6 +474,8 @@ if __name__ == '__main__':
         out_path = '{:s}_subseq_{:d}'.format(out_path, n_subseq)
     if err_type:
         out_path = '{:s}_{:s}'.format(out_path, err_postfix)
+
+    out_path = '{:s}_{:d}_runs'.format(out_path, n_runs)
 
     if write_to_bin:
         out_path = '{:s}.bin'.format(out_path)

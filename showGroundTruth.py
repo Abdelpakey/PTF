@@ -37,7 +37,7 @@ if __name__ == '__main__':
     show_stacked = 0
     stack_order = 0  # 0: row major 1: column major
     show_grid = 0
-    show_patch = 0
+    show_patch = 1
     patch_corner = 0
     resize_factor = 2
     label_corners = 0
@@ -56,8 +56,8 @@ if __name__ == '__main__':
     use_opt_gt = 1
     use_reinit_gt = 0
 
-    actor_id = 15
-    seq_id = 20
+    actor_id = 0
+    seq_id = 2
     init_frame_id = 0
 
     show_all_seq = 0

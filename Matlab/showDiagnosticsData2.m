@@ -7,8 +7,16 @@ db_root_dir=sprintf('../../Datasets');
 img_root_dir=sprintf('../../Image Data');
 root_dir='../C++/MTF/log';
 
-actor_id = 0;
-seq_id = 4;
+ACTOR_IDS=[3, 0, 1, 1, 3, 3, 0];
+SEQ_IDS=[11, 2, 41, 48, 2, 11, 39];
+FRAME_IDS=[1, 362, 13, 100, 583, 150, 172];
+
+config_id = 4;
+
+actor_id = ACTOR_IDS(config_id);
+seq_id = SEQ_IDS(config_id);
+start_id = FRAME_IDS(config_id);
+
 update_type = 0;
 opt_type = 0;
 out_prefix = '';
@@ -17,13 +25,17 @@ am_name = 'spss';
 ilm_name = '0';
 ssm_name = '2';
 frame_gap = 0;
-start_id = 1;
-file_start_id = 101;
-file_end_id = 102;
+file_start_id = 0;
+file_end_id = -1;
 state_ids = 0;
 use_inv_data = 0;
+show_img = 0;
+am_name_disp = '';
+pause_exec = 1;
+speed_factor = 1;
 
-plot_only_norm = 0;
+plot_only_norm = 1;
+plot_norm_in_one_fig = 1;
 plot_feat_norm = 0;
 plot_likelihood = 0;
 plot_num_likelihood = 0;
@@ -32,15 +44,19 @@ likelihood_beta = 1;
 likelihood_type = 1;
 
 plot_only_jac = 0;
-plot_num_jac = 1;
+plot_num_jac = 0;
 
 plot_only_hess = 1;
 plot_num_hess = 1;
 plot_misc_hess = 0;
 plot_sec_ord_hess = 1;
+plot_font_size = 24;
 
-normalized_fig = 1;
-show_img = 0;
+normalized_fig = 0;
+
+% start_id = start_id + 1;
+file_start_id = file_start_id + 1;
+file_end_id = file_end_id + 1;
 
 if plot_only_norm
     plot_only_jac = 0;
@@ -50,13 +66,34 @@ end
 if plot_only_jac
     plot_only_hess = 0;
 end
+if isempty(am_name_disp)
+    am_name_disp = am_name;       
+end
+set(0,'DefaultAxesFontName', 'Times New Roman');
+set(0,'DefaultAxesFontSize', plot_font_size);
+set(0,'DefaultAxesFontWeight', 'bold');
+
+plot_cols_123={
+    'red',...
+    'green',...
+    'blue',...
+    'cyan',...
+    'magenta',...
+    'purple',...
+    'forest_green',...
+    'slate_gray'
+};
+plot_legend_123={
+    't_x',...
+    't_y',...
+    };
 
 actor = actors{actor_id+1};
 seq_name = sequences{actor_id + 1}{seq_id + 1};
 
 if file_end_id<file_start_id
     db_n_frames=importdata(sprintf('%s/%s/n_frames.txt',db_root_dir, actor));
-    n_frames=db_n_frames.data(strcmp(db_n_frames.textdata,seq_name));
+    n_frames=db_n_frames.data(strcmp(strtrim(db_n_frames.textdata),seq_name));
     file_end_id=n_frames;
     fprintf('Using file_end_id=%d\n', file_end_id);
 end
@@ -70,9 +107,7 @@ end
 
 src_img_fname=sprintf('%s/%s.bin', img_root_dir, seq_name);
 
-pause_exec = 1;
 end_exec = 0;
-speed_factor = 1;
 frame_id_diff = 1;
 
 if show_img
@@ -98,9 +133,6 @@ if show_img
     set(img_fig, 'Name', seq_name);
 end
 
-set(0,'DefaultAxesFontName', 'Times New Roman');
-set(0,'DefaultAxesFontSize', 20);
-set(0,'DefaultAxesFontWeight', 'bold');
 if plot_only_norm
     if plot_feat_norm
         data_types={
@@ -246,7 +278,7 @@ grid_start_pos = ftell(dist_fid);
 dist_grid_size=data_rows*data_cols*8;
 dist_grid_pos=zeros(file_end_id, 1);
 for i=1:file_end_id
-    dist_grid_pos(i)=grid_start_pos + dist_grid_size*(i-start_id);
+    dist_grid_pos(i)=grid_start_pos + dist_grid_size*(i-file_start_id);
 end
 
 for state_id = state_ids
@@ -279,7 +311,7 @@ end
 hac_data=zeros(diag_res, 1);
 frame_id=start_id;
 prev_frame_id = 0;
-file_n_frames=file_end_id - file_start_id;
+file_n_frames=file_end_id - file_start_id + 1;
 while ~end_exec
     if frame_id<start_id
         pause_exec=1;
@@ -306,7 +338,7 @@ while ~end_exec
             plotDiagAll;
         end
         if show_img
-            fseek(img_fid, img_pos(curr_frame_id), 'bof');
+            fseek(img_fid, img_pos(curr_frame_id + file_start_id), 'bof');
             img_bin=fread(img_fid, [img_width img_height], 'uint8', 'a');
             img_bin=uint8(img_bin');
             set(0,'CurrentFigure',img_fig);
