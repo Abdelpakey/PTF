@@ -1,11 +1,60 @@
 labels=cell(n_lines, 1);
-bars_per_group=length(plot_data_desc{1}('value'));
+if isnumeric(plot_data_desc{1}('value'))
+    bars_per_group=length(plot_data_desc{1}('value'));
+else
+    bars_per_group = 1;
+end
 colors=plot_data_desc{1}('color');
 values=zeros(n_lines, bars_per_group);
+stats_col = 1;
 for line_id=1:n_lines
     desc=plot_data_desc{line_id};
+    curr_colors=desc('color');
+    line_styles=desc('line_style');
     labels{line_id}=desc('label');
-    values(line_id, :)=desc('value');
+    if ~isnumeric(desc('value'))
+        key_string = desc('value');
+        if ~isempty(desc('stats_file_name'))
+            stats_file_name=desc('stats_file_name');
+        else
+            stats_file_name = 'tracking_stats.txt';
+        end        
+        fprintf('Reading stats data for key %d: %s from %s\n',...
+            line_id, key_string, stats_file_name);
+        stats = importdata(stats_file_name);
+        if ~isempty(desc('stats_col'))
+            stats_col=desc('stats_col');
+            fprintf('Getting data from mean of column %d\n', stats_col);
+        else
+            stats_col = 1;
+        end
+        key_data=stats.data(~cellfun('isempty',strfind(stats.textdata(:, end),...
+            key_string)), stats_col);
+        n_key_data=length(key_data);
+        key_data_mean=mean(key_data);
+        key_data_std=std(key_data);
+        fprintf('key_data :: count: %d mean: %f std: %f\n',...
+            n_key_data, key_data_mean, key_data_std);
+        values(line_id, 1) = key_data_mean;
+        values(line_id, 2) = key_data_std;
+        if bar_with_legend
+%             bar_x=[2*line_id-1, 2*line_id];
+            bar(line_id, values(line_id, 1),...
+                'Parent', gca,...
+                'BarWidth', bar_width,...
+                'LineWidth', bar_line_width,...
+                'LineStyle', line_styles{1},...
+                'FaceColor', col_rgb{strcmp(col_names,curr_colors(1))},...
+                'EdgeColor', col_rgb{strcmp(col_names,'black')});            
+%             for bar_id=1:bars_per_group
+%                 set(b(bar_id), 'LineStyle', line_styles{bar_id});
+%                 set(b(bar_id), 'FaceColor', col_rgb{strcmp(col_names,curr_colors{bar_id})});
+%                 set(b(bar_id), 'EdgeColor', col_rgb{strcmp(col_names,'black')});
+%             end
+        end
+    else
+        values(line_id, :)=desc('value');
+    end
     if annotate_bars
         for bar_id=1:bars_per_group
             if isempty(annotation_col)
@@ -28,20 +77,37 @@ for line_id=1:n_lines
         end
     end
 end
-if horz_bar_plot
-    b = barh(values);
-    set(gca, 'YTick', 1:n_lines);
-    set(gca, 'YTickLabel', labels, 'DefaultTextInterpreter', 'none');
-    xlabel('MCD Error');
-else
-    b=bar(values);
+if bar_with_legend
+    if col_legend
+        h_legend=columnlegend(2,labels,'NorthWest', 'boxon');
+    else
+        h_legend=legend(gca, labels);
+    end
+    set(h_legend,'FontSize',legend_font_size);
+    set(h_legend,'FontWeight','bold');
+    set(gca, 'XAxisLocation', 'bottom');
+    set(gca, 'YAxisLocation', 'left');
+    set(gca, 'Color', 'None');
+    set(gca, 'XLim', [0, n_lines+1]);
     set(gca, 'XTick', 1:n_lines);
-    ylabel('MCD Error');
-    set(gca, 'XTickLabel', labels, 'DefaultTextInterpreter', 'none');
-end                
-line_styles=plot_data_desc{1}('line_style');
-for bar_id=1:bars_per_group
-    set(b(bar_id), 'LineStyle', line_styles{bar_id});
-    set(b(bar_id), 'FaceColor', col_rgb{strcmp(col_names,colors{bar_id})});
-    set(b(bar_id), 'EdgeColor', col_rgb{strcmp(col_names,'black')});
+    set(gca, 'XTickLabel', []);
+    set(gca,'box','off');
+else
+    if horz_bar_plot
+        b = barh(values);
+        set(gca, 'YTick', 1:n_lines);
+        set(gca, 'YTickLabel', labels, 'DefaultTextInterpreter', 'none');
+        xlabel('MCD Error');
+    else
+        b=bar(values);
+        set(gca, 'XTick', 1:n_lines);
+        ylabel('MCD Error');
+        set(gca, 'XTickLabel', labels, 'DefaultTextInterpreter', 'none');
+    end                
+    line_styles=plot_data_desc{1}('line_style');
+    for bar_id=1:bars_per_group
+        set(b(bar_id), 'LineStyle', line_styles{bar_id});
+        set(b(bar_id), 'FaceColor', col_rgb{strcmp(col_names,colors{bar_id})});
+        set(b(bar_id), 'EdgeColor', col_rgb{strcmp(col_names,'black')});
+    end
 end

@@ -14,7 +14,10 @@ for syn_ssm_sigma_id = syn_ssm_sigma_ids
             syn_am_sigma_id = desc('mtf_ssm');
         end
         if ~isempty(desc('iiw'))
-            syn_plot_type = desc('mtf_sm');
+            syn_ssm = desc('iiw');
+        end
+        if ~isempty(desc('plot_type')) && desc('plot_type')>=0
+            syn_plot_type = desc('plot_type');
         end
     end
     syn_out_suffix = getSyntheticSeqSuffix(syn_ssm, syn_ssm_sigma_id,...

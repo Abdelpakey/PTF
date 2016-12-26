@@ -31,7 +31,11 @@ if __name__ == '__main__':
     reinit_on_failure = 0
     reinit_frame_skip = 5
     reinit_err_thresh = 20
+
     reinit_at_each_frame = 0
+    reset_at_each_frame = 0
+    reset_to_init = 1
+
     # mtf_am = 'miIN50r10i8b'
     # mtf_am = 'miIN50r10i1i5000s'
     enable_subseq = 0
@@ -124,7 +128,13 @@ if __name__ == '__main__':
         reinit_err_thresh = float(sys.argv[arg_id])
         arg_id += 1
     if len(sys.argv) > arg_id:
-        reinit_at_each_frame = float(sys.argv[arg_id])
+        reinit_at_each_frame = int(sys.argv[arg_id])
+        arg_id += 1
+    if len(sys.argv) > arg_id:
+        reset_at_each_frame = int(sys.argv[arg_id])
+        arg_id += 1
+    if len(sys.argv) > arg_id:
+        reset_to_init = int(sys.argv[arg_id])
         arg_id += 1
     if len(sys.argv) > arg_id:
         enable_subseq = int(sys.argv[arg_id])
@@ -247,6 +257,10 @@ if __name__ == '__main__':
     # s = raw_input('Output file already exists:\n {:s}\n Proceed with overwrite ?\n'.format(out_path))
     # if s == 'n' or s == 'N':
     # sys.exit()
+    if reset_to_init:
+        reset_dir = 'reset_to_init'
+    else:
+        reset_dir = 'reset'
 
     start_ids = None
     subseq_start_ids = None
@@ -277,6 +291,10 @@ if __name__ == '__main__':
         in_arch_path = '{:s}/reinit'.format(in_arch_path)
         tracking_root_dir = '{:s}/reinit'.format(tracking_root_dir)
         out_dir = '{:s}/reinit'.format(out_dir)
+    elif reset_at_each_frame:
+        in_arch_path = '{:s}/{:s}'.format(in_arch_path, reset_dir)
+        tracking_root_dir = '{:s}/{:s}'.format(tracking_root_dir, reset_dir)
+        out_dir = '{:s}/{:s}'.format(out_dir, reset_dir)
     elif reinit_on_failure:
         if reinit_err_thresh == int(reinit_err_thresh):
             in_arch_path = '{:s}/reinit_{:d}_{:d}'.format(in_arch_path, int(reinit_err_thresh), reinit_frame_skip)
@@ -312,8 +330,8 @@ if __name__ == '__main__':
         seq_name = sequences[seq_id]
         if actor == 'Synthetic':
             seq_name = getSyntheticSeqName(seq_name, syn_ssm, syn_ssm_sigma_id, syn_ilm,
-                                syn_am_sigma_id, syn_frame_id, syn_add_noise,
-                                syn_noise_mean, syn_noise_sigma)
+                                           syn_am_sigma_id, syn_frame_id, syn_add_noise,
+                                           syn_noise_mean, syn_noise_sigma)
 
         if use_reinit_gt:
             if use_opt_gt:
@@ -350,7 +368,7 @@ if __name__ == '__main__':
                 j, seq_name))
         total_frame_count += len(tracking_err)
         cmb_tracking_err.append(tracking_err)
-        if reinit_at_each_frame:
+        if reinit_at_each_frame or reset_at_each_frame:
             avg_err = float(sum(tracking_err)) / float(len(tracking_err))
             cmb_avg_err[0, j + 1] = avg_err
             cmb_tracking_err_list.extend(tracking_err)
@@ -365,7 +383,7 @@ if __name__ == '__main__':
                 avg_err = float(sum(tracking_err)) / float(len(tracking_err))
             cmb_avg_err[0, j + 1] = avg_err
     print 'total_frame_count: ', total_frame_count
-    if reinit_at_each_frame:
+    if reinit_at_each_frame or reset_at_each_frame:
         cmb_avg_err[0, n_seq + 1] = float(sum(cmb_tracking_err_list)) / float(len(cmb_tracking_err_list))
     if reinit_on_failure:
         total_failure_count = np.sum(cmb_failure_count)
@@ -380,9 +398,12 @@ if __name__ == '__main__':
     if write_err:
         if reinit_at_each_frame:
             actor_err_out_dir = '{:s}/reinit'.format(err_out_dir)
+        elif reset_at_each_frame:
+            actor_err_out_dir = '{:s}/{:s}'.format(err_out_dir, reset_dir)
         elif reinit_on_failure:
             if reinit_err_thresh == int(reinit_err_thresh):
-                actor_err_out_dir = '{:s}/reinit_{:d}_{:d}'.format(err_out_dir, int(reinit_err_thresh), reinit_frame_skip)
+                actor_err_out_dir = '{:s}/reinit_{:d}_{:d}'.format(err_out_dir, int(reinit_err_thresh),
+                                                                   reinit_frame_skip)
             else:
                 actor_err_out_dir = '{:s}/reinit_{:4.2f}_{:d}'.format(err_out_dir, reinit_err_thresh, reinit_frame_skip)
         else:
@@ -429,8 +450,8 @@ if __name__ == '__main__':
 
     out_path = '{:s}/sr'.format(out_dir)
     if actor == 'Synthetic':
-        syn_out_suffix = getSyntheticSeqSuffix(syn_ssm, syn_ssm_sigma_id, syn_ilm,syn_am_sigma_id,
-                                      syn_add_noise, syn_noise_mean, syn_noise_sigma)
+        syn_out_suffix = getSyntheticSeqSuffix(syn_ssm, syn_ssm_sigma_id, syn_ilm, syn_am_sigma_id,
+                                               syn_add_noise, syn_noise_mean, syn_noise_sigma)
         out_path = '{:s}_{:s}'.format(out_path, syn_out_suffix)
 
     if overriding_seq_id >= 0:
@@ -450,7 +471,7 @@ if __name__ == '__main__':
     else:
         out_path = '{:s}.txt'.format(out_path)
     print 'Saving success rate data to {:s}'.format(out_path)
-    if reinit_at_each_frame:
+    if reinit_at_each_frame or reset_at_each_frame:
         out_data = np.vstack((success_rates, cmb_avg_err))
     elif reinit_on_failure:
         out_data = np.vstack((success_rates, cmb_avg_err, cmb_failure_count, frames_per_failure))

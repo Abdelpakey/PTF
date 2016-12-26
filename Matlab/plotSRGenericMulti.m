@@ -10,9 +10,14 @@ sr_root_dir = '../C++/MTF/log/success_rates';
 plot_titles={};
 plot_data_descs={};
 
-desc_keys={'actor_id', 'seq_idxs_ids', 'plot_type', 'error_type', 'enable_subseq', 'file_name', 'mtf_sm', 'mtf_am', 'mtf_ssm', 'opt_gt_ssm', 'iiw',...
+desc_keys={'actor_id', 'seq_idxs_ids', 'plot_type', 'error_type', 'enable_subseq',...
+    'file_name', 'mtf_sm', 'mtf_am', 'mtf_ssm', 'opt_gt_ssm', 'iiw',...
     'legend', 'color', 'line_style'};
-bar_desc_keys={'actor_id', 'value', 'label', 'color', 'line_style'};
+bar_desc_keys={'actor_id', 'stats_file_name', 'stats_col', 'value', 'label', 'color', 'line_style'};
+
+scatter_markers = ['o', '+', '*', 's', 'x',...
+    'd', '^', 'v', '>', '<', 'p', 'h'];
+
 
 plot_combined_data = 1;
 ytick_precision=20;
@@ -52,6 +57,7 @@ annotate_bars = 0;
 % annotation_col = [0, 0, 0];
 annotation_col = [];
 horz_bar_plot = 1;
+bar_with_legend = 1;
 scatter_size = 128;
 
 n_subseq = 10;
@@ -59,8 +65,17 @@ mcd_err_thresh = 20;
 jaccard_err_thresh = 0.90;
 plot_data_type = 3;
 
-scatter_markers = ['o', '+', '*', 's', 'x',...
-    'd', '^', 'v', '>', '<', 'p', 'h'];
+n_runs = 1;
+min_err_thr = 1;
+
+overriding_error_type = -2;
+read_from_bin = 1;
+
+reinit_frame_skip = 5;
+reinit_err_thresh = 20;
+plot_area_under_sr = 0;
+show_area_in_legend = 1;
+show_failures_in_legend = 1;
 
 % 0: SR without reinitialization
 % 1: total number of failures
@@ -69,28 +84,23 @@ scatter_markers = ['o', '+', '*', 's', 'x',...
 % 4: fraction of frames tracked successfully
 % 5: Scatter plot with SR area on x axis and no. of failures on y axis
 plot_types = [0];
-reinit_frame_skip = 5;
-reinit_err_thresh = 20;
-plot_area_under_sr = 0;
-show_area_in_legend = 1;
-show_failures_in_legend = 1;
 reinit_at_each_frame = 0;
-n_runs = 1;
-min_err_thr = 1;
+reset_at_each_frame = 1;
+reset_to_init = 1;
 
-overriding_error_type = -2;
-read_from_bin = 1;
-
-%load all generic plot configurations
-genericConfigsAM_gd;
-% genericConfigsAM_stochastic;
+% load generic plot configurations
+% genericConfigsAM_gd;
+genericConfigsAM_stochastic;
 % genericConfigsSM_robust
 
 % genericConfigsAM;
 % genericConfigsSM;
 % genericConfigsSSM;
-plot_ids = [2120, 2121, 2122];
-% plot_ids = [1981,1982,198];
+
+% plot_ids = [3500, 3501];
+plot_ids = [2101, 2111, 2121];
+
+
 % CRV
 % plot_ids = [4911];
 % plot_ids = [451, 461, 481];
@@ -128,6 +138,8 @@ axis_label_y = 'Success Rate';
 % settings for synthetic sequences
 syn_ssm = 'c8';
 syn_ssm_sigma_ids = [19, 20, 21, 22, 23, 24, 25, 26, 27, 28];
+% syn_ssm_sigma_ids = [94, 95, 96, 97, 98, 99, 100, 101, 102, 103];
+
 syn_ssm_sigmas = 1:10;
 syn_ilm = '0';
 syn_am_sigma_id = 9;
@@ -135,7 +147,7 @@ syn_add_noise = 1;
 syn_noise_mean = 0;
 syn_noise_sigma = 10;
 syn_frame_id = 0;
-syn_err_thresh = 5;
+syn_err_thresh = 2;
 syn_plot_type = 0;
 
 n_rows=size(plot_ids, 1);
@@ -209,7 +221,15 @@ for plot_type_ = plot_types
             end
             reinit_on_failure=plot_type;
             if reinit_at_each_frame
+                reinit_on_failure = 0;
                 root_dir=sprintf('%s/reinit',root_dir);
+            elseif reset_at_each_frame
+                reinit_on_failure = 0;
+                if reset_to_init
+                    root_dir=sprintf('%s/reset_to_init',root_dir);
+                else
+                    root_dir=sprintf('%s/reset',root_dir);
+                end              
             elseif reinit_on_failure
                 if reinit_err_thresh==int32(reinit_err_thresh)
                     root_dir=sprintf('%s/reinit_%d_%d',root_dir, reinit_err_thresh, reinit_frame_skip);
@@ -401,7 +421,7 @@ for plot_type_ = plot_types
                     else
                         axis_label_y = 'Average Error';
                     end
-                    axis_label_x = 'Sigma';
+                    axis_label_x = '\sigma_{hom}';
                 else
                     if reinit_on_failure
                         if plot_type==1
@@ -493,28 +513,6 @@ for plot_type_ = plot_types
             end
             set(h_legend,'FontSize',legend_font_size);
             set(h_legend,'FontWeight','bold');
-            if ~reinit_on_failure
-                if adaptive_axis_range
-                    y_min=floor(min_sr*ytick_precision)/ytick_precision;
-                    y_max=ceil(max_sr*ytick_precision)/ytick_precision;
-                    fprintf('min_sr: %f\t max_sr: %f\n', min_sr, max_sr);
-                    fprintf('y_min: %f\t y_max: %f\n', y_min, y_max);
-                end
-                if y_min~=y_max
-                    set(ax1,'YLim', [y_min y_max]);
-                    set(ax1,'YTick', y_min:ytick_gap:y_max);
-                end
-                if x_min~=x_max
-                    set(ax1,'XLim', [x_min x_max]);
-                end                
-                if reinit_on_failure
-                    set(ax1, 'XAxisLocation', 'bottom');
-                    set(ax1, 'YAxisLocation', 'right');
-                end
-                %         set(ax1,'Color', 'r');
-                xlabel(ax1, axis_label_x);
-                ylabel(ax1, axis_label_y);
-            end
             if reinit_on_failure
                 labels=cell(n_lines, 1);
                 %             ax2 = axes;
@@ -557,7 +555,7 @@ for plot_type_ = plot_types
                 set(ax2, 'XLim', [0, n_lines+1]);
                 set(ax2, 'XTick', 1:n_lines);
                 set(ax2, 'XTickLabel', []);
-                set(ax2,'box','off')
+                set(ax2,'box','off');
                 if reinit_on_failure==1
                     y_label= 'Number of Failures';
                 elseif reinit_on_failure==2
@@ -572,6 +570,26 @@ for plot_type_ = plot_types
                 end
                 ylabel(ax2, y_label);
             else
+                if adaptive_axis_range
+                    y_min=floor(min_sr*ytick_precision)/ytick_precision;
+                    y_max=ceil(max_sr*ytick_precision)/ytick_precision;
+                    fprintf('min_sr: %f\t max_sr: %f\n', min_sr, max_sr);
+                    fprintf('y_min: %f\t y_max: %f\n', y_min, y_max);
+                end
+                if y_min~=y_max
+                    set(ax1,'YLim', [y_min y_max]);
+                    set(ax1,'YTick', y_min:ytick_gap:y_max);
+                end
+                if x_min~=x_max
+                    set(ax1,'XLim', [x_min x_max]);
+                end                
+                if reinit_on_failure
+                    set(ax1, 'XAxisLocation', 'bottom');
+                    set(ax1, 'YAxisLocation', 'right');
+                end
+                %         set(ax1,'Color', 'r');
+                xlabel(ax1, axis_label_x);
+                ylabel(ax1, axis_label_y);
                 if plot_type_in_title
                     plot_title=sprintf('%s :: SR Plot', plot_title);
                 end

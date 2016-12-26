@@ -9,7 +9,7 @@ if __name__ == '__main__':
 
     use_arch = 1
     arch_root_dir = './C++/MTF/log/archives'
-    arch_name = 'resl_pf500s7car_ncc_zncc_ssim_spss_50r_30i_50a_4u_no_ss_tulp'
+    arch_name = 'resl_nn3ickmn670_ssd_ssim_spss_ncc_zncc_riu_50r_30i_50a_4u_subseq10_tulp'
     in_arch_path = 'tracking_data'
     gt_root_dir = '../Datasets'
     tracking_root_dir = './C++/MTF/log/tracking_data'
@@ -20,15 +20,14 @@ if __name__ == '__main__':
     # list_fname = '{:s}/{:s}.txt'.format(arch_root_dir, arch_name)
     actor_ids = [0, 1, 2, 3]
     # actor_ids = [15]
+
     # opt_gt_ssms = None
     opt_gt_ssms = ['0']
 
-    enable_subseq = 0
-
+    enable_subseq = 1
     reinit_on_failure = 0
-    reinit_at_each_frame = 0
-    n_runs = 1
 
+    n_runs = 1
     n_subseq = 10
     err_type = 0
     reinit_frame_skip = 5
@@ -41,12 +40,18 @@ if __name__ == '__main__':
     write_err = 0
     overriding_seq_id = -1
 
+    reinit_at_each_frame = 0
+    reset_at_each_frame = 0
+    reset_to_init = 1
+
     # settings for synthetic sequences
-    syn_ssm = 'c8'
-    syn_ssm_sigma_ids = [19, 20, 21, 22, 23, 24, 25, 26, 27, 28]
-    syn_ilm = '0'
+    syn_ssm = '6'
+    # syn_ssm_sigma_ids = [19, 20, 21, 22, 23, 24, 25, 26, 27, 28]
+    syn_ssm_sigma_ids = [94, 95, 96, 97, 98, 99, 100, 101, 102, 103]
+
+    syn_ilm = 'rbf'
     syn_am_sigma_ids = [9]
-    syn_add_noise = 0
+    syn_add_noise = 1
     syn_noise_mean = 0
     syn_noise_sigma = 10
     syn_frame_id = 0
@@ -105,10 +110,10 @@ if __name__ == '__main__':
     # reinit gt only used with reinit tests
     # use_reinit_gt = use_reinit_gt or reinit_from_gt
 
-    if reinit_at_each_frame:
+    if reinit_at_each_frame or reset_at_each_frame:
         reinit_on_failure = 0
     # sub sequence tests only run without reinitialization
-    enable_subseq = enable_subseq and not reinit_on_failure and not reinit_at_each_frame
+    enable_subseq = enable_subseq and not reinit_on_failure and not reinit_at_each_frame and not reset_at_each_frame
 
     arch_path = '{:s}/{:s}.zip'.format(arch_root_dir, arch_name)
     print 'Reading tracking data from zip archive: {:s}'.format(arch_path)
@@ -141,11 +146,17 @@ if __name__ == '__main__':
             else:
                 seq_name = sequences[actor][0]
             if actor == 'Synthetic':
+                reset_at_each_frame = 1
                 seq_name = getSyntheticSeqName(seq_name, syn_ssm, syn_ssm_sigma_ids[0], syn_ilm,
                                                syn_am_sigma_ids[0], syn_frame_id, syn_add_noise,
                                                syn_noise_mean, syn_noise_sigma)
             if reinit_at_each_frame:
                 proc_file_path = '{:s}/reinit/{:s}/{:s}'.format(in_arch_path, actor, seq_name)
+            elif reset_at_each_frame:
+                if reset_to_init:
+                    proc_file_path = '{:s}/reset_to_init/{:s}/{:s}'.format(in_arch_path, actor, seq_name)
+                else:
+                    proc_file_path = '{:s}/reset/{:s}/{:s}'.format(in_arch_path, actor, seq_name)
             elif reinit_on_failure:
                 if reinit_err_thresh == int(reinit_err_thresh):
                     proc_file_path = '{:s}/reinit_{:d}_{:d}/{:s}/{:s}'.format(
@@ -190,9 +201,10 @@ if __name__ == '__main__':
             arguments = '{:s} {:s} {:s} {:s} {:s} {:s} {:s}'.format(
                 arguments, arch_name, in_arch_path, arch_root_dir, gt_root_dir,
                 tracking_root_dir, out_dir)
-            arguments = '{:s} {:s} {:d} {:d} {:d} {:f} {:d} {:d} {:d} {:d}'.format(
+            arguments = '{:s} {:s} {:d} {:d} {:d} {:f} {:d} {:d} {:d} {:d} {:d} {:d}'.format(
                 arguments, opt_gt_ssm, use_reinit_gt, reinit_on_failure, reinit_frame_skip,
-                reinit_err_thresh, reinit_at_each_frame, enable_subseq, n_subseq, overriding_seq_id)
+                reinit_err_thresh, reinit_at_each_frame, reset_at_each_frame, reset_to_init,
+                enable_subseq, n_subseq, overriding_seq_id)
             arguments = '{:s} {:f} {:f} {:d} {:d} {:d} {:f} {:d}'.format(
                 arguments, err_min, err_max, err_res, err_type, write_err,
                 overflow_err, write_to_bin)
