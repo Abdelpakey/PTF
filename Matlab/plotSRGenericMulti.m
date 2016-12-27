@@ -83,9 +83,9 @@ show_failures_in_legend = 1;
 % 3: average number of frames between consecutive failures
 % 4: fraction of frames tracked successfully
 % 5: Scatter plot with SR area on x axis and no. of failures on y axis
-plot_types = [0];
+plot_types = [0, 1];
 reinit_at_each_frame = 0;
-reset_at_each_frame = 1;
+reset_at_each_frame = 0;
 reset_to_init = 1;
 
 % load generic plot configurations
@@ -97,8 +97,8 @@ genericConfigsAM_stochastic;
 % genericConfigsSM;
 % genericConfigsSSM;
 
-% plot_ids = [3500, 3501];
-plot_ids = [2101, 2111, 2121];
+plot_ids = [5401];
+% plot_ids = [1600, 1601, 1602];
 
 
 % CRV
