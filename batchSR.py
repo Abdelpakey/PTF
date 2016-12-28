@@ -9,7 +9,7 @@ if __name__ == '__main__':
 
     use_arch = 1
     arch_root_dir = './C++/MTF/log/archives'
-    arch_name = 'resl_pf500d5s0s1s2s3s4car_ccre_8_10_32b_50r_30i_100a1bt_4u_8_no_ss_tulp'
+    arch_name = 'resh_nnkmn2k_scv_8_16_32_128_256b_50r_30i_50a_4u_no_ss_tulp'
     in_arch_path = 'tracking_data'
     gt_root_dir = '../Datasets'
     tracking_root_dir = './C++/MTF/log/tracking_data'
@@ -25,7 +25,7 @@ if __name__ == '__main__':
     opt_gt_ssms = ['0']
 
     enable_subseq = 0
-    reinit_on_failure = 0
+    reinit_on_failure = 1
 
     n_runs = 1
     n_subseq = 10
@@ -45,13 +45,13 @@ if __name__ == '__main__':
     reset_to_init = 1
 
     # settings for synthetic sequences
-    syn_ssm = '6'
-    # syn_ssm_sigma_ids = [19, 20, 21, 22, 23, 24, 25, 26, 27, 28]
-    syn_ssm_sigma_ids = [94, 95, 96, 97, 98, 99, 100, 101, 102, 103]
+    syn_ssm = 'c8'
+    syn_ssm_sigma_ids = [19, 20, 21, 22, 23, 24, 25, 26, 27, 28]
+    # syn_ssm_sigma_ids = [94, 95, 96, 97, 98, 99, 100, 101, 102, 103]
 
-    syn_ilm = 'rbf'
+    syn_ilm = '0'
     syn_am_sigma_ids = [9]
-    syn_add_noise = 1
+    syn_add_noise = 0
     syn_noise_mean = 0
     syn_noise_sigma = 10
     syn_frame_id = 0

@@ -11,7 +11,7 @@ ACTOR_IDS=[3, 0, 1, 1, 3, 3, 0];
 SEQ_IDS=[11, 2, 41, 48, 2, 11, 39];
 FRAME_IDS=[1, 362, 13, 100, 583, 150, 172];
 
-config_id = 4;
+config_id = 1;
 
 actor_id = ACTOR_IDS(config_id);
 seq_id = SEQ_IDS(config_id);
@@ -21,12 +21,12 @@ update_type = 0;
 opt_type = 0;
 out_prefix = '';
 % out_prefix = 'riu_2_a500';
-am_name = 'spss';
+am_name = 'mi64b';
 ilm_name = '0';
 ssm_name = '2';
 frame_gap = 0;
 file_start_id = 0;
-file_end_id = -1;
+file_end_id = 0;
 state_ids = 0;
 use_inv_data = 0;
 show_img = 0;
