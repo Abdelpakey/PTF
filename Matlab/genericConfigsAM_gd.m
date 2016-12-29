@@ -120,7 +120,7 @@ config_plot_type = -1;
 % ----------------------- FCLK on Datasets ----------------------- %
 %------------------------------------------------------------------%
 
-actor_ids=[3];
+actor_ids=[0, 1, 2, 3];
 plot_id = 1030;
 seq_idxs_ids=[0];
 plot_titles{3, plot_id}=sprintf('FCLK on Datasets');
@@ -646,7 +646,7 @@ plot_data_descs{3, plot_id}={
 % ----------------------- ICLK on Datasets ----------------------- %
 %------------------------------------------------------------------%
 	
-actor_ids=[2];
+actor_ids=[0, 1, 2, 3];
 plot_id = 2010;
 seq_idxs_ids=[0];
 plot_titles{3, plot_id}=sprintf('ICLK on Datasets');
@@ -1304,8 +1304,12 @@ plot_data_descs{3, plot_id}={
     };	
 config_plot_type = -1;	
 
+% ------------------------------------------------------- %
+% ------------------- ESM on Datasets ------------------- %
+% ------------------------------------------------------- %
+
 plot_id = 3030;
-actor_ids=[3];
+actor_ids=[0, 1, 2, 3];
 seq_idxs_ids=[0];
 plot_titles{3, plot_id}=sprintf('ESM on Datasets');
 plot_data_descs{3, plot_id}={
@@ -1732,6 +1736,7 @@ plot_data_descs{3, plot_id}={
 	containers.Map(desc_keys, {actor_ids, seq_idxs_ids, config_plot_type, 0,  1, 'esmlmDJcw1C1_rscv50r30i4u_8_0', 1, 'rbf', 9, '0', '', 'RSCV', 'magenta', '-'}),...
 	containers.Map(desc_keys, {actor_ids, seq_idxs_ids, config_plot_type, 0,  1, 'esmlmDJcw1C1_lscv50r30i4u_8_0', 1, 'rbf', 9, '0', '', 'LSCV', 'orange', '-'}),...
     };
+	
 % ====================================================================== %
 % ================================ FALK ================================ %
 % ====================================================================== %	
@@ -1911,7 +1916,7 @@ config_plot_type = -1;
 % ----------------------- FALK on Datasets ----------------------- %
 %------------------------------------------------------------------%
 
-actor_ids=[3];
+actor_ids=[0, 1, 2, 3];
 plot_id = 4030;
 seq_idxs_ids=[0];
 plot_titles{3, plot_id}=sprintf('FALK on Datasets');
@@ -1959,6 +1964,7 @@ config_plot_type = -1;
 %-------------------------------------------------------------------------------%
 % ------------------- Effect of Sampling Resolution on FALK ------------------- %
 %-------------------------------------------------------------------------------%	
+
 plot_id = 4100;
 actor_ids=[0, 1, 2, 3];
 seq_idxs_ids=[0];
@@ -2493,7 +2499,11 @@ plot_data_descs{3, plot_id}={
     };	
 config_plot_type = -1;
 
-actor_ids=[2];
+%----------------------------------------------------------%
+% ------------------- IALK on Datasets ------------------- %
+%----------------------------------------------------------%
+
+actor_ids=[0, 1, 2, 3];
 plot_id = 5030;
 seq_idxs_ids=[0];
 plot_titles{3, plot_id}=sprintf('IALK on Datasets');
@@ -2849,7 +2859,7 @@ plot_data_descs{3, plot_id}={
     };	
 plot_id = 5301;
 seq_idxs_ids=[0];
-plot_titles{3, plot_id}=sprintf('FALK Synthetic');
+plot_titles{3, plot_id}=sprintf('IALK Synthetic');
 plot_data_descs{3, plot_id}={
     containers.Map(desc_keys, {actor_ids, seq_idxs_ids, config_plot_type, 0,  1, 'ialmC1_riu50r30i4u_8_1', 0, '', '', '0', '', 'RIU', 'maroon', '-'}),... 
     containers.Map(desc_keys, {actor_ids, seq_idxs_ids, config_plot_type, 0,  1, 'ialmC1_ngf50r30i4u_8_1', 0, '', '', '0', '', 'NGF', 'gold', '-'}),... 
@@ -2862,7 +2872,7 @@ plot_data_descs{3, plot_id}={
 actor_ids=[15];
 plot_id = 5310;
 seq_idxs_ids=[0];
-plot_titles{3, plot_id}=sprintf('FALK Synthetic + Noise');
+plot_titles{3, plot_id}=sprintf('IALK Synthetic + Noise');
 plot_data_descs{3, plot_id}={
     containers.Map(desc_keys, {actor_ids, seq_idxs_ids, config_plot_type, 0,  1, 'ialmC1_ssim50r30i4u_8_1', 1, '', '', '0', '', 'SSIM', 'blue', '-'}),...
     containers.Map(desc_keys, {actor_ids, seq_idxs_ids, config_plot_type, 0,  1, 'ialmC1_ncc50r30i4u_8_1', 1, '', '', '0', '', 'NCC', 'red', '-'}),...
@@ -2873,7 +2883,7 @@ plot_data_descs{3, plot_id}={
     };	
 plot_id = 5311;
 seq_idxs_ids=[0];
-plot_titles{3, plot_id}=sprintf('FALK Synthetic + Noise');
+plot_titles{3, plot_id}=sprintf('IALK Synthetic + Noise');
 plot_data_descs{3, plot_id}={
     containers.Map(desc_keys, {actor_ids, seq_idxs_ids, config_plot_type, 0,  1, 'ialmC1_riu50r30i4u_8_1', 1, '', '', '0', '', 'RIU', 'maroon', '-'}),... 
     containers.Map(desc_keys, {actor_ids, seq_idxs_ids, config_plot_type, 0,  1, 'ialmC1_ngf50r30i4u_8_1', 1, '', '', '0', '', 'NGF', 'gold', '-'}),... 
@@ -2886,7 +2896,7 @@ plot_data_descs{3, plot_id}={
 actor_ids=[15];
 plot_id = 5320;
 seq_idxs_ids=[0];
-plot_titles{3, plot_id}=sprintf('FALK Synthetic + Noise + RBF');
+plot_titles{3, plot_id}=sprintf('IALK Synthetic + Noise + RBF');
 plot_data_descs{3, plot_id}={
     containers.Map(desc_keys, {actor_ids, seq_idxs_ids, config_plot_type, 0,  1, 'ialmC1_ssim50r30i4u_8_1', 1, 'rbf', 9, '0', '', 'SSIM', 'blue', '-'}),...
     containers.Map(desc_keys, {actor_ids, seq_idxs_ids, config_plot_type, 0,  1, 'ialmC1_ncc50r30i4u_8_1', 1, 'rbf', 9, '0', '', 'NCC', 'red', '-'}),...
@@ -2906,5 +2916,26 @@ plot_data_descs{3, plot_id}={
 	containers.Map(desc_keys, {actor_ids, seq_idxs_ids, config_plot_type, 0,  1, 'ialmC1_rscv50r30i4u_8_1', 1, 'rbf', 9, '0', '', 'RSCV', 'magenta', '-'}),...
 	containers.Map(desc_keys, {actor_ids, seq_idxs_ids, config_plot_type, 0,  1, 'ialmC1_lscv50r30i4u_8_1', 1, 'rbf', 9, '0', '', 'LSCV', 'orange', '-'}),...
     };
-
-
+	
+%========================================================%
+% =================== NN for Scatter =================== %
+%========================================================%	
+	
+actor_ids=[0, 1, 2, 3];
+plot_id = 6002;
+seq_idxs_ids=[0];
+plot_titles{3, plot_id}=sprintf('NN Reinit');
+plot_data_descs{3, plot_id}={
+    containers.Map(desc_keys, {actor_ids, seq_idxs_ids, config_plot_type, 0,  1, 'nnkmn2k2s_ssim50r1i4u_8_0', '', '', '8', '0', 0, 'SSIM', 'blue', '-'}),...
+    containers.Map(desc_keys, {actor_ids, seq_idxs_ids, config_plot_type, 0,  1, 'nnkmn2k2s_ncc50r1i4u_8_0', '', '', '8', '0', 0, 'NCC', 'red', '-'}),...
+    containers.Map(desc_keys, {actor_ids, seq_idxs_ids, config_plot_type, 0,  1, 'nnkmn2k2s_mi24b50r30i4u_8_0', '', '', '8', '0', 0, 'MI', 'slate_gray', '-'}),... 
+    containers.Map(desc_keys, {actor_ids, seq_idxs_ids, config_plot_type, 0,  1, 'nnkmn2k2s_spss50r1i4u_8_0', '', '', '8', '0', 0, 'SPSS', 'cyan', '-'}),... 
+    containers.Map(desc_keys, {actor_ids, seq_idxs_ids, config_plot_type, 0,  1, 'nnkmn2k2s_ssd50r1i4u_8_0', '', '', '8', '0', 0, 'SSD', 'forest_green', '-'}),...
+    containers.Map(desc_keys, {actor_ids, seq_idxs_ids, config_plot_type, 0,  1, 'nnkmn2k2s_zncc50r1i4u_8_0', '', '', '8', '0', 0, 'ZNCC', 'peach_puff_3', '-'}),...
+    containers.Map(desc_keys, {actor_ids, seq_idxs_ids, config_plot_type, 0,  1, 'nnkmn2k2s_riu50r1e3a1i4u_8_0', '', '', '8', '0', 0, 'RIU', 'maroon', '-'}),... 
+    containers.Map(desc_keys, {actor_ids, seq_idxs_ids, config_plot_type, 0,  1, 'nnkmn2k2s_ngf50r1i4u_8_0', '', '', '8', '0', 0, 'NGF', 'gold', '-'}),... 
+    containers.Map(desc_keys, {actor_ids, seq_idxs_ids, config_plot_type, 0,  1, 'nnkmn2k2s_ccre24b50r1i4u_8_0', '', '', '8', '0', 0, 'CCRE', 'green', '-'}),... 
+    containers.Map(desc_keys, {actor_ids, seq_idxs_ids, config_plot_type, 0,  1, 'nnkmn2k2s_scv64b50r1i4u_8_0', '', '', '8', '0', 0, 'SCV', 'purple', '-'}),...
+	containers.Map(desc_keys, {actor_ids, seq_idxs_ids, config_plot_type, 0,  1, 'nnkmn2k2s_rscv64b50r1i4u_8_0', '', '', '8', '0', 0, 'RSCV', 'magenta', '-'}),...
+	containers.Map(desc_keys, {actor_ids, seq_idxs_ids, config_plot_type, 0,  1, 'nnkmn2k2s_lscv64b50r1i4u_8_0', '', '', '8', '0', 0, 'LSCV', 'orange', '-'}),...
+    };	

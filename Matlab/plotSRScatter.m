@@ -190,6 +190,10 @@ for line_id=1:n_lines
     plot_legend=[plot_legend {desc('legend')}];    
     scatter_cols(line_id, :) = col_rgb{strcmp(col_names,desc('color'))};
     marker_id = mod(line_id-1, length(scatter_markers)) + 1;     
+    
+    if normalize_failures
+        total_failures(line_id, 1) = total_failures(line_id, 1)/total_frames;
+    end
         
     scatter(sr_area(line_id, 1), total_failures(line_id, 1), scatter_size,...
         'Marker', scatter_markers(marker_id),...

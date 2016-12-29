@@ -9,7 +9,7 @@ if __name__ == '__main__':
 
     use_arch = 1
     arch_root_dir = './C++/MTF/log/archives'
-    arch_name = 'resh_nnkmn2k_scv_8_16_32_128_256b_50r_30i_50a_4u_no_ss_tulp'
+    arch_name = 'resf_nn5kmn400s78s77s76s75s74_mi_ccre_ssd_ncc_ssim_zncc_riu_spss_50r_30i_4u_subseq10_tulp'
     in_arch_path = 'tracking_data'
     gt_root_dir = '../Datasets'
     tracking_root_dir = './C++/MTF/log/tracking_data'
@@ -24,8 +24,8 @@ if __name__ == '__main__':
     # opt_gt_ssms = None
     opt_gt_ssms = ['0']
 
-    enable_subseq = 0
-    reinit_on_failure = 1
+    enable_subseq = 1
+    reinit_on_failure = 0
 
     n_runs = 1
     n_subseq = 10
@@ -49,9 +49,9 @@ if __name__ == '__main__':
     syn_ssm_sigma_ids = [19, 20, 21, 22, 23, 24, 25, 26, 27, 28]
     # syn_ssm_sigma_ids = [94, 95, 96, 97, 98, 99, 100, 101, 102, 103]
 
-    syn_ilm = '0'
+    syn_ilm = 'rbf'
     syn_am_sigma_ids = [9]
-    syn_add_noise = 0
+    syn_add_noise = 1
     syn_noise_mean = 0
     syn_noise_sigma = 10
     syn_frame_id = 0

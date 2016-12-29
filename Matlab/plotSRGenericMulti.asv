@@ -76,7 +76,6 @@ reinit_err_thresh = 20;
 plot_area_under_sr = 0;
 show_area_in_legend = 1;
 show_failures_in_legend = 1;
-normalize_failures = 0;
 
 % 0: SR without reinitialization
 % 1: total number of failures
@@ -105,8 +104,7 @@ plot_ids = [1032, 2012, 3032];
 % scatter
 % plot_ids = [1032, 2012, 3032];
 % plot_ids = [4032, 5032, 6002];
-% plot_ids = [2002, 3102, 4102];
-% plot_ids = [5102, 5202, 6102];
+2002, 3102, 
 
 % CRV
 % plot_ids = [4911];
