@@ -49,6 +49,17 @@ if __name__ == '__main__':
     }
     params = parseArguments(sys.argv, params)
 
+    # settings for synthetic sequences
+    syn_ssm = 'c8'
+    syn_ssm_sigma_id = 28
+    syn_ilm = 'rbf'
+    syn_am_sigma_id = 9
+    syn_add_noise = 1
+    syn_noise_mean = 0
+    syn_noise_sigma = 10
+    syn_frame_id = 0
+    syn_err_thresh = 5.0
+
     db_root_dir = params['db_root_dir']
     gt_root_dir = params['gt_root_dir']
     img_name_fmt = params['img_name_fmt']
@@ -113,6 +124,11 @@ if __name__ == '__main__':
     sequences = sequences[actor]
     seq_name = sequences[seq_id]
     opt_method = opt_methods[opt_id]
+
+    if actor == 'Synthetic':
+        seq_name = getSyntheticSeqName(seq_name, syn_ssm, syn_ssm_sigma_id, syn_ilm,
+                            syn_am_sigma_id, syn_frame_id, syn_add_noise,
+                            syn_noise_mean, syn_noise_sigma)
 
     if seq_id >= len(sequences):
         print 'Invalid dataset_id: ', seq_id

@@ -47,6 +47,10 @@ plot_data_descs{3, plot_id}={
 	containers.Map(desc_keys, {actor_ids, seq_idxs_ids, '', 0,  1, 'fclmcw1C1_rscv50r30i4u_8_0', 1, 'rbf', 9, '0', '', 'RSCV', 'magenta', '-'}),...
 	containers.Map(desc_keys, {actor_ids, seq_idxs_ids, '', 0,  1, 'fclmcw1C1_lscv50r30i4u_8_0', 1, 'rbf', 9, '0', '', 'LSCV', 'orange', '-'}),...
     };
+	
+%---------------------------------------------------------------------------------%
+% ------------------- Comparing SSMs with various SMs and AMs ------------------- %
+%---------------------------------------------------------------------------------%	
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%% learning trackers %%%%%%%%%%%%%%%%

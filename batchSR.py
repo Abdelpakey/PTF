@@ -9,18 +9,19 @@ if __name__ == '__main__':
 
     use_arch = 1
     arch_root_dir = './C++/MTF/log/archives'
-    arch_name = 'resf_nn5kmn400s78s77s76s75s74_mi_ccre_ssd_ncc_ssim_zncc_riu_spss_50r_30i_4u_subseq10_tulp'
+    arch_name = 'resf_RKL_6_MISSING_rkles_esm_ic_fc__ncc_50r_30i_4u_2_4_6_reset_to_init_syn_iso_s19_28_rbf_s9_noise_0_10'
     in_arch_path = 'tracking_data'
     gt_root_dir = '../Datasets'
     tracking_root_dir = './C++/MTF/log/tracking_data'
     out_dir = './C++/MTF/log/success_rates'
-    # list_fname = 'list.txt'
-    list_fname = None
+    list_fname = 'list.txt'
+    # list_fname = None
     list_in_arch = 0
     # list_fname = '{:s}/{:s}.txt'.format(arch_root_dir, arch_name)
-    actor_ids = [0, 1, 2, 3]
-    # actor_ids = [15]
+    # actor_ids = [0, 1, 2, 3]
+    actor_ids = [15]
 
+    use_reinit_gt = 0
     # opt_gt_ssms = None
     opt_gt_ssms = ['0']
 
@@ -34,7 +35,6 @@ if __name__ == '__main__':
     jaccard_err_thresh = 0.90
     mcd_err_thresh = 20.0
 
-    use_reinit_gt = 0
     err_min = 0
     err_res = 100
     write_err = 0
@@ -45,10 +45,9 @@ if __name__ == '__main__':
     reset_to_init = 1
 
     # settings for synthetic sequences
-    syn_ssm = 'c8'
+    syn_ssm = '3'
     syn_ssm_sigma_ids = [19, 20, 21, 22, 23, 24, 25, 26, 27, 28]
     # syn_ssm_sigma_ids = [94, 95, 96, 97, 98, 99, 100, 101, 102, 103]
-
     syn_ilm = 'rbf'
     syn_am_sigma_ids = [9]
     syn_add_noise = 1
@@ -140,6 +139,8 @@ if __name__ == '__main__':
 
     for actor_id in actor_ids:
         actor = actors[actor_id]
+        if actor == 'Synthetic':
+            reset_at_each_frame = 1
         if list_fname is None or file_list is None:
             if overriding_seq_id >= 0:
                 seq_name = sequences[actor][overriding_seq_id]

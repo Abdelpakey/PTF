@@ -33,7 +33,7 @@ y_max = 1;
 x_min = 0;
 x_max = 20;
 
-plot_font_size = 20;
+plot_font_size = 24;
 legend_font_size = 18;
 col_legend = 0;
 
@@ -58,7 +58,9 @@ annotate_bars = 0;
 annotation_col = [];
 horz_bar_plot = 1;
 bar_with_legend = 1;
+show_bar_legend = 1;
 scatter_size = 128;
+scatter_line_width=2;
 
 n_subseq = 10;
 mcd_err_thresh = 20;
@@ -84,29 +86,30 @@ normalize_failures = 0;
 % 3: average number of frames between consecutive failures
 % 4: fraction of frames tracked successfully
 % 5: Scatter plot with SR area on x axis and no. of failures on y axis
-plot_types = [5];
+plot_types = [1];
 reinit_at_each_frame = 0;
 reset_at_each_frame = 0;
 reset_to_init = 1;
 
 % load generic plot configurations
-genericConfigsAM_gd;
-% genericConfigsAM_stochastic;
+% genericConfigsAM_gd;
+genericConfigsAM_stochastic;
 % genericConfigsSM_robust
+% genericConfigsSSM_thesis
 
 % genericConfigsAM;
 % genericConfigsSM;
 % genericConfigsSSM;
 
-plot_ids = [1032, 2012, 3032];
-% plot_ids = [6100, 6101, 6102];
+% plot_ids = [4500];
+plot_ids = [2500, 4500, 6600];
 
 
 % scatter
 % plot_ids = [1032, 2012, 3032];
 % plot_ids = [4032, 5032, 6002];
-% plot_ids = [2002, 3102, 4102];
-% plot_ids = [5102, 5202, 6102];
+% plot_ids = [3022, 5102, 5202];
+% plot_ids = [2002, 4102, 6102];
 
 % CRV
 % plot_ids = [4911];
@@ -144,8 +147,8 @@ axis_label_y = 'Success Rate';
 
 % settings for synthetic sequences
 syn_ssm = 'c8';
-syn_ssm_sigma_ids = [19, 20, 21, 22, 23, 24, 25, 26, 27, 28];
-% syn_ssm_sigma_ids = [94, 95, 96, 97, 98, 99, 100, 101, 102, 103];
+% syn_ssm_sigma_ids = [19, 20, 21, 22, 23, 24, 25, 26, 27, 28];
+syn_ssm_sigma_ids = [94, 95, 96, 97, 98, 99, 100, 101, 102, 103];
 
 syn_ssm_sigmas = 1:10;
 syn_ilm = '0';
@@ -154,7 +157,7 @@ syn_add_noise = 1;
 syn_noise_mean = 0;
 syn_noise_sigma = 10;
 syn_frame_id = 0;
-syn_err_thresh = 4;
+syn_err_thresh = 2;
 syn_plot_type = 0;
 
 n_rows=size(plot_ids, 1);
@@ -217,11 +220,9 @@ for plot_type_ = plot_types
                 x_max = jaccard_err_thresh;
             end
             
-            if plot_data_desc{1}('plot_type')>=0 && plot_type_~=5
-                plot_type=plot_data_desc{1}('plot_type');
-            else
-                plot_type=plot_type_;
-                
+            plot_type=plot_data_desc{1}('plot_type');
+            if plot_type_==5 || isempty(plot_type) || plot_type<0
+                plot_type=plot_type_;                
             end
             if plot_type == 5
                 plotSRScatter;
@@ -430,7 +431,7 @@ for plot_type_ = plot_types
                     else
                         axis_label_y = 'Average Error';
                     end
-                    axis_label_x = '\sigma_{hom}';
+                    axis_label_x = '\sigma_{syn}';
                 else
                     if reinit_on_failure
                         if plot_type==1

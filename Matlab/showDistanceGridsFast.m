@@ -27,7 +27,8 @@ actor_id = 3;
 seq_id = 11;
 update_type = 0;
 opt_type = 0;
-am_name = 'spss';
+am_name = 'ncc';
+am_name_disp='';
 ssm_name = '2';
 frame_gap = 0;
 start_id = 0;
@@ -39,7 +40,6 @@ use_inv_data = 0;
 show_img = 0;
 pause_exec = 1;
 show_controls = 1;
-am_name_disp='';
 plot_font_size = 24;
 
 
