@@ -95,6 +95,9 @@ if __name__ == '__main__':
         iiw = int(sys.argv[arg_id])
         arg_id += 1
     if len(sys.argv) > arg_id:
+        use_arch = int(sys.argv[arg_id])
+        arg_id += 1
+    if len(sys.argv) > arg_id:
         arch_name = sys.argv[arg_id]
         arg_id += 1
     if len(sys.argv) > arg_id:

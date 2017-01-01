@@ -7,26 +7,27 @@ from Misc import getSyntheticSeqName
 
 if __name__ == '__main__':
 
-    use_arch = 1
+    use_arch = 0
     arch_root_dir = './C++/MTF/log/archives'
-    arch_name = 'resf_RKL_6_MISSING_rkles_esm_ic_fc__ncc_50r_30i_4u_2_4_6_reset_to_init_syn_iso_s19_28_rbf_s9_noise_0_10'
+    arch_name = 'resl_rklnospicv10rLMS10ki25p_fc_ic_esm__ssd_ncc_50r_30i_4u_8_subseq10_mcd_tulp'
     in_arch_path = 'tracking_data'
     gt_root_dir = '../Datasets'
-    tracking_root_dir = './C++/MTF/log/tracking_data'
+    tracking_root_dir = './C++/MTF/log/archives'
+    # tracking_root_dir = './C++/MTF/log/tracking_data'
     out_dir = './C++/MTF/log/success_rates'
     list_fname = 'list.txt'
     # list_fname = None
     list_in_arch = 0
     # list_fname = '{:s}/{:s}.txt'.format(arch_root_dir, arch_name)
-    # actor_ids = [0, 1, 2, 3]
-    actor_ids = [15]
+    actor_ids = [0, 1, 2, 3]
+    # actor_ids = [15]
 
     use_reinit_gt = 0
     # opt_gt_ssms = None
     opt_gt_ssms = ['0']
 
     enable_subseq = 1
-    reinit_on_failure = 0
+    reinit_on_failure = 1
 
     n_runs = 1
     n_subseq = 10
@@ -114,9 +115,13 @@ if __name__ == '__main__':
     # sub sequence tests only run without reinitialization
     enable_subseq = enable_subseq and not reinit_on_failure and not reinit_at_each_frame and not reset_at_each_frame
 
-    arch_path = '{:s}/{:s}.zip'.format(arch_root_dir, arch_name)
-    print 'Reading tracking data from zip archive: {:s}'.format(arch_path)
-    arch_fid = zipfile.ZipFile(arch_path, 'r')
+    if use_arch:
+        arch_path = '{:s}/{:s}.zip'.format(arch_root_dir, arch_name)
+        print 'Reading tracking data from zip archive: {:s}'.format(arch_path)
+        arch_fid = zipfile.ZipFile(arch_path, 'r')
+    else:
+        data_path = '{:s}/{:s}'.format(arch_root_dir, arch_name)
+        tracking_root_dir = '{:s}/{:s}'.format(data_path, in_arch_path)
 
     # if not os.path.isfile(list_fname):
     # print 'List file for the batch job does  not exist:\n {:s}'.format(list_fname)
@@ -124,7 +129,10 @@ if __name__ == '__main__':
     file_list = None
     if list_fname is not None:
         if list_in_arch:
-            file_list = arch_fid.open(list_fname, 'r').readlines()
+            if use_arch:
+                file_list = arch_fid.open(list_fname, 'r').readlines()
+            else:
+                file_list = open('{:s}/{:s}'.format(data_path, list_fname), 'r').readlines()
         else:
             file_list = open('{:s}/{:s}'.format(arch_root_dir, list_fname), 'r').readlines()
 
@@ -168,7 +176,17 @@ if __name__ == '__main__':
             else:
                 proc_file_path = '{:s}/{:s}/{:s}'.format(in_arch_path, actor, seq_name)
 
-            path_list = [f for f in arch_fid.namelist() if f.startswith(proc_file_path)]
+            if use_arch:
+                path_list = [f for f in arch_fid.namelist() if f.startswith(proc_file_path)]
+            else:
+                proc_file_path = '{:s}/{:s}'.format(data_path, proc_file_path)
+                # print os.listdir(data_path)
+                path_list = [val for sublist in [[os.path.join(i[0], j) for j in i[2]] for i in os.walk(data_path)] for val in sublist]
+                path_list = [f for f in [j.replace('\\', '/') for j in path_list] if f.startswith(proc_file_path)]
+                # print '\n'.join(path_list)
+                # print proc_file_path
+                # exit(0)
+
             file_list = [os.path.basename(path) for path in path_list]
             file_list = [file_name for file_name in file_list
                          if '_init_' not in file_name and '.txt' in file_name]
@@ -199,8 +217,8 @@ if __name__ == '__main__':
 
             arguments = '{:d} {:s} {:s} {:s} {:s}'.format(
                 actor_id, mtf_sm, mtf_am, mtf_ssm, iiw)
-            arguments = '{:s} {:s} {:s} {:s} {:s} {:s} {:s}'.format(
-                arguments, arch_name, in_arch_path, arch_root_dir, gt_root_dir,
+            arguments = '{:s} {:d} {:s} {:s} {:s} {:s} {:s} {:s}'.format(
+                arguments, use_arch, arch_name, in_arch_path, arch_root_dir, gt_root_dir,
                 tracking_root_dir, out_dir)
             arguments = '{:s} {:s} {:d} {:d} {:d} {:f} {:d} {:d} {:d} {:d} {:d} {:d}'.format(
                 arguments, opt_gt_ssm, use_reinit_gt, reinit_on_failure, reinit_frame_skip,

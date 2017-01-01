@@ -86,30 +86,47 @@ normalize_failures = 0;
 % 3: average number of frames between consecutive failures
 % 4: fraction of frames tracked successfully
 % 5: Scatter plot with SR area on x axis and no. of failures on y axis
-plot_types = [1];
+plot_types = [0];
 reinit_at_each_frame = 0;
-reset_at_each_frame = 0;
+reset_at_each_frame = 1;
 reset_to_init = 1;
 
 % load generic plot configurations
 % genericConfigsAM_gd;
-genericConfigsAM_stochastic;
+% genericConfigsAM_stochastic;
 % genericConfigsSM_robust
-% genericConfigsSSM_thesis
+genericConfigsSSM_thesis
 
 % genericConfigsAM;
 % genericConfigsSM;
 % genericConfigsSSM;
 
-% plot_ids = [4500];
-plot_ids = [2500, 4500, 6600];
-
+% plot_ids = [3101];
+plot_ids = [1011, 1021, 1031];
 
 % scatter
 % plot_ids = [1032, 2012, 3032];
 % plot_ids = [4032, 5032, 6002];
 % plot_ids = [3022, 5102, 5202];
 % plot_ids = [2002, 4102, 6102];
+
+% settings for synthetic sequences
+syn_ssm = 'c8';
+syn_ssm_sigma_ids = [19, 20, 21, 22, 23, 24, 25, 26, 27, 28];
+% syn_ssm_sigma_ids = [94, 95, 96, 97, 98, 99, 100, 101, 102, 103];
+
+syn_ssm_sigmas = 1:10;
+syn_ilm = '0';
+syn_am_sigma_id = 9;
+syn_add_noise = 1;
+syn_noise_mean = 0;
+syn_noise_sigma = 10;
+syn_frame_id = 0;
+syn_err_thresh = 2;
+syn_plot_type = 0;
+
+axis_label_x = 'Error Threshold';
+axis_label_y = 'Success Rate';
 
 % CRV
 % plot_ids = [4911];
@@ -141,24 +158,6 @@ plot_ids = [2500, 4500, 6600];
 
 % plot_ids = [1762];
 % plot_ids = [6, 7, 8, 9, 10];
-
-axis_label_x = 'Error Threshold';
-axis_label_y = 'Success Rate';
-
-% settings for synthetic sequences
-syn_ssm = 'c8';
-% syn_ssm_sigma_ids = [19, 20, 21, 22, 23, 24, 25, 26, 27, 28];
-syn_ssm_sigma_ids = [94, 95, 96, 97, 98, 99, 100, 101, 102, 103];
-
-syn_ssm_sigmas = 1:10;
-syn_ilm = '0';
-syn_am_sigma_id = 9;
-syn_add_noise = 1;
-syn_noise_mean = 0;
-syn_noise_sigma = 10;
-syn_frame_id = 0;
-syn_err_thresh = 2;
-syn_plot_type = 0;
 
 n_rows=size(plot_ids, 1);
 n_cols=size(plot_ids, 2);
