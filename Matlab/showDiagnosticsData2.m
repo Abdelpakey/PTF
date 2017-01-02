@@ -11,23 +11,22 @@ ACTOR_IDS=[3, 0, 1, 1, 3, 3, 0];
 SEQ_IDS=[11, 2, 41, 48, 2, 11, 39];
 FRAME_IDS=[1, 362, 13, 100, 583, 150, 172];
 
-config_id = 1;
+config_id = 0;
 
-actor_id = ACTOR_IDS(config_id);
-seq_id = SEQ_IDS(config_id);
-start_id = FRAME_IDS(config_id);
-
+actor_id = 0;
+seq_id = 3;
+start_id = 1;
 update_type = 0;
 opt_type = 0;
 out_prefix = '';
-% out_prefix = 'riu_2_a500';
-am_name = 'mi10b';
-am_name_disp = 'MI';
+out_prefix = 'ssd10r_2';
+am_name = 'ssd';
+am_name_disp = '';
 ilm_name = '0';
 ssm_name = '2';
 frame_gap = 0;
 file_start_id = 0;
-file_end_id = -1;
+file_end_id = 0;
 state_ids = 0;
 use_inv_data = 0;
 show_img = 0;
@@ -53,6 +52,12 @@ plot_sec_ord_hess = 1;
 plot_font_size = 24;
 
 normalized_fig = 0;
+
+if config_id>0
+    actor_id = ACTOR_IDS(config_id);
+    seq_id = SEQ_IDS(config_id);
+    start_id = FRAME_IDS(config_id);
+end
 
 % start_id = start_id + 1;
 file_start_id = file_start_id + 1;

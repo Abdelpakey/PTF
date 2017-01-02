@@ -88,21 +88,21 @@ normalize_failures = 0;
 % 5: Scatter plot with SR area on x axis and no. of failures on y axis
 plot_types = [0];
 reinit_at_each_frame = 0;
-reset_at_each_frame = 1;
+reset_at_each_frame = 0;
 reset_to_init = 1;
 
 % load generic plot configurations
-% genericConfigsAM_gd;
+genericConfigsAM_gd;
 % genericConfigsAM_stochastic;
 % genericConfigsSM_robust
-genericConfigsSSM_thesis
+% genericConfigsSSM_thesis
 
 % genericConfigsAM;
 % genericConfigsSM;
 % genericConfigsSSM;
 
-% plot_ids = [3101];
-plot_ids = [1011, 1021, 1031];
+% plot_ids = [2020, 2021, 2022];
+plot_ids = [2340, 2341, 2342];
 
 % scatter
 % plot_ids = [1032, 2012, 3032];
@@ -112,8 +112,8 @@ plot_ids = [1011, 1021, 1031];
 
 % settings for synthetic sequences
 syn_ssm = 'c8';
-syn_ssm_sigma_ids = [19, 20, 21, 22, 23, 24, 25, 26, 27, 28];
-% syn_ssm_sigma_ids = [94, 95, 96, 97, 98, 99, 100, 101, 102, 103];
+% syn_ssm_sigma_ids = [19, 20, 21, 22, 23, 24, 25, 26, 27, 28];
+syn_ssm_sigma_ids = [94, 95, 96, 97, 98, 99, 100, 101, 102, 103];
 
 syn_ssm_sigmas = 1:10;
 syn_ilm = '0';
