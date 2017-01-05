@@ -11,14 +11,14 @@ stats_col = 1;
 for line_id=1:n_lines
     desc=plot_data_desc{line_id};
     curr_colors=desc('color');
-    line_styles=desc('line_style');    
+    line_styles=desc('line_style');
     if ~isnumeric(desc('value'))
         key_string = desc('value');
         if ~isempty(desc('stats_file_name'))
             stats_file_name=desc('stats_file_name');
         else
             stats_file_name = 'tracking_stats.txt';
-        end        
+        end
         fprintf('Reading stats data for key %d: %s from %s\n',...
             line_id, key_string, stats_file_name);
         stats = importdata(stats_file_name);
@@ -26,9 +26,9 @@ for line_id=1:n_lines
         show_bar_legend_=show_bar_legend;
         if ~isempty(desc('stats_col'))
             show_bar_legend_=desc('stats_col');
-%             stats_col=desc('stats_col');
-%             fprintf('Getting data from mean of column %d\n', stats_col);            
-        end     
+            %             stats_col=desc('stats_col');
+            %             fprintf('Getting data from mean of column %d\n', stats_col);
+        end
         
         key_data=stats.data(~cellfun('isempty',strfind(stats.textdata(:, end),...
             key_string)), stats_col);
@@ -41,11 +41,12 @@ for line_id=1:n_lines
             n_key_data, key_data_mean, key_data_std);
         values(line_id, 1) = key_data_mean;
         values(line_id, 2) = key_data_std;
-%         labels{2*line_id-1}=sprintf('%s/Mean', desc('label'));
-%         labels{2*line_id}=sprintf('%s/Std', desc('label'));
+        %         labels{2*line_id-1}=sprintf('%s/Mean', desc('label'));
+        %         labels{2*line_id}=sprintf('%s/Std', desc('label'));
+        
         labels{line_id}=desc('label');
         if bar_with_legend
-%             bar_x=[2*line_id-1, 2*line_id];
+            %             bar_x=[2*line_id-1, 2*line_id];
             line_id_avg=(line_id-1)*1.75 + 0.40;
             bar_ids(line_id) = bar(line_id_avg, values(line_id, 1),...
                 'Parent', gca,...
@@ -53,7 +54,7 @@ for line_id=1:n_lines
                 'LineWidth', bar_line_width,...
                 'LineStyle', line_styles{1},...
                 'FaceColor', col_rgb{strcmp(col_names,curr_colors(1))},...
-                'EdgeColor', col_rgb{strcmp(col_names,'black')});  
+                'EdgeColor', col_rgb{strcmp(col_names,'black')});
             bar(line_id_avg + 0.65, values(line_id, 2),...
                 'Parent', gca,...
                 'BarWidth', bar_width,...
@@ -61,11 +62,14 @@ for line_id=1:n_lines
                 'LineStyle', line_styles{2},...
                 'FaceColor', col_rgb{strcmp(col_names,curr_colors(1))},...
                 'EdgeColor', col_rgb{strcmp(col_names,'black')});
-%             for bar_id=1:bars_per_group
-%                 set(b(bar_id), 'LineStyle', line_styles{bar_id});
-%                 set(b(bar_id), 'FaceColor', col_rgb{strcmp(col_names,curr_colors{bar_id})});
-%                 set(b(bar_id), 'EdgeColor', col_rgb{strcmp(col_names,'black')});
-%             end
+            %             for bar_id=1:bars_per_group
+            %                 set(b(bar_id), 'LineStyle', line_styles{bar_id});
+            %                 set(b(bar_id), 'FaceColor', col_rgb{strcmp(col_names,curr_colors{bar_id})});
+            %                 set(b(bar_id), 'EdgeColor', col_rgb{strcmp(col_names,'black')});
+            %             end
+        if annotate_bar_legend
+            labels{line_id}=sprintf('%s:%6.3f',desc('label'), values(line_id, 1));
+        end
         end
     else
         labels{line_id}=desc('label');
@@ -77,7 +81,7 @@ for line_id=1:n_lines
                 bar_annotation_col=col_rgb{strcmp(col_names,colors{bar_id})};
             else
                 bar_annotation_col = annotation_col;
-            end                                
+            end
             annotation('textbox',...
                 [0 0 0.3 0.15],...
                 'String',num2str(values(line_id, bar_id)),...
@@ -108,7 +112,7 @@ if bar_with_legend
     set(gca, 'Color', 'None');
     x_lim=(n_lines-1)*1.75 + 1.40;
     set(gca, 'XLim', [0, x_lim]);
-%     set(gca, 'XTick', 1:n_lines);
+    %     set(gca, 'XTick', 1:n_lines);
     set(gca, 'XTickLabel', []);
     set(gca,'box','off');
     ylabel('Speed in FPS');
@@ -123,7 +127,7 @@ else
         set(gca, 'XTick', 1:n_lines);
         ylabel('MCD Error');
         set(gca, 'XTickLabel', labels, 'DefaultTextInterpreter', 'none');
-    end                
+    end
     line_styles=plot_data_desc{1}('line_style');
     for bar_id=1:bars_per_group
         set(b(bar_id), 'LineStyle', line_styles{bar_id});

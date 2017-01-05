@@ -33,8 +33,8 @@ y_max = 1;
 x_min = 0;
 x_max = 20;
 
-plot_font_size = 24;
-legend_font_size = 18;
+plot_font_size = 20;
+legend_font_size = 16;
 col_legend = 0;
 
 line_width = 3;
@@ -59,6 +59,7 @@ annotation_col = [];
 horz_bar_plot = 1;
 bar_with_legend = 1;
 show_bar_legend = 1;
+annotate_bar_legend = 1;
 scatter_size = 128;
 scatter_line_width=2;
 
@@ -86,34 +87,48 @@ normalize_failures = 0;
 % 3: average number of frames between consecutive failures
 % 4: fraction of frames tracked successfully
 % 5: Scatter plot with SR area on x axis and no. of failures on y axis
-plot_types = [0];
+plot_types = [5];
 reinit_at_each_frame = 0;
 reset_at_each_frame = 0;
 reset_to_init = 1;
 
 % load generic plot configurations
-genericConfigsAM_gd;
+% genericConfigsAM_gd;
 % genericConfigsAM_stochastic;
 % genericConfigsSM_robust
-% genericConfigsSSM_thesis
+genericConfigsSSM_thesis
 
 % genericConfigsAM;
 % genericConfigsSM;
 % genericConfigsSSM;
 
-% plot_ids = [2020, 2021, 2022];
-plot_ids = [2340, 2341, 2342];
+% plot_ids = [2522];
+plot_ids = [2520, 2521, 2522];
 
-% scatter
+
+% scatter AM
+% plot_ids = [7002, 9002, 10002];
+% plot_ids = [11002, 8002, 4002];
+% plot_ids = [5002, 6002, 2002];
+% plot_ids = [3002, 12002, 13002];
+
+
+% scatter SM
 % plot_ids = [1032, 2012, 3032];
 % plot_ids = [4032, 5032, 6002];
-% plot_ids = [3022, 5102, 5202];
-% plot_ids = [2002, 4102, 6102];
+% plot_ids = [2002, 3022, 4102];
+% plot_ids = [5102, 5202, 6102];
+
+% speed SM
+% plot_ids = [1500, 2500, 3500];
+% plot_ids = [4500, 5500, 6500];
+% plot_ids = [2500, 3700, 4500];
+% plot_ids = [5900, 5901, 6600];
 
 % settings for synthetic sequences
 syn_ssm = 'c8';
-% syn_ssm_sigma_ids = [19, 20, 21, 22, 23, 24, 25, 26, 27, 28];
-syn_ssm_sigma_ids = [94, 95, 96, 97, 98, 99, 100, 101, 102, 103];
+syn_ssm_sigma_ids = [19, 20, 21, 22, 23, 24, 25, 26, 27, 28];
+% syn_ssm_sigma_ids = [94, 95, 96, 97, 98, 99, 100, 101, 102, 103];
 
 syn_ssm_sigmas = 1:10;
 syn_ilm = '0';
@@ -122,7 +137,7 @@ syn_add_noise = 1;
 syn_noise_mean = 0;
 syn_noise_sigma = 10;
 syn_frame_id = 0;
-syn_err_thresh = 2;
+syn_err_thresh = 4;
 syn_plot_type = 0;
 
 axis_label_x = 'Error Threshold';
@@ -209,12 +224,13 @@ for plot_type_ = plot_types
                 continue;                
             end  
             
-            min_sr = 1.0;
-            max_sr = 0.0;
+            min_sr = inf;
+            max_sr = -inf;
             plot_legend={};
             ax1=gca;
             root_dir=sr_root_dir;
             if overriding_error_type==2
+                min_err_thr=0;
                 reinit_err_thresh = jaccard_err_thresh;
                 x_max = jaccard_err_thresh;
             end

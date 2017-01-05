@@ -56,11 +56,11 @@ if __name__ == '__main__':
     use_opt_gt = 1
     use_reinit_gt = 0
 
-    actor_id = 3
-    seq_id = 27
+    actor_id = 15
+    seq_id = 0
     init_frame_id = 0
 
-    show_all_seq = 0
+    show_all_seq = 1
     start_id = 25
     end_id = -1
     pause_seq = 1

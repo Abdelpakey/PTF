@@ -19,8 +19,8 @@ start_id = 1;
 update_type = 0;
 opt_type = 0;
 out_prefix = '';
-out_prefix = 'ssd10r_2';
-am_name = 'ssd';
+out_prefix = 'ccreDTCH50r_2';
+am_name = 'ccre';
 am_name_disp = '';
 ilm_name = '0';
 ssm_name = '2';
@@ -35,12 +35,13 @@ speed_factor = 1;
 
 plot_only_norm = 1;
 plot_norm_in_one_fig = 1;
-plot_feat_norm = 0;
+plot_feat_norm = 1;
 plot_likelihood = 0;
 plot_num_likelihood = 0;
 likelihood_alpha = 100;
 likelihood_beta = 1;
 likelihood_type = 1;
+invert_feat_norm = 1;
 
 plot_only_jac = 0;
 plot_num_jac = 0;

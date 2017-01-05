@@ -1,7 +1,12 @@
 if plot_feat_norm
     Norm_data=plot_data{strcmp(data_types,'FeatNorm')};
+    if invert_feat_norm
+        for state_id = state_ids
+            Norm_data(:, 2*state_id) = -Norm_data(:, 2*state_id);
+        end
+    end
 elseif plot_likelihood
-    Norm_data=plot_data{strcmp(data_types,'Likelihood')};
+    Norm_data=plot_data{strcmp(data_types,'Likelihood')};    
 else
     Norm_data=plot_data{strcmp(data_types,'Norm')};
 end
@@ -37,13 +42,15 @@ else
     plot_cols = 2;
 end
 
-
 for state_id = state_ids
-    diag_fig=diag_figs{state_id};
-    %         set (diag_fig, 'Units', 'Normalized', 'Position', [0,0,1,1]);
-    x_label = sprintf('param %d frame %d', state_id, frame_id);
-    set(diag_fig, 'Name', x_label);
-    
+    if plot_only_norm && plot_norm_in_one_fig && state_id>1
+        close(diag_figs{state_id});
+    else
+        diag_fig=diag_figs{state_id};
+        %         set (diag_fig, 'Units', 'Normalized', 'Position', [0,0,1,1]);
+        x_label = sprintf('param %d frame %d', state_id, frame_id);
+        set(diag_fig, 'Name', x_label);
+    end   
     
     % matlab_StdJac=gradient(Norm_data(:, 2*state_id));
     % matlab_Std=gradient(StdJac_data(:, 2*state_id));  
