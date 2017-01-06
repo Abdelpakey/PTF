@@ -9,7 +9,7 @@ if __name__ == '__main__':
 
     use_arch = 1
     arch_root_dir = './C++/MTF/log/archives'
-    arch_name = 'resh_nn5kmn400s23s22s21s20s19_ssim_50r_30i_50a_4u_2_3_4_6_subseq10_tulp'
+    arch_name = 'resl_fc_ic_esm_fa_ia_lm_ccreDTCH16b_50r_30i_4u_subseq10_tulp'
     in_arch_path = 'tracking_data'
     gt_root_dir = '../Datasets'
     tracking_root_dir = './C++/MTF/log/archives'
@@ -22,9 +22,10 @@ if __name__ == '__main__':
     actor_ids = [0, 1, 2, 3]
     # actor_ids = [15]
 
-    use_reinit_gt = 1
-    opt_gt_ssms = None
-    # opt_gt_ssms = ['0']
+    # use_reinit_gt = 1
+    # opt_gt_ssms = None
+    use_reinit_gt = 0
+    opt_gt_ssms = ['0']
 
     enable_subseq = 1
     reinit_on_failure = 1
