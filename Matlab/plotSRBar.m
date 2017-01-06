@@ -8,6 +8,8 @@ end
 colors=plot_data_desc{1}('color');
 values=zeros(n_lines, bars_per_group);
 stats_col = 1;
+last_stats_fname='';
+last_stats='';
 for line_id=1:n_lines
     desc=plot_data_desc{line_id};
     curr_colors=desc('color');
@@ -15,13 +17,19 @@ for line_id=1:n_lines
     if ~isnumeric(desc('value'))
         key_string = desc('value');
         if ~isempty(desc('stats_file_name'))
-            stats_file_name=desc('stats_file_name');
+            stats_file_name = desc('stats_file_name');
         else
             stats_file_name = 'tracking_stats.txt';
         end
         fprintf('Reading stats data for key %d: %s from %s\n',...
             line_id, key_string, stats_file_name);
-        stats = importdata(stats_file_name);
+        if ~isempty(last_stats_fname) && strcmp(last_stats_fname,stats_file_name)
+            stats=last_stats;
+        else
+            stats = importdata(stats_file_name);
+            last_stats_fname=stats_file_name;
+            last_stats=stats;
+        end        
         stats_col = 1;
         show_bar_legend_=show_bar_legend;
         if ~isempty(desc('stats_col'))
@@ -30,8 +38,11 @@ for line_id=1:n_lines
             %             fprintf('Getting data from mean of column %d\n', stats_col);
         end
         
-        key_data=stats.data(~cellfun('isempty',strfind(stats.textdata(:, end),...
-            key_string)), stats_col);
+%         key_data=stats.data(~cellfun('isempty',strfind(stats.textdata(:, end),...
+%             key_string)), stats_col);
+        key_data=stats.data(strncmp(stats.textdata(:, end),...
+            key_string, length(key_string)), stats_col);
+
         key_data(isnan(key_data))=[];
         n_key_data=length(key_data);
         
@@ -55,13 +66,15 @@ for line_id=1:n_lines
                 'LineStyle', line_styles{1},...
                 'FaceColor', col_rgb{strcmp(col_names,curr_colors(1))},...
                 'EdgeColor', col_rgb{strcmp(col_names,'black')});
-            bar(line_id_avg + 0.65, values(line_id, 2),...
-                'Parent', gca,...
-                'BarWidth', bar_width,...
-                'LineWidth', bar_line_width,...
-                'LineStyle', line_styles{2},...
-                'FaceColor', col_rgb{strcmp(col_names,curr_colors(1))},...
-                'EdgeColor', col_rgb{strcmp(col_names,'black')});
+            if length(line_styles)>1
+                bar(line_id_avg + 0.65, values(line_id, 2),...
+                    'Parent', gca,...
+                    'BarWidth', bar_width,...
+                    'LineWidth', bar_line_width,...
+                    'LineStyle', line_styles{2},...
+                    'FaceColor', col_rgb{strcmp(col_names,curr_colors(1))},...
+                    'EdgeColor', col_rgb{strcmp(col_names,'black')});
+            end
             %             for bar_id=1:bars_per_group
             %                 set(b(bar_id), 'LineStyle', line_styles{bar_id});
             %                 set(b(bar_id), 'FaceColor', col_rgb{strcmp(col_names,curr_colors{bar_id})});
