@@ -102,8 +102,8 @@ genericConfigsAM_stochastic;
 % genericConfigsSM;
 % genericConfigsSSM;
 
-plot_ids = [1520];
-% plot_ids = [2500, 2501, 2502];
+% plot_ids = [1512];
+plot_ids = [1510, 1511, 1512, 1513];
 
 
 % scatter AM

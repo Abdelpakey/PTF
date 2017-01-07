@@ -33,11 +33,11 @@ nl_bookI_s3	 gnn	 ssd	 8	 1	 gnn2k2s_ssim50r1i4u_8_0	    3.832454	   106.6941358
 nl_bookI_s3	 gnn	 ssd	 8	 1	 gnn2k2s_ssim50r1i4u_8_0	    3.267260	   106.694135869	    14.606473653
 nl_bookI_s3	 gnn	 ssd	 8	 1	 gnn2k2s_ssim50r1i4u_8_0	    3.145388	   106.694135869	    14.606473653
 nl_bookI_s3	 gnn	 ssd	 8	 1	 gnn2k2s_ssim50r1i4u_8_0	    3.566859	   106.694135869	    14.606473653
-nl_bookI_s3	 gnn	 ssd	 8	 1	 fgnnkmn2k2s_ssim50r1i4u_8_0	    14.703686	   106.694135869	    14.606473653
-nl_bookI_s3	 gnn	 ssd	 8	 1	 fgnnkmn2k2s_ssim50r1i4u_8_0	    15.158256	   106.694135869	    14.606473653
-nl_bookI_s3	 gnn	 ssd	 8	 1	 fgnnkmn2k2s_ssim50r1i4u_8_0	    15.451864	   106.694135869	    14.606473653
-nl_bookI_s3	 gnn	 ssd	 8	 1	 fgnnkmn2k2s_ssim50r1i4u_8_0	    14.176828	   106.694135869	    14.606473653
-nl_bookI_s3	 gnn	 ssd	 8	 1	 fgnnkmn2k2s_ssim50r1i4u_8_0	    15.069057	   106.694135869	    14.606473653
+nl_bookI_s3	 gnn	 ssd	 8	 1	 fgnnkmn2k2s_ssim50r1i4u_8_0	    5.335593	   106.694135869	    14.606473653
+nl_bookI_s3	 gnn	 ssd	 8	 1	 fgnnkmn2k2s_ssim50r1i4u_8_0	    5.332523	   106.694135869	    14.606473653
+nl_bookI_s3	 gnn	 ssd	 8	 1	 fgnnkmn2k2s_ssim50r1i4u_8_0	    5.306482	   106.694135869	    14.606473653
+nl_bookI_s3	 gnn	 ssd	 8	 1	 fgnnkmn2k2s_ssim50r1i4u_8_0	    5.325887	   106.694135869	    14.606473653
+nl_bookI_s3	 gnn	 ssd	 8	 1	 fgnnkmn2k2s_ssim50r1i4u_8_0	    5.342606	   106.694135869	    14.606473653
 nl_bookI_s3	 gnn	 ssd	 8	 1	 nnkmn2k2s_ncc50r1i4u_8_0	    0.024179	   106.694135869	    14.606473653
 nl_bookI_s3	 gnn	 ssd	 8	 1	 nnkmn2k2s_ncc50r1i4u_8_0	    0.017442	   106.694135869	    14.606473653
 nl_bookI_s3	 gnn	 ssd	 8	 1	 nnkmn2k2s_ncc50r1i4u_8_0	    0.021955	   106.694135869	    14.606473653
@@ -53,15 +53,13 @@ nl_bookI_s3	 gnn	 ssd	 8	 1	 gnn2k2s_ncc50r1i4u_8_0	    3.901162	   106.69413586
 nl_bookI_s3	 gnn	 ssd	 8	 1	 gnn2k2s_ncc50r1i4u_8_0	    3.920030	   106.694135869	    14.606473653
 nl_bookI_s3	 gnn	 ssd	 8	 1	 gnn2k2s_ncc50r1i4u_8_0	    4.564667	   106.694135869	    14.606473653
 nl_bookI_s3	 gnn	 ssd	 8	 1	 gnn2k2s_ncc50r1i4u_8_0	    5.799376	   106.694135869	    14.606473653
-nl_bookI_s3	 gnn	 ssd	 8	 1	 fgnnkmn2k2s_ncc50r1i4u_8_0	    1	   106.694135869	    14.606473653
-nl_bookI_s3	 gnn	 ssd	 8	 1	 fgnnkmn2k2s_ncc50r1i4u_8_0	    1	   106.694135869	    14.606473653
-nl_bookI_s3	 gnn	 ssd	 8	 1	 fgnnkmn2k2s_ncc50r1i4u_8_0	    1	   106.694135869	    14.606473653
-nl_bookI_s3	 gnn	 ssd	 8	 1	 fgnnkmn2k2s_ncc50r1i4u_8_0	    1	   106.694135869	    14.606473653
-nl_bookI_s3	 gnn	 ssd	 8	 1	 fgnnkmn2k2s_ncc50r1i4u_8_0	    1	   106.694135869	    14.606473653
-nl_bookI_s3	 gnn	 ssd	 8	 1	 fgnnkdt2k2s_ncc50r1i4u_8_0	    1	   106.694135869	    14.606473653
-nl_bookI_s3	 gnn	 ssd	 8	 1	 fgnnkdt2k2s_ncc50r1i4u_8_0	    1	   106.694135869	    14.606473653
-nl_bookI_s3	 gnn	 ssd	 8	 1	 fgnnkdt2k2s_ncc50r1i4u_8_0	    1	   106.694135869	    14.606473653
-nl_bookI_s3	 gnn	 ssd	 8	 1	 fgnnkdt2k2s_ncc50r1i4u_8_0	    1	   106.694135869	    14.606473653
-nl_bookI_s3	 gnn	 ssd	 8	 1	 fgnnkdt2k2s_ncc50r1i4u_8_0	    1	   106.694135869	    14.606473653
-
-
+nl_bookI_s3	 gnn	 ssd	 8	 1	 fgnnkmn2k2s_ncc50r1i4u_8_0	    4.726654	   106.694135869	    14.606473653
+nl_bookI_s3	 gnn	 ssd	 8	 1	 fgnnkmn2k2s_ncc50r1i4u_8_0	    4.702300	   106.694135869	    14.606473653
+nl_bookI_s3	 gnn	 ssd	 8	 1	 fgnnkmn2k2s_ncc50r1i4u_8_0	    4.721184	   106.694135869	    14.606473653
+nl_bookI_s3	 gnn	 ssd	 8	 1	 fgnnkmn2k2s_ncc50r1i4u_8_0	    4.741780	   106.694135869	    14.606473653
+nl_bookI_s3	 gnn	 ssd	 8	 1	 fgnnkmn2k2s_ncc50r1i4u_8_0	    6.402518	   106.694135869	    14.606473653
+nl_bookI_s3	 gnn	 ssd	 8	 1	 fgnnkdt2k2s_ncc50r1i4u_8_0	    1.015633	   106.694135869	    14.606473653
+nl_bookI_s3	 gnn	 ssd	 8	 1	 fgnnkdt2k2s_ncc50r1i4u_8_0	    1.020612	   106.694135869	    14.606473653
+nl_bookI_s3	 gnn	 ssd	 8	 1	 fgnnkdt2k2s_ncc50r1i4u_8_0	    1.007178	   106.694135869	    14.606473653
+nl_bookI_s3	 gnn	 ssd	 8	 1	 fgnnkdt2k2s_ncc50r1i4u_8_0	    1.022144	   106.694135869	    14.606473653
+nl_bookI_s3	 gnn	 ssd	 8	 1	 fgnnkdt2k2s_ncc50r1i4u_8_0	    1.015187	   106.694135869	    14.606473653
