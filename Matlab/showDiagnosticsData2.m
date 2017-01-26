@@ -13,14 +13,14 @@ FRAME_IDS=[1, 362, 13, 100, 583, 150, 172];
 
 config_id = 0;
 
-actor_id = 0;
-seq_id = 3;
+actor_id = 3;
+seq_id = 8;
 start_id = 1;
 update_type = 0;
 opt_type = 0;
 out_prefix = '';
-out_prefix = 'ccreDTCH50r_2';
-am_name = 'ccre';
+out_prefix = 'ccre24b100a1b';
+am_name = 'CCRE/100';
 am_name_disp = '';
 ilm_name = '0';
 ssm_name = '2';
@@ -35,8 +35,8 @@ speed_factor = 1;
 
 plot_only_norm = 1;
 plot_norm_in_one_fig = 1;
-plot_feat_norm = 1;
-plot_likelihood = 0;
+plot_feat_norm = 0;
+plot_likelihood = 1;
 plot_num_likelihood = 0;
 likelihood_alpha = 100;
 likelihood_beta = 1;

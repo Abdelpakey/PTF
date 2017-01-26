@@ -210,6 +210,6 @@ else
 end
 set(h_legend,'FontSize',legend_font_size);
 set(h_legend,'FontWeight','bold');
-xlabel(ax1, 'Area of SR Curve');
+xlabel(ax1, 'Area under SR Curve');
 ylabel(ax1, 'Number of Failures');
 

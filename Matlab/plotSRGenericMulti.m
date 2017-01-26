@@ -7,6 +7,17 @@ colRGBDefs;
 db_root_dir = '../../Datasets';
 sr_root_dir = '../C++/MTF/log/success_rates';
 
+subplot_positions_with_xlabel={
+    [0.0472689075630252 0.10126582278481 0.327731092436974 0.876582278481013],...
+    [0.410797101449275 0.109177215189873 0.320295335525515 0.870253164556962],...
+    [0.0472689075630252 0.10126582278481 0.327731092436974 0.876582278481013],...
+%     [0.788758068444766 0.0189873417721519 0.213405797101449 0.963607594936709]
+};
+subplot_positions_without_xlabel={
+    [0.0435924369747899 0.054140127388535 0.334033613445378 0.929936305732484],...
+    [0.410797101449275 0.0525477707006369 0.330799537206187 0.928343949044586],...
+    [0.788758068444768 0.0207006369426752 0.213405797101449 0.961783439490446]
+};
 plot_titles={};
 plot_data_descs={};
 
@@ -23,7 +34,6 @@ plot_combined_data = 1;
 ytick_precision=20;
 ytick_gap=0.05;
 
-
 seq_idxs_ids = 0;
 n_ams = 0;
 
@@ -32,10 +42,6 @@ y_max = 1;
 
 x_min = 0;
 x_max = 20;
-
-plot_font_size = 20;
-legend_font_size = 16;
-col_legend = 0;
 
 line_width = 3;
 
@@ -53,15 +59,20 @@ plot_type_in_title = 0;
 bar_width=0.5;
 bar_line_width = 2;
 bar_line_style = '-';
-annotate_bars = 0;
+annotate_bars = 1;
+annotation_font_size = 18;
 % annotation_col = [0, 0, 0];
 annotation_col = [];
 horz_bar_plot = 1;
+plot_average_in_bar = 1;
 bar_with_legend = 1;
 show_bar_legend = 1;
 annotate_bar_legend = 1;
+annotate_with_ratio = 1;
 scatter_size = 128;
 scatter_line_width=2;
+intra_bar_gap=0.65;
+inter_bar_gap_ratio=1.35;
 
 n_subseq = 10;
 mcd_err_thresh = 20;
@@ -81,6 +92,12 @@ show_area_in_legend = 1;
 show_failures_in_legend = 1;
 normalize_failures = 0;
 
+plot_font_size = 20;
+legend_font_size = 16;
+col_legend = 0;
+enable_xlabel = 1;
+automatic_placement = 0;
+
 % 0: SR without reinitialization
 % 1: total number of failures
 % 2: average error on successfull frames
@@ -94,16 +111,16 @@ reset_to_init = 1;
 
 % load generic plot configurations
 % genericConfigsAM_gd;
-genericConfigsAM_stochastic;
+% genericConfigsAM_stochastic;
 % genericConfigsSM_robust
-% genericConfigsSSM_thesis
+genericConfigsSSM_thesis
 
 % genericConfigsAM;
 % genericConfigsSM;
 % genericConfigsSSM;
 
-% plot_ids = [1512];
-plot_ids = [1510, 1511, 1512, 1513];
+plot_ids = [951, 952];
+% plot_ids = [5750, 5751, 5752];
 
 
 % scatter AM
@@ -205,10 +222,20 @@ for plot_type_ = plot_types
             plot_data_desc=plot_data_descs{plot_data_type, plot_id};
             if isempty(plot_data_desc)
                 error('Invalid plot id specified: %d', plot_id);
-            end          
-                       
+            end                      
             
-            subplot(plot_rows, plot_cols, subplot_id), hold on, grid on;
+            h = subplot(plot_rows, plot_cols, subplot_id);
+            hold on, grid on;
+            if automatic_placement
+                if enable_xlabel
+                    subplot_pos=subplot_positions_with_xlabel{subplot_id};
+                else
+                    subplot_pos=subplot_positions_without_xlabel{subplot_id};
+                end
+                fprintf('Setting subplot  %d position to:', subplot_id),disp(subplot_pos);
+                set(gca, 'Position', subplot_pos);
+            end
+            
             plot_title=plot_titles{plot_data_type, plot_id};
             
             n_lines=length(plot_data_desc);
@@ -613,7 +640,9 @@ for plot_type_ = plot_types
                     set(ax1, 'YAxisLocation', 'right');
                 end
                 %         set(ax1,'Color', 'r');
-                xlabel(ax1, axis_label_x);
+                if enable_xlabel
+                    xlabel(ax1, axis_label_x);
+                end
                 ylabel(ax1, axis_label_y);
                 if plot_type_in_title
                     plot_title=sprintf('%s :: SR Plot', plot_title);

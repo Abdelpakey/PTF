@@ -56,10 +56,10 @@ for state_id = state_ids
     % matlab_Std=gradient(StdJac_data(:, 2*state_id));  
     
     if plot_feat_norm
-        y_label=sprintf('D(f)_{%s}', lower(am_name_disp));
+        y_label=sprintf('D_f');
         plot_title=sprintf('%s FeatNorm', upper(am_name_disp));
     elseif plot_likelihood
-        y_label=sprintf('L(f)_{%s}', lower(am_name_disp));
+        y_label=sprintf('L_f');
         plot_title=sprintf('%s Likelihood', upper(am_name_disp));
     else
         plot_title=sprintf('%s %s frame %d', upper(am_name_disp), seq_name, frame_id);
