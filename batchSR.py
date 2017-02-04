@@ -9,7 +9,7 @@ if __name__ == '__main__':
 
     use_arch = 1
     arch_root_dir = './C++/MTF/log/archives'
-    arch_name = 'resl_rklspicvBE50rLMS10ki25p_ic__ssd_ncc__50r_30i_4u_8_subseq10_mcd_tulp'
+    arch_name = 'resl_nniclmkmn2k_mc_mi_ccre_ssd_ncc_ssim_spss_riu_scv_zncc_24b_50r_30i_4u_subseq10_tulp'
     in_arch_path = 'tracking_data'
     gt_root_dir = '../Datasets'
     tracking_root_dir = './C++/MTF/log/archives'
@@ -28,7 +28,7 @@ if __name__ == '__main__':
     opt_gt_ssms = ['0']
 
     enable_subseq = 1
-    reinit_on_failure = 0
+    reinit_on_failure = 1
 
     n_runs = 1
     n_subseq = 10

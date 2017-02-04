@@ -9,6 +9,7 @@ replace_existing = 0
 show_names = 0
 add_as_prefix = 0
 add_as_suffix = 0
+remove_files = 0
 
 arg_id = 1
 if len(sys.argv) > arg_id:
@@ -35,19 +36,28 @@ elif src_substr == '__suffix__' or src_substr == '__sf__':
     add_as_suffix = 1
 elif src_substr == '__space__' or src_substr == '__sp__':
     src_substr = ' '
-
+if dst_substr == '__remove__' or dst_substr == '__rm__':
+    remove_files = 1
 if dst_substr == '__space__' or dst_substr == '__sp__':
     dst_substr = ' '
 if dst_substr == '__none__' or dst_substr == '__n__':
     dst_substr = ''
-
-print 'Searching for {:s} to replace with {:s} in {:s}'.format(src_substr, dst_substr, src_dir)
+if remove_files:
+    print 'Searching for {:s} to remove in {:s}'.format(src_substr, src_dir)
+else:
+    print 'Searching for {:s} to replace with {:s} in {:s}'.format(src_substr, dst_substr, src_dir)
 src_file_paths = []
 for root, dirnames, filenames in os.walk(src_dir):
     for filename in fnmatch.filter(filenames, '*{:s}*'.format(src_substr)):
         src_file_paths.append(os.path.join(root, filename))
 print 'Found {:d} matches'.format(len(src_file_paths))
 for src_path in src_file_paths:
+    if remove_files:
+        if show_names:
+            print 'removing {:s}'.format(src_path)
+        os.remove(src_path)
+        continue
+
     if add_as_prefix:
         dst_path = os.path.join(os.path.dirname(src_path), '{:s}{:s}'.format(dst_substr, os.path.basename(src_path)))
     elif add_as_suffix:

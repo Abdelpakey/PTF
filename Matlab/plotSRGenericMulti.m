@@ -7,16 +7,21 @@ colRGBDefs;
 db_root_dir = '../../Datasets';
 sr_root_dir = '../C++/MTF/log/success_rates';
 
-subplot_positions_with_xlabel={
-    [0.0472689075630252 0.10126582278481 0.327731092436974 0.876582278481013],...
-    [0.410797101449275 0.109177215189873 0.320295335525515 0.870253164556962],...
-    [0.0472689075630252 0.10126582278481 0.327731092436974 0.876582278481013],...
-%     [0.788758068444766 0.0189873417721519 0.213405797101449 0.963607594936709]
+subplot_positions_with_xlabel_small={
+    [0.0414915966386555 0.0884676145339652 0.343487394957983 0.894154818325434],...
+    [0.417016806722689 0.0963665086887836 0.326680672268907 0.88783570300158],...
+    [0.788758068444766 0.0189873417721519 0.213405797101449 0.963607594936709]
 };
-subplot_positions_without_xlabel={
+subplot_positions_without_xlabel_small={
     [0.0435924369747899 0.054140127388535 0.334033613445378 0.929936305732484],...
     [0.410797101449275 0.0525477707006369 0.330799537206187 0.928343949044586],...
     [0.788758068444768 0.0207006369426752 0.213405797101449 0.961783439490446]
+};
+
+subplot_positions_with_xlabel_large={
+    [0.0472689075630252 0.10126582278481 0.327731092436974 0.876582278481013],...
+    [0.410797101449275 0.109177215189873 0.320295335525515 0.870253164556962],...
+    [0.788758068444766 0.0189873417721519 0.213405797101449 0.963607594936709]
 };
 plot_titles={};
 plot_data_descs={};
@@ -52,28 +57,6 @@ out_dir = 'plots';
 save_plot = 0;
 save_fmt='bmp';
 
-% add the name of datasets (and any subsets thereof) being plotted into the title
-actor_in_title = 1;
-plot_type_in_title = 0;
-
-bar_width=0.5;
-bar_line_width = 2;
-bar_line_style = '-';
-annotate_bars = 1;
-annotation_font_size = 18;
-% annotation_col = [0, 0, 0];
-annotation_col = [];
-horz_bar_plot = 1;
-plot_average_in_bar = 1;
-bar_with_legend = 1;
-show_bar_legend = 1;
-annotate_bar_legend = 1;
-annotate_with_ratio = 1;
-scatter_size = 128;
-scatter_line_width=2;
-intra_bar_gap=0.65;
-inter_bar_gap_ratio=1.35;
-
 n_subseq = 10;
 mcd_err_thresh = 20;
 jaccard_err_thresh = 0.90;
@@ -84,6 +67,28 @@ min_err_thr = 1;
 
 overriding_error_type = -2;
 read_from_bin = 1;
+
+% add the name of datasets (and any subsets thereof) being plotted into the title
+actor_in_title = 1;
+plot_type_in_title = 0;
+
+bar_width=0.5;
+bar_line_width = 2;
+bar_line_style = '-';
+annotate_bars = 1;
+annotation_font_size = 14;
+annotation_col = [0, 0, 0];
+% annotation_col = [];
+horz_bar_plot = 1;
+plot_average_in_bar = 1;
+bar_with_legend = 0;
+show_bar_legend = 1;
+annotate_bar_legend = 1;
+annotate_with_ratio = 1;
+scatter_size = 128;
+scatter_line_width=2;
+intra_bar_gap=0.65;
+inter_bar_gap_ratio=1.00;
 
 reinit_frame_skip = 5;
 reinit_err_thresh = 20;
@@ -119,8 +124,8 @@ genericConfigsSSM_thesis
 % genericConfigsSM;
 % genericConfigsSSM;
 
-plot_ids = [951, 952];
-% plot_ids = [5750, 5751, 5752];
+plot_ids = [3032];
+% plot_ids = [6010, 6011, 6012];
 
 
 % scatter AM
@@ -222,19 +227,25 @@ for plot_type_ = plot_types
             plot_data_desc=plot_data_descs{plot_data_type, plot_id};
             if isempty(plot_data_desc)
                 error('Invalid plot id specified: %d', plot_id);
-            end                      
-            
-            h = subplot(plot_rows, plot_cols, subplot_id);
-            hold on, grid on;
+            end                   
+          
             if automatic_placement
-                if enable_xlabel
-                    subplot_pos=subplot_positions_with_xlabel{subplot_id};
-                else
-                    subplot_pos=subplot_positions_without_xlabel{subplot_id};
+                subplot_pos_id=mod(subplot_id-1, length(subplot_positions_with_xlabel_small)) + 1;
+                if subplot_pos_id==0
+                    subplot_pos_id=1;
                 end
-                fprintf('Setting subplot  %d position to:', subplot_id),disp(subplot_pos);
-                set(gca, 'Position', subplot_pos);
+                if enable_xlabel
+                    subplot_pos=subplot_positions_with_xlabel_small{subplot_pos_id};
+                else
+                    subplot_pos=subplot_positions_without_xlabel_small{subplot_pos_id};
+                end
+                fprintf('Setting subplot %d position to:', subplot_id),disp(subplot_pos);
+                % set(gca, 'Position', subplot_pos);
+                subplot('position', subplot_pos);
+            else
+                subplot(plot_rows, plot_cols, subplot_id);
             end
+            hold on, grid on;
             
             plot_title=plot_titles{plot_data_type, plot_id};
             
