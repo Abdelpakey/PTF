@@ -1,13 +1,13 @@
 % root_dir='.';
-root_dir='../../Datasets/Mosaic';
+root_dir='../../Datasets';
 
 read_from_list = 0;
 if read_from_list
     file_list=importdata(sprintf('%s/list.txt',root_dir))    
     format='';
 else
-    file_list={'poster_9'}
-    format='mp4';
+    file_list={'poster_mos3'}
+    format='wmv';
 end
 for file_id=1:length(file_list)
     filename=file_list{file_id};   

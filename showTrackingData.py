@@ -20,26 +20,31 @@ if __name__ == '__main__':
     params_dict = getParamDict()
     param_ids = readDistGridParams()
 
-    use_arch = 0
-    arch_root_dir = './C++/MTF/log/archives/Old'
-    arch_name = 'resl_dsst_2_3_4_frg_vot_jacc'
+    use_arch = 1
+    # arch_root_dir = './C++/MTF/log/archives'
+    # arch_root_dir = 'O:\UofA\Results\#Old\\tracking_data'
+    arch_root_dir = 'O:\UofA\Results\#Old\CRV'
+    arch_name = 'tracking_data'
     in_arch_path = 'tracking_data'
 
     db_root_dir = '../Datasets'
     tracking_data_root_dir = 'C++/MTF/log'
     out_root_dir = 'C++/MTF/log'
+    out_root_dir = '../../Reports/Thesis/Presentation'
 
-    data_config_id = 16
-    n_trackers = 1
+    data_config_id = 0
+    n_trackers = 4
 
     actor_id = 1
-    start_id = 48
+    # start_id = 3 + 1 * 16
+    start_id = 78
     end_id = -1
+    # end_id = 9 + 1 * 16
     actor = 'Live'
     seq_name = 'usb_cam'
     sub_seq_name = ''
 
-    pause_seq = 1
+    pause_seq = 0
     write_img = 1
     show_stacked = 1
     stack_order = 0  # 0: row major 1: column major
@@ -52,20 +57,22 @@ if __name__ == '__main__':
     annotation_font_size = 1
     annotation_col = None
 
-    show_grid = 0
-    grid_res_x = 25
-    grid_res_y = 25
+    show_grid = 1
+    grid_res_x = 40
+    grid_res_y = 40
 
-    line_thickness = 2
+    line_thickness = 1
 
-    legend_font_size = 2
+    failure_font_size = 1.5
+    failure_font_thickness = 2
+    legend_font_size = 1.5
     legend_font_thickness = 2
     legend_font_face = cv2.FONT_HERSHEY_COMPLEX_SMALL
     legend_font_line_type = cv2.CV_AA
     legend_bkg_col = (0, 0, 0)
-    legend_gap = 0
+    legend_gap = 2
 
-    header_location = (0, 30)
+    header_location = (0, 20)
     header_font_face = cv2.FONT_HERSHEY_COMPLEX_SMALL
     header_col = (255, 255, 255)
     header_bkg_col = (0, 0, 0)
@@ -233,20 +240,8 @@ if __name__ == '__main__':
 
             for tracker_id in xrange(n_trackers):
                 tracker = trackers[tracker_id]
-                tracking_data = tracking_data_list[tracker_id]
-                curr_corners = np.asarray([tracking_data[frame_id, 0:2].tolist(),
-                                           tracking_data[frame_id, 2:4].tolist(),
-                                           tracking_data[frame_id, 4:6].tolist(),
-                                           tracking_data[frame_id, 6:8].tolist()]).T
-                if show_grid:
-                    try:
-                        curr_hom_mat = np.mat(util.compute_homography(std_corners, curr_corners))
-                    except:
-                        pass
-                    curr_pts = util.dehomogenize(curr_hom_mat * std_pts_hm)
                 text_size, baseline = cv2.getTextSize(tracker['legend'], legend_font_face,
                                                       legend_font_size, legend_font_thickness)
-
                 if show_header:
                     legend_y = header_location[1] + text_size[1] + baseline + header_baseline + legend_gap
                 else:
@@ -255,6 +250,29 @@ if __name__ == '__main__':
                 # print 'text_size: ', text_size
                 # print 'baseline: ', baseline
                 baseline += legend_font_thickness
+
+                tracking_data = tracking_data_list[tracker_id]
+                curr_corners = np.asarray([tracking_data[frame_id, 0:2].tolist(),
+                                           tracking_data[frame_id, 2:4].tolist(),
+                                           tracking_data[frame_id, 4:6].tolist(),
+                                           tracking_data[frame_id, 6:8].tolist()]).T
+                if np.isnan(curr_corners).any():
+                    if show_stacked:
+                        new_img = np.copy(curr_img)
+                        cv2.putText(new_img, 'Tracker Failed', (legend_x, legend_y), legend_font_face,
+                                failure_font_size, col_rgb['red'],  failure_font_thickness, legend_font_line_type)
+                        curr_img_list.append(new_img)
+                    else:
+                        cv2.putText(curr_img, 'Tracker Failed', (curr_img.shape[0]/2, curr_img.shape[1]/2), legend_font_face,
+                                failure_font_size, col_rgb['red'],  failure_font_thickness, legend_font_line_type)
+                    continue
+
+                if show_grid:
+                    try:
+                        curr_hom_mat = np.mat(util.compute_homography(std_corners, curr_corners))
+                    except:
+                        pass
+                    curr_pts = util.dehomogenize(curr_hom_mat * std_pts_hm)
 
                 if show_stacked:
                     new_img = np.copy(curr_img)

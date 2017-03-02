@@ -365,13 +365,18 @@ def readTrackingData(filename, arch_fid=None):
     for line in lines:
         # print(line)
         words = line.split()
-        if len(words) != 9:
-            msg = "Invalid formatting on line %d" % line_id + " in file %s" % filename + ":\n%s" % line
-            raise SyntaxError(msg)
-        words = words[1:]
         coordinates = []
-        for word in words:
-            coordinates.append(float(word))
+        if len(words) != 9:
+            if len(words) == 2 and words[1] == 'invalid_tracker_state':
+                for i in xrange(8):
+                    coordinates.append(float('NaN'))
+            else:
+                msg = "Invalid formatting on line %d" % line_id + " in file %s" % filename + ":\n%s" % line
+                raise SyntaxError(msg)
+        else:
+            words = words[1:]
+            for word in words:
+                coordinates.append(float(word))
         data_array[line_id, :] = coordinates
         # print words
         line_id += 1

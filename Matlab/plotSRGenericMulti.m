@@ -23,6 +23,13 @@ subplot_positions_with_xlabel_large={
     [0.410797101449275 0.109177215189873 0.320295335525515 0.870253164556962],...
     [0.788758068444766 0.0189873417721519 0.213405797101449 0.963607594936709]
 };
+
+subplot_positions_without_xlabel_large={
+    [0.0472689075630252 0.10126582278481 0.327731092436974 0.876582278481013],...
+    [0.410797101449275 0.109177215189873 0.320295335525515 0.870253164556962],...
+    [0.788758068444766 0.0189873417721519 0.213405797101449 0.963607594936709]
+};
+
 plot_titles={};
 plot_data_descs={};
 
@@ -51,7 +58,7 @@ x_max = 20;
 line_width = 3;
 
 adaptive_axis_range = 1;
-title_as_text_box = 0;
+title_as_text_box = 1;
 
 out_dir = 'plots';
 save_plot = 0;
@@ -75,7 +82,7 @@ plot_type_in_title = 0;
 bar_width=0.5;
 bar_line_width = 2;
 bar_line_style = '-';
-annotate_bars = 1;
+annotate_bars = 0;
 annotation_font_size = 14;
 annotation_col = [0, 0, 0];
 % annotation_col = [];
@@ -87,8 +94,8 @@ annotate_bar_legend = 1;
 annotate_with_ratio = 1;
 scatter_size = 128;
 scatter_line_width=2;
-intra_bar_gap=0.65;
-inter_bar_gap_ratio=1.00;
+intra_bar_gap = 0.65;
+inter_bar_gap_ratio = 1.00;
 
 reinit_frame_skip = 5;
 reinit_err_thresh = 20;
@@ -97,11 +104,11 @@ show_area_in_legend = 1;
 show_failures_in_legend = 1;
 normalize_failures = 0;
 
-plot_font_size = 20;
-legend_font_size = 16;
+plot_font_size = 24;
+legend_font_size = 24;
 col_legend = 0;
 enable_xlabel = 1;
-automatic_placement = 0;
+automatic_placement = 1;
 
 % 0: SR without reinitialization
 % 1: total number of failures
@@ -124,8 +131,8 @@ genericConfigsSSM_thesis
 % genericConfigsSM;
 % genericConfigsSSM;
 
-plot_ids = [3032];
-% plot_ids = [6010, 6011, 6012];
+% plot_ids = [4000];
+plot_ids = [2023, 2024, 2025];
 
 
 % scatter AM
@@ -230,14 +237,26 @@ for plot_type_ = plot_types
             end                   
           
             if automatic_placement
-                subplot_pos_id=mod(subplot_id-1, length(subplot_positions_with_xlabel_small)) + 1;
-                if subplot_pos_id==0
-                    subplot_pos_id=1;
-                end
-                if enable_xlabel
-                    subplot_pos=subplot_positions_with_xlabel_small{subplot_pos_id};
+                if plot_font_size>16
+                    subplot_pos_id = mod(subplot_id-1, length(subplot_positions_with_xlabel_large)) + 1;
+                    if subplot_pos_id==0
+                        subplot_pos_id=1;
+                    end
+                    if enable_xlabel
+                        subplot_pos=subplot_positions_with_xlabel_large{subplot_pos_id};
+                    else
+                        subplot_pos=subplot_positions_without_xlabel_large{subplot_pos_id};
+                    end                    
                 else
-                    subplot_pos=subplot_positions_without_xlabel_small{subplot_pos_id};
+                    subplot_pos_id=mod(subplot_id-1, length(subplot_positions_with_xlabel_small)) + 1;
+                    if subplot_pos_id==0
+                        subplot_pos_id=1;
+                    end
+                    if enable_xlabel
+                        subplot_pos=subplot_positions_with_xlabel_small{subplot_pos_id};
+                    else
+                        subplot_pos=subplot_positions_without_xlabel_small{subplot_pos_id};
+                    end
                 end
                 fprintf('Setting subplot %d position to:', subplot_id),disp(subplot_pos);
                 % set(gca, 'Position', subplot_pos);

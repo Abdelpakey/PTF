@@ -38,7 +38,8 @@ if __name__ == '__main__':
     stack_order = 0  # 0: row major 1: column major
     show_grid = 0
     show_patch = 0
-    patch_corner = 0
+    patch_in_border = 1
+    patch_corner = 1
     resize_factor = 2
     label_corners = 0
 
@@ -48,26 +49,26 @@ if __name__ == '__main__':
     conn_all_corners = 1
     conn_boundary = 1
 
-    grid_res_x = 100
-    grid_res_y = 100
-    grid_sub_sampling = 5
+    grid_res_x = 50
+    grid_res_y = 50
+    grid_sub_sampling = 10
 
     opt_gt_ssm = '0'
     use_opt_gt = 1
     use_reinit_gt = 0
 
-    actor_id = 15
+    actor_id = 3
     seq_id = 0
     init_frame_id = 0
 
-    show_all_seq = 1
+    show_all_seq = 0
     start_id = 25
     end_id = -1
-    pause_seq = 1
+    pause_seq = 0
 
-    write_img = 0
+    write_img = 1
     show_frame_id = 0
-    dst_root_dir = '../../Reports/ICRA17/video'
+    dst_root_dir = '../../Reports/Thesis/Presentation'
 
     # settings for synthetic sequences
     syn_ssm = 'c8'

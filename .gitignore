@@ -41,4 +41,8 @@ cython_trackers_old/
 *.a
 *.so
 *.pyd
+*.mp4
+*.avi
+*.wmv
+*.mkv
 C++/

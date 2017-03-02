@@ -1,6 +1,6 @@
 function toVideo
 % clear all;
-workingDir='../../Datasets/Misc';
+workingDir='../../../Reports/Thesis/Presentation/tracking_videos';
 getParamLists;
 
 actor_id = 1;
@@ -8,14 +8,14 @@ seq_id = 46;
 actor = actors{actor_id+1};
 seq_name = sequences{actor_id + 1}{seq_id + 1};
 
-seq_name='20160927_172633';
+seq_name='comparing_am_stacked';
 
 start_frame_id = 1;
 end_frame_id = 0;
 
 src_dir=seq_name;
 
-fps = 2;
+fps = 60;
 quality = 100;
 img_fmt='jpg';
 vid_fmt='mp4';
