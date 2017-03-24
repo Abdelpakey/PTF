@@ -7,11 +7,12 @@ root_dir='./vid';
 % seq_id = 46;
 % actor = actors{actor_id+1};
 % seq_name = sequences{actor_id + 1}{seq_id + 1};
+
 seq_names={
-    'single_tracker_book',...
-    'single_tracker_bus_mug',...
-    'single_tracker_non_planar',...
-    'multi_tracker',...
+    'single_tracker_book_cropped',...
+    'single_tracker_bus_mug_cropped',...
+    'single_tracker_non_planar_cropped',...
+    'multi_tracker_cropped',...
     };
 stack_order = 0;
 n_frames = 0;
@@ -49,7 +50,8 @@ outputVideo.Quality = quality;
 open(outputVideo);
 
 frame_id=0;
-while hasFrame(inputVideos{1})
+input_ended = 0;
+while ~input_ended
     frame_id=frame_id+1;
     current_frame_list=cell(n_seq, 1);
     for seq_id = 1:n_seq
@@ -57,7 +59,10 @@ while hasFrame(inputVideos{1})
         if resize_factor ~= 1
             current_frame_list{seq_id}=imresize(current_frame_list{seq_id},...
                 resize_factor);
-        end       
+        end
+        if ~hasFrame(inputVideos{seq_id})
+            input_ended = 1;
+        end
     end
     stacked_frame = stackImages(current_frame_list, stack_order);
     writeVideo(outputVideo, stacked_frame);

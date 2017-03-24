@@ -1,8 +1,0 @@
-fclk_miIN50r30i8b_8_0
-fclk_miCN25r10i8b_8_0
-fclk_miCN25r30i8b_8_0
-fclk_miCN50r10i8b_8_0
-fclk_miCN50r30i8b_8_0
-fclk_miIN25r10i8b_8_0
-fclk_miIN25r30i8b_8_0
-fclk_miIN50r10i8b_8_0

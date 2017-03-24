@@ -1,3 +1,0 @@
-seq_id	seq_name            	opt_method     	prog 	hom_opt  	hom_pwopt	aff_opt  	aff_pwopt	se2_opt  	se2_pwopt	rt_opt   	rt_pwopt 	mean_fps 	pw_mean_fps
-     1	nl_bookII_s3        	BFGS           	    1	 0.000000	 0.040823	 0.039615	 0.050910	 0.058445	 0.058445	 0.058446	 0.058446	64.178395	133.600285
-     3	nl_bus              	BFGS           	    1	 0.000000	 0.150801	 0.153211	 0.204540	 0.288418	 0.288418	 0.288698	 0.288698	55.372793	108.372493

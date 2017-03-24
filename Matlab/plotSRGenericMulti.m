@@ -30,6 +30,18 @@ subplot_positions_without_xlabel_large={
     [0.788758068444766 0.0189873417721519 0.213405797101449 0.963607594936709]
 };
 
+subplot_positions_with_xlabel_large_new={
+    [0.0472689075630252 0.0754098360655738 0.327731092436974 0.902438265200249],...
+    [0.410797101449275 0.0765027322404372 0.320295335525515 0.902927647506398],...
+    [0.788758068444766 0.0189873417721519 0.213405797101449 0.963607594936709]
+};
+
+subplot_positions_without_xlabel_large_new={
+    [0.0472689075630252 0.0754098360655738 0.327731092436974 0.902438265200249],...
+    [0.410797101449275 0.0765027322404372 0.320295335525515 0.902927647506398],...
+    [0.788758068444766 0.0189873417721519 0.213405797101449 0.963607594936709]
+};
+
 plot_titles={};
 plot_data_descs={};
 
@@ -43,21 +55,11 @@ scatter_markers = ['o', '+', '*', 's', 'x',...
 
 
 plot_combined_data = 1;
-ytick_precision=20;
-ytick_gap=0.05;
-
 seq_idxs_ids = 0;
 n_ams = 0;
 
-y_min = 0;
-y_max = 1;
-
-x_min = 0;
-x_max = 20;
-
 line_width = 3;
 
-adaptive_axis_range = 1;
 title_as_text_box = 1;
 
 out_dir = 'plots';
@@ -82,7 +84,7 @@ plot_type_in_title = 0;
 bar_width=0.5;
 bar_line_width = 2;
 bar_line_style = '-';
-annotate_bars = 0;
+annotate_bars = 1;
 annotation_font_size = 14;
 annotation_col = [0, 0, 0];
 % annotation_col = [];
@@ -105,10 +107,18 @@ show_failures_in_legend = 1;
 normalize_failures = 0;
 
 plot_font_size = 24;
-legend_font_size = 24;
+legend_font_size = 18;
 col_legend = 0;
 enable_xlabel = 1;
-automatic_placement = 1;
+automatic_placement = 0;
+
+ytick_precision = 20;
+ytick_gap = 0.05;
+x_min = 0;
+x_max = 20;
+y_min = 0;
+y_max = 0.90;
+adaptive_axis_range = 0;
 
 % 0: SR without reinitialization
 % 1: total number of failures
@@ -124,15 +134,16 @@ reset_to_init = 1;
 % load generic plot configurations
 % genericConfigsAM_gd;
 % genericConfigsAM_stochastic;
-% genericConfigsSM_robust
-genericConfigsSSM_thesis
+% genericConfigsSM_robust;
+genericConfigsSSM_thesis;
+
+% plot_ids = [3050, 3051];
+base_id = 3040;
+plot_ids = [base_id, base_id + 1, base_id + 2];
 
 % genericConfigsAM;
 % genericConfigsSM;
 % genericConfigsSSM;
-
-% plot_ids = [4000];
-plot_ids = [2023, 2024, 2025];
 
 
 % scatter AM
@@ -238,14 +249,14 @@ for plot_type_ = plot_types
           
             if automatic_placement
                 if plot_font_size>16
-                    subplot_pos_id = mod(subplot_id-1, length(subplot_positions_with_xlabel_large)) + 1;
+                    subplot_pos_id = mod(subplot_id-1, length(subplot_positions_with_xlabel_large_new)) + 1;
                     if subplot_pos_id==0
                         subplot_pos_id=1;
                     end
                     if enable_xlabel
-                        subplot_pos=subplot_positions_with_xlabel_large{subplot_pos_id};
+                        subplot_pos=subplot_positions_with_xlabel_large_new{subplot_pos_id};
                     else
-                        subplot_pos=subplot_positions_without_xlabel_large{subplot_pos_id};
+                        subplot_pos=subplot_positions_without_xlabel_large_new{subplot_pos_id};
                     end                    
                 else
                     subplot_pos_id=mod(subplot_id-1, length(subplot_positions_with_xlabel_small)) + 1;

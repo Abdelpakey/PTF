@@ -5,26 +5,36 @@ from MultiProposalTracker import MultiProposalTracker
 from ParallelTracker import ParallelTracker
 from BakerMatthewsICTracker import BakerMatthewsICTracker as BMICTracker
 from CascadeTracker import CascadeTracker
-from NNTracker import NNTracker
+
+flann_found = True
+try:
+    from NNTracker import NNTracker
+    from cython_trackers.NNTracker import NNTracker as NNTracker_c
+    from cython_trackers.DNNTracker import DNNTracker as DNNTracker
+    import cython_trackers.TurnkeyTrackers as cy_tt
+except:
+    flann_found = False
 from ESMTracker import ESMTracker
 from L1Tracker import L1Tracker
 from cython_trackers.BMICTracker import BMICTracker as BMICTracker_c
 from cython_trackers.CascadeTracker import CascadeTracker as CascadeTracker_c
-from cython_trackers.NNTracker import NNTracker as NNTracker_c
 from cython_trackers.ESMTracker import ESMTracker as ESMTracker_c
 from cython_trackers.CTracker import CTracker as RKLTracker
 from cython_trackers.PFTracker import PFTracker as PFTracker
 from cython_trackers.DESMTracker import DESMTracker as DESMTracker
 from cython_trackers.DLKTracker import DLKTracker as DLKTracker
-from cython_trackers.DNNTracker import DNNTracker as DNNTracker
-import cython_trackers.TurnkeyTrackers as cy_tt
-from XVSSDTracker import XVSSDTracker
+xvision_found = True
+try:
+    from XVSSDTracker import XVSSDTracker
+except:
+    xvision_found = False
+
 from mtfTracker import mtfTracker
 from Homography import random_homography
 
 
 class TrackingParams:
-    def __init__(self, type, params):
+    def __init__(self, xvision_foundtype, params):
         self.type = type
         self.params = {}
         self.tracker = None
@@ -49,7 +59,8 @@ class TrackingParams:
         for param in self.sorted_params:
             self.params[param.name] = param
 
-        if type == 'nn':
+
+        if flann_found and type == 'nn':
             def getNNTracker(feature, current_params=self.params):
                 version = current_params['version'].val
                 if version == 'python':
@@ -172,7 +183,7 @@ class TrackingParams:
                 use_scv=current_params['enable_scv'].val,
                 multi_approach=current_params['multi_approach'].val,
                 feature=feature)
-        elif type == 'xv_ssd':
+        elif xvision_found and type == 'xv_ssd':
             self.update = lambda feature, current_params=self.params: XVSSDTracker(
                 steps_per_frame=current_params['steps_per_frame'].val,
                 multi_approach=current_params['multi_approach'].val,
@@ -224,9 +235,7 @@ class TrackingParams:
                 current_params['resolution_x'].val,
                 current_params['resolution_y'].val,
                 current_params['enable_scv'].val)
-
-        elif type == 'nnic':
-
+        elif flann_found and type == 'nnic':
             def getNNICTracker(feature, current_params=self.params):
                 version = current_params['version'].val
                 trackers = []
@@ -283,7 +292,7 @@ class TrackingParams:
                     return CascadeTracker_c(trackers)
 
             self.update = getNNICTracker
-        elif type == 'tt_dnn_bmic':
+        elif flann_found and type == 'tt_dnn_bmic':
             self.update = lambda feature, current_params=self.params: cy_tt.make_dnn_bmic(
                 use_scv=current_params['enable_scv'].val,
                 res=(current_params['resolution_x'].val, current_params['resolution_y'].val),
@@ -294,7 +303,7 @@ class TrackingParams:
                 gnn=current_params['enable_gnn'].val,
                 exp=current_params['enable_exp'].val
             )
-        elif type == 'tt_nn_bmic':
+        elif flann_found and type == 'tt_nn_bmic':
             self.update = lambda feature, current_params=self.params: cy_tt.make_nn_bmic(
                 use_scv=current_params['enable_scv'].val,
                 res=(current_params['resolution_x'].val, current_params['resolution_y'].val),

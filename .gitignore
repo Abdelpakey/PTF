@@ -12,6 +12,7 @@ C++/Eigen/
 C++/unsupported/
 scripts/
 Matlab/plots/
+log/
 MTF/
 ROS/
 batch/

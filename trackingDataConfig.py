@@ -281,3 +281,29 @@ tracker_configs[config_id] = [
     {'fname': 'iclmcw1C1_ncc50r30i4u_8_0', 'legend': 'ICLK', 'col': 'cyan',
      'arch_name': 'resh_RSCV_CCRE_MISSING_iclm_all_AMs_50r_30i_4u_subseq10_tulp'}
 ]
+
+config_id = 26
+out_dirs[config_id] = 'goturn_vs_rbt'
+tracker_configs[config_id] = [
+    {'fname': 'gtrn_50r30i4u_2r_0', 'legend': 'GOTURN', 'col': 'red',
+    'arch_name': 'resl_gtrn_2r_subseq10_tulp_reinit_gt'},
+    {'fname': 'dsst3_50r30i4u_4_0', 'legend': 'DSST', 'col': 'magenta',
+     'arch_name': 'resf_dsst_2_3_4_subseq10_tmt_corrected'},
+    {'fname': 'esmlmDJcw1C1_ncc50r30i4u_8_0', 'legend': 'ESM', 'col': 'green',
+     'arch_name': 'resf_esmlm_all_AMs_50r_30i_4u_subseq10_tulp'},
+    {'fname': 'rklcvBE20rLMS10ki25pfc_ncc50r30i4u_8_0', 'legend': 'LMES', 'col': 'cyan',
+     'arch_name': 'resl_grid_rklcv_BE_10_20r_LMS10ki25p_ssd_50r_30i_4u_8_subseq10_mcd_tulp'},
+]
+
+config_id = 27
+out_dirs[config_id] = 'goturn_vs_rbt_2dof'
+tracker_configs[config_id] = [
+    {'fname': 'gtrn_50r30i4u_2r_0', 'legend': 'GOTURN', 'col': 'red',
+    'arch_name': 'resl_gtrn_2r_subseq10_tulp_reinit_gt'},
+    {'fname': 'dsst3_50r30i4u_4_0', 'legend': 'DSST', 'col': 'magenta',
+     'arch_name': 'resf_dsst_2_3_4_subseq10_tmt_corrected'},
+    {'fname': 'esmDJcw1C1_ssim50r30i4u_2r_0', 'legend': 'ESM', 'col': 'green',
+     'arch_name': 'resl_fa_ia_fc_ic_esm_nn_nnic_ssim_50r_30i_4u_2r_subseq10_tulp_reinit_gt'},
+    {'fname': 'rklfc10rLMS25p10Ki5t_ssim50r30i4uReinitGT_2r_0', 'legend': 'LMES', 'col': 'cyan',
+     'arch_name': 'resh_grid_rkl_pf_pffc_ssim_50r_30i_4u_2r_subseq10_tulp_reinit_gt'},
+]

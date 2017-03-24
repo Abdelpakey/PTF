@@ -57,16 +57,19 @@ if __name__ == '__main__':
     use_opt_gt = 1
     use_reinit_gt = 0
 
-    actor_id = 3
+    actor_id = 7
     seq_id = 0
     init_frame_id = 0
 
-    show_all_seq = 0
-    start_id = 25
+    show_all_seq = 1
+    start_id = 0
     end_id = -1
     pause_seq = 0
 
-    write_img = 1
+    seq_ids = None
+    # seq_ids = [0, 1, 2, 3, 16]
+
+    write_img = 0
     show_frame_id = 0
     dst_root_dir = '../../Reports/Thesis/Presentation'
 
@@ -111,13 +114,15 @@ if __name__ == '__main__':
     std_pts_ss, ss_std_corners = getNormalizedUnitSquarePts(ss_grid_res_x, ss_grid_res_y, 0.5)
     std_pts_ss_hm = util.homogenize(std_pts_ss)
 
-    if show_all_seq:
-        start_id = 0
-        end_id = n_seq - 1
-        print 'n_seq: ', n_seq
-    elif end_id < start_id:
-        start_id = end_id = seq_id
-    seq_ids = range(start_id, end_id + 1)
+
+    if seq_ids is None:
+        if show_all_seq:
+            start_id = 0
+            end_id = n_seq - 1
+            print 'n_seq: ', n_seq
+        elif end_id < start_id:
+            start_id = end_id = seq_id
+        seq_ids = range(start_id, end_id + 1)
 
     for curr_seq_id in seq_ids:
         seq_name = sequences[curr_seq_id]

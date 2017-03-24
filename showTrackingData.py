@@ -21,9 +21,9 @@ if __name__ == '__main__':
     param_ids = readDistGridParams()
 
     use_arch = 1
-    # arch_root_dir = './C++/MTF/log/archives'
+    arch_root_dir = './C++/MTF/log/archives'
     # arch_root_dir = 'O:\UofA\Results\#Old\\tracking_data'
-    arch_root_dir = 'O:\UofA\Results\#Old\CRV'
+    # arch_root_dir = 'O:\UofA\Results\#Old\CRV'
     arch_name = 'tracking_data'
     in_arch_path = 'tracking_data'
 
@@ -32,12 +32,12 @@ if __name__ == '__main__':
     out_root_dir = 'C++/MTF/log'
     out_root_dir = '../../Reports/Thesis/Presentation'
 
-    data_config_id = 0
+    data_config_id = 26
     n_trackers = 4
 
-    actor_id = 1
+    actor_id = 0
     # start_id = 3 + 1 * 16
-    start_id = 78
+    start_id = 104
     end_id = -1
     # end_id = 9 + 1 * 16
     actor = 'Live'
@@ -46,10 +46,10 @@ if __name__ == '__main__':
 
     pause_seq = 0
     write_img = 1
-    show_stacked = 1
+    show_stacked = 0
     stack_order = 0  # 0: row major 1: column major
     resize_stacked_img = 1
-    resize_factor = 1
+    resize_factor = 0.75
     convert_to_gs = 0
     show_header = 1
     show_legend = 1
@@ -57,18 +57,18 @@ if __name__ == '__main__':
     annotation_font_size = 1
     annotation_col = None
 
-    show_grid = 1
+    show_grid = 0
     grid_res_x = 40
     grid_res_y = 40
 
-    line_thickness = 1
+    line_thickness = 2
 
     failure_font_size = 1.5
     failure_font_thickness = 2
     legend_font_size = 1.5
     legend_font_thickness = 2
     legend_font_face = cv2.FONT_HERSHEY_COMPLEX_SMALL
-    legend_font_line_type = cv2.CV_AA
+    legend_font_line_type = cv2.LINE_AA
     legend_bkg_col = (0, 0, 0)
     legend_gap = 2
 

@@ -487,7 +487,7 @@ def drawRegion(img, corners, color, thickness=1, annotate_corners=False,
     for i in xrange(4):
         p1 = (int(corners[0, i]), int(corners[1, i]))
         p2 = (int(corners[0, (i + 1) % 4]), int(corners[1, (i + 1) % 4]))
-        cv2.line(img, p1, p2, color, thickness, cv2.CV_AA)
+        cv2.line(img, p1, p2, color, thickness, cv2.LINE_AA)
         if annotate_corners:
             if annotation_col is None:
                 annotation_col = color
@@ -557,7 +557,7 @@ def drawGrid(img, pts, res_x, res_y, color, thickness=1):
             pt_id2 = (y_id + 1) * res_x + x_id
             p1 = (int(pts[0, pt_id1]), int(pts[1, pt_id1]))
             p2 = (int(pts[0, pt_id2]), int(pts[1, pt_id2]))
-            cv2.line(img, p1, p2, color, thickness, cv2.CV_AA)
+            cv2.line(img, p1, p2, color, thickness, cv2.LINE_AA)
 
     # draw horizontal lines
     for y_id in xrange(res_y):

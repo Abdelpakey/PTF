@@ -8,12 +8,12 @@ root_dir='.';
 % actor = actors{actor_id+1};
 % seq_name = sequences{actor_id + 1}{seq_id + 1};
 
-seq_name='comparing_gt_dof_unconstrained_60_100';
+seq_name='comparing_ssm_tmt_stacked_grid_25x25_24_100';
 
 start_time = 0;
 end_time = 0;
 desired_fps = 1000;
-out_fps = 60;
+out_fps = 24;
 quality = 100;
 input_format='avi';
 output_fmt='mp4';

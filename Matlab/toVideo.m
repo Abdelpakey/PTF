@@ -8,14 +8,14 @@ seq_id = 46;
 actor = actors{actor_id+1};
 seq_name = sequences{actor_id + 1}{seq_id + 1};
 
-seq_name='comparing_am_stacked';
+seq_name='goturn_vs_rbt_2dof_nl_bookIII_s3';
 
 start_frame_id = 1;
 end_frame_id = 0;
 
 src_dir=seq_name;
 
-fps = 60;
+fps = 90;
 quality = 100;
 img_fmt='jpg';
 vid_fmt='mp4';
