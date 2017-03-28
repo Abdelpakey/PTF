@@ -5,36 +5,43 @@ from MultiProposalTracker import MultiProposalTracker
 from ParallelTracker import ParallelTracker
 from BakerMatthewsICTracker import BakerMatthewsICTracker as BMICTracker
 from CascadeTracker import CascadeTracker
+from ESMTracker import ESMTracker
+from L1Tracker import L1Tracker
 
 flann_found = True
+cython_found = True
+xvision_found = True
+mtf_found = True
 try:
     from NNTracker import NNTracker
+except:
+    flann_found = False
+try:
+    from cython_trackers.BMICTracker import BMICTracker as BMICTracker_c
+    from cython_trackers.CascadeTracker import CascadeTracker as CascadeTracker_c
+    from cython_trackers.ESMTracker import ESMTracker as ESMTracker_c
+    from cython_trackers.CTracker import CTracker as RKLTracker
+    from cython_trackers.PFTracker import PFTracker as PFTracker
+    from cython_trackers.DESMTracker import DESMTracker as DESMTracker
+    from cython_trackers.DLKTracker import DLKTracker as DLKTracker
+except:
+    cython_found = False
+if cython_found and flann_found:
     from cython_trackers.NNTracker import NNTracker as NNTracker_c
     from cython_trackers.DNNTracker import DNNTracker as DNNTracker
     import cython_trackers.TurnkeyTrackers as cy_tt
-except:
-    flann_found = False
-from ESMTracker import ESMTracker
-from L1Tracker import L1Tracker
-from cython_trackers.BMICTracker import BMICTracker as BMICTracker_c
-from cython_trackers.CascadeTracker import CascadeTracker as CascadeTracker_c
-from cython_trackers.ESMTracker import ESMTracker as ESMTracker_c
-from cython_trackers.CTracker import CTracker as RKLTracker
-from cython_trackers.PFTracker import PFTracker as PFTracker
-from cython_trackers.DESMTracker import DESMTracker as DESMTracker
-from cython_trackers.DLKTracker import DLKTracker as DLKTracker
-xvision_found = True
 try:
     from XVSSDTracker import XVSSDTracker
 except:
     xvision_found = False
-
-from mtfTracker import mtfTracker
+try:
+    from mtfTracker import mtfTracker
+except:
+    mtf_found = False
 from Homography import random_homography
 
-
 class TrackingParams:
-    def __init__(self, xvision_foundtype, params):
+    def __init__(self, type, params):
         self.type = type
         self.params = {}
         self.tracker = None
@@ -75,7 +82,7 @@ class TrackingParams:
                         warp_generator=lambda: random_homography(current_params['nn_sigma_d'].val,
                                                                  current_params['nn_sigma_t'].val),
                         feature=feature)
-                elif version == 'cython':
+                elif cython_found and version == 'cython':
                     print 'Using cython version'
                     # NNTracker(nn_iters, nn_samples, res[0], res[1], 0.06, 0.04, use_scv)
                     return NNTracker_c(
@@ -104,7 +111,7 @@ class TrackingParams:
                         use_scv=current_params['enable_scv'].val,
                         multi_approach=current_params['multi_approach'].val,
                         feature=feature)
-                elif version == 'cython':
+                elif cython_found and version == 'cython':
                     print 'Using cython version'
                     # NNTracker(nn_iters, nn_samples, res[0], res[1], 0.06, 0.04, use_scv)
                     return ESMTracker_c(
@@ -132,7 +139,7 @@ class TrackingParams:
                         use_scv=current_params['enable_scv'].val,
                         multi_approach=current_params['multi_approach'].val,
                         feature=feature)
-                elif version == 'cython':
+                elif cython_found and version == 'cython':
                     print 'Using cython version'
                     # NNTracker(nn_iters, nn_samples, res[0], res[1], 0.06, 0.04, use_scv)
                     return BMICTracker_c(
@@ -163,7 +170,7 @@ class TrackingParams:
                     print 'Using python version'
                     return CascadeTracker(
                         initTrackers(feature, current_params), feature=feature)
-                elif version == 'cython':
+                elif cython_found and version == 'cython':
                     print 'Using cython version'
                     # NNTracker(nn_iters, nn_samples, res[0], res[1], 0.06, 0.04, use_scv)
                     return CascadeTracker_c(
@@ -266,7 +273,7 @@ class TrackingParams:
                         )
                     )
                     return CascadeTracker(trackers, feature=feature)
-                elif version == 'cython':
+                elif cython_found and version == 'cython':
                     print 'Using cython version'
                     # NNTracker(nn_iters, nn_samples, res[0], res[1], 0.06, 0.04, use_scv)
                     trackers.append(
@@ -311,7 +318,7 @@ class TrackingParams:
                 nn_samples=current_params['no_of_samples'].val,
                 bmic_iters=current_params['ic_max_iterations'].val
             )
-        elif type == 'mtf':
+        elif mtf_found and type == 'mtf':
             self.update = lambda feature, current_params=self.params: mtfTracker(
                 current_params['config_root_dir'].val)
         else:

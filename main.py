@@ -7,7 +7,12 @@ import config
 from FilteringParams import *
 from TrackingParams import *
 import sys
-import CModules.xvInput as xvInput
+
+xv_input_found = True
+try:
+    import CModules.xvInput as xvInput
+except:
+    xv_input_found = False
 import time
 
 
@@ -85,7 +90,7 @@ class StandaloneTrackingApp(InteractiveTrackingApp):
             return False
 
         self.start_time_win = time.clock()
-        if self.pipeline == 'XVision':
+        if xv_input_found and self.pipeline == 'XVision':
             # xvInput.getFrame(self.src_img)
             self.src_img = xvInput.getFrame2(0)
         else:
@@ -490,9 +495,11 @@ if __name__ == '__main__':
     tracking_data_fname = None
     extended_db = 1
 
-    [basic_params, labels, default_id] = config.getBasicParams(extended_db)
-    tracking_params = config.getTrackingParams()
+    tracking_params = config.getTrackingParams(flann_found, cython_found,
+                                               xvision_found, mtf_found)
+    trackers = sorted(tracking_params.keys())
     filtering_params = config.getFilteringParams()
+    [basic_params, labels, default_id] = config.getBasicParams(trackers, extended_db)
 
     if len(sys.argv) > 1:
         extended_db = True

@@ -3,7 +3,7 @@ import numpy as np
 from Misc import getParamDict
 
 
-def getBasicParams(extended_db=False):
+def getBasicParams(trackers, extended_db=False):
     video_pipeline = ['OpenCV', 'XVision']
     cv_sources = ['jpeg', 'mpeg', 'usb camera']
     xv_sources = ['mpeg', 'usb camera', 'firewire camera']
@@ -15,7 +15,6 @@ def getBasicParams(extended_db=False):
     features = ['none', 'hoc']
     smoothing = ['none', 'box', 'bilateral', 'gauss', 'median']
     smoothing_kernel = map(str, range(3, 26, 2))
-    trackers = sorted(getTrackingParams().keys())
     params = [video_pipeline, sources, initialization, color_spaces, filters, features, smoothing, smoothing_kernel,
               trackers]
     labels = ['pipeline', 'source', 'initialization', 'color_space', 'filter', 'feature', 'smoothing',
@@ -38,7 +37,7 @@ def getBasicParams(extended_db=False):
         tasks = [seq.values() for seq in tasks]
         params.extend([task_type, tasks])
         labels.extend(['type', 'task'])
-        default_id.extend([2, 2])
+        default_id.extend([0, 3])
     else:
         task_type = ['simple', 'complex']
         light_conditions = ['nl', 'dl']
@@ -59,7 +58,9 @@ def getBasicParams(extended_db=False):
     return params, labels, default_id
 
 
-def getTrackingParams(simple_only=False):
+def getTrackingParams(flann_found, cython_found,
+                      xvision_found, mtf_found,
+                      simple_only=False):
     multichannel_nn = ['none', 'mean', 'majority', 'flatten']
     multichannel_esm = ['none', 'mean', 'flatten']
     multichannel_ict = ['none', 'mean', 'flatten']
@@ -213,17 +214,32 @@ def getTrackingParams(simple_only=False):
         'enable_gnn': {'id': 4, 'default': False, 'type': 'boolean', 'list': [True, False]},
         'enable_exp': {'id': 4, 'default': False, 'type': 'boolean', 'list': [True, False]},
     }
-    tracking_params = {'nn': params_nn, 'esm': params_esm, 'ict': params_ict, 'l1': params_l1,
-                       'desm': params_desm, 'dnn': params_dnn, 'dlk': params_dlk, 'rkl': params_rkl,
-                       'pf': params_pf, 'tt_dnn_bmic': params_tt_dnn_bmic, 'tt_nn_bmic': params_tt_nn_bmic,
-                       'nnic': params_nnic, 'xv_ssd': params_xv_ssd, 'mtf': params_mtf}
+    tracking_params = {'esm': params_esm, 'ict': params_ict, 'l1': params_l1,
+                       'rkl': params_rkl, 'pf': params_pf}
+
+    if flann_found:
+        tracking_params['nn'] = params_nn
+        tracking_params['tt_nn_bmic'] = params_tt_nn_bmic
+        tracking_params['nnic'] = params_nnic
+        if cython_found:
+            tracking_params['dnn'] = params_dnn
+            tracking_params['tt_dnn_bmic'] = params_tt_dnn_bmic
+    if cython_found:
+        tracking_params['desm'] = params_desm
+        tracking_params['dlk'] = params_dlk
+    if xvision_found:
+        tracking_params['xv_ssd'] = params_xv_ssd
+    if mtf_found:
+        tracking_params['mtf'] = params_mtf
 
     if not simple_only:
         tracker_list = tracking_params.keys()
         params_cascade = {'trackers': {'id': 1, 'default': ['nn', 'ict', 'none', 'none', 'none'],
                                        'type': 'string_list', 'list': tracker_list},
                           'parameters': {'id': 2, 'default': [None, None, None, None, None],
-                                         'type': 'tracking_params', 'list': getTrackingParams(simple_only=True)},
+                                         'type': 'tracking_params', 'list': getTrackingParams(flann_found, cython_found,
+                                                                                              xvision_found, mtf_found,
+                                                                                              simple_only=True)},
                           'version': {'id': 0, 'default': 'python', 'type': 'string', 'list': ['python', 'cython']}
         }
         tracking_params['cascade'] = params_cascade

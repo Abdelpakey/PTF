@@ -1,6 +1,5 @@
 from Misc import readTrackingData
 from Misc import getParamDict
-from Misc import readDistGridParams
 from Misc import drawRegion
 from Misc import drawGrid
 from Misc import col_rgb
@@ -18,7 +17,6 @@ import utility as util
 
 if __name__ == '__main__':
     params_dict = getParamDict()
-    param_ids = readDistGridParams()
 
     use_arch = 1
     arch_root_dir = './C++/MTF/log/archives'
@@ -51,7 +49,7 @@ if __name__ == '__main__':
     resize_stacked_img = 1
     resize_factor = 0.75
     convert_to_gs = 0
-    show_header = 1
+    show_header = 0
     show_legend = 1
     annotate_corners = 1
     annotation_font_size = 1

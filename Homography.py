@@ -103,15 +103,15 @@ def compute_homography(in_pts, out_pts):
     in_pts = homogenize(in_pts)
     out_pts = homogenize(out_pts)
     constraint_matrix = np.empty((num_pts*2, 9))
-    #print "in_pts=", in_pts
-    #print "out_pts=", out_pts
-    #print "num_pts=", num_pts
+    # print "in_pts=", in_pts
+    # print "out_pts=", out_pts
+    # print "num_pts=", num_pts
     for i in xrange(num_pts):
         #print "i=", i
         p = in_pts[:,i]
         q = out_pts[:,i]
-        constraint_matrix[2*i,:] = np.concatenate([[0,0,0], -p, q[1]*p], axis=1)
-        constraint_matrix[2*i+1,:] = np.concatenate([p, [0,0,0], -q[0]*p], axis=1)
+        constraint_matrix[2*i,:] = np.concatenate([[0,0,0], -p, q[1]*p], axis=0)
+        constraint_matrix[2*i+1,:] = np.concatenate([p, [0,0,0], -q[0]*p], axis=0)
     U,S,V = np.linalg.svd(constraint_matrix)
     homography = V[8].reshape((3,3))
     homography /= homography[2,2]

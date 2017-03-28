@@ -6,7 +6,12 @@ from GUI import *
 from Misc import *
 from ImageUtils import *
 from matplotlib import pyplot as plt
-import CModules.xvInput as xvInput
+
+xv_input_found = True
+try:
+    import CModules.xvInput as xvInput
+except:
+    xv_input_found = False
 
 
 class InteractiveTrackingApp:
@@ -265,7 +270,7 @@ class InteractiveTrackingApp:
         if self.source == 'jpeg' or self.source == 'mpeg':
             self.processDatasetParams()
 
-        if self.pipeline == 'XVision':
+        if xv_input_found and self.pipeline == 'XVision':
             if self.source == 'usb camera':
                 self.from_cam = True
                 [width, height] = xvInput.initSource(3, None, None)

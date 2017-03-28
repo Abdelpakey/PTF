@@ -84,8 +84,8 @@ plot_type_in_title = 0;
 bar_width=0.5;
 bar_line_width = 2;
 bar_line_style = '-';
-annotate_bars = 1;
-annotation_font_size = 14;
+annotate_bars = 0;
+annotation_font_size = 20;
 annotation_col = [0, 0, 0];
 % annotation_col = [];
 horz_bar_plot = 1;
@@ -134,11 +134,11 @@ reset_to_init = 1;
 % load generic plot configurations
 % genericConfigsAM_gd;
 % genericConfigsAM_stochastic;
-% genericConfigsSM_robust;
-genericConfigsSSM_thesis;
+genericConfigsSM_robust;
+% genericConfigsSSM_thesis;
 
-% plot_ids = [3050, 3051];
-base_id = 3040;
+% plot_ids = [3042];
+base_id = 4010;
 plot_ids = [base_id, base_id + 1, base_id + 2];
 
 % genericConfigsAM;

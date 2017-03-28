@@ -412,7 +412,7 @@ cpdef double[:,:] compute_homography(double[:,:] in_pts, double[:,:] out_pts):
         constraint_matrix[r2,7] = -out_pts[0,i] * in_pts[1,i]
         constraint_matrix[r2,8] = -out_pts[0,i]
     U,S,V = np.linalg.svd(constraint_matrix)
-    cdef double[:,:] H = V[8].reshape(3,3) / V[8][-1]
+    cdef double[:,:] H = V[8].reshape(3,3) / V[8][8]
     return H
 
 cpdef double[:,:] compute_affine(double[:,:] in_pts, double[:,:] tmplt_size, double[:,:] out_pts):
@@ -498,9 +498,9 @@ def apply_to_pts(homography, pts):
     (h,w) = pts.shape    
     result = np.empty((h+1,w))
     result[:h] = pts
-    result[-1].fill(1)
+    result[h].fill(1)
     result = np.asmatrix(homography) * result
-    result[:h] = result[:h] / result[-1]
+    result[:h] = result[:h] / result[h]
     result[np.isnan(result)] = 0
     return np.asarray(result[:h])
 

@@ -1,6 +1,7 @@
 *.pyc
 *~
 .idea/
+misc/
 ssm_sigma/
 duplicates/
 C++/Xvision2/
