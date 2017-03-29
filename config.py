@@ -3,12 +3,14 @@ import numpy as np
 from Misc import getParamDict
 
 
-def getBasicParams(trackers, extended_db=False):
-    video_pipeline = ['OpenCV', 'XVision']
+def getBasicParams(trackers, xv_input_found, extended_db):
+    video_pipeline = ['OpenCV']
     cv_sources = ['jpeg', 'mpeg', 'usb camera']
-    xv_sources = ['mpeg', 'usb camera', 'firewire camera']
-    sources = [cv_sources, xv_sources]
-
+    sources = [cv_sources]
+    if xv_input_found:
+        video_pipeline.append('XVision')
+        xv_sources = ['mpeg', 'usb camera', 'firewire camera']
+        sources.append(xv_sources)
     initialization = ['manual', 'ground_truth']
     color_spaces = ['Grayscale', 'RGB', 'HSV', 'YCrCb', 'HLS', 'Lab']
     filters = ['none', 'gabor', 'laplacian', 'sobel', 'scharr', 'canny', 'LoG', 'DoG']

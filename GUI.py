@@ -476,7 +476,11 @@ class GUI:
     def setTasks(self, value):
         type_id = self.params[self.type_index].index(value)
         frame_id = self.widgets.index('task') + self.no_of_rows
-        self.item_vars[self.task_index].set(self.params[self.task_index][type_id][self.current_id[self.task_index]])
+        try:
+            self.item_vars[self.task_index].set(self.params[self.task_index][type_id][self.current_id[self.task_index]])
+        except IndexError:
+            self.current_id[self.task_index]=0
+            self.item_vars[self.task_index].set(self.params[self.task_index][type_id][self.current_id[self.task_index]])
         self.item_menus[self.task_index].pack_forget()
         self.item_menus[self.task_index] = tk.OptionMenu(self.parent_frames[frame_id],
                                                          self.item_vars[self.task_index],

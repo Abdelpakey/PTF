@@ -193,13 +193,13 @@ class StandaloneTrackingApp(InteractiveTrackingApp):
             self.switch_plot = False
             # print "here we are"
             if self.plot_fps:
-                fig.canvas.set_window_title('FPS')
+                fig.canvas.set_window_title('Press shift to switch to tracking error')
                 plt.ylabel('FPS')
                 plt.title('FPS')
                 self.max_fps = max(self.curr_fps_list)
                 ax.set_ylim(0, self.max_fps)
             else:
-                fig.canvas.set_window_title('Tracking Error')
+                fig.canvas.set_window_title('Press shift to switch to FPS')
                 plt.ylabel('Error')
                 plt.title('Tracking Error')
                 self.max_error = max(self.curr_error_list)
@@ -458,12 +458,12 @@ class animatedPlot:
             continue
         print 'Starting now !'
         fig = plt.figure(0)
-        fig.canvas.set_window_title('Tracking Error')
+        fig.canvas.set_window_title('Press shift to switch to FPS')
         cid = fig.canvas.mpl_connect('key_press_event', app.onKeyPress)
         ax = plt.axes(xlim=(0, app.no_of_frames), ylim=(0, 5))
         plt.xlabel('Frame')
-        # plt.ylabel('Error')
-        # plt.title('Tracking Error')
+        plt.ylabel('Error')
+        plt.title('Tracking Error')
         plt.grid(True)
         line1, line2 = ax.plot([], [], 'r', [], [], 'g')
         plt.legend(('Average', 'Current'))
@@ -499,7 +499,7 @@ if __name__ == '__main__':
                                                xvision_found, mtf_found)
     trackers = sorted(tracking_params.keys())
     filtering_params = config.getFilteringParams()
-    [basic_params, labels, default_id] = config.getBasicParams(trackers, extended_db)
+    [basic_params, labels, default_id] = config.getBasicParams(trackers, xv_input_found, extended_db)
 
     if len(sys.argv) > 1:
         extended_db = True
@@ -522,12 +522,12 @@ if __name__ == '__main__':
         app.run(show_img)
     elif use_plot:
         fig = plt.figure(0)
-        fig.canvas.set_window_title('Tracking Error')
+        fig.canvas.set_window_title('Press shift to switch to FPS')
         cid = fig.canvas.mpl_connect('key_press_event', app.onKeyPress)
         ax = plt.axes(xlim=(0, app.no_of_frames), ylim=(0, 5))
         plt.xlabel('Frame')
-        # plt.ylabel('Error')
-        # plt.title('Tracking Error')
+        plt.ylabel('Error')
+        plt.title('Tracking Error')
         plt.grid(True)
         line1, line2 = ax.plot([], [], 'r', [], [], 'g')
         plt.legend(('Average', 'Current'))
