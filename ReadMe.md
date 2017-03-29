@@ -24,6 +24,7 @@ All optional Cython and C modules used by PTF can be compiled and installed by s
 
 Basic Usage
 ===========
+Set `db_root_path` in `main.py` if running on dataset sequences and adjust rrmaining settings in `config.py`.
 
 Running with GUI:
 ```
