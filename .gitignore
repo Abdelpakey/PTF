@@ -19,7 +19,7 @@ ROS/
 batch/
 build/
 matrices/
-Backup/
+backup/
 Results/
 CModules/*.o
 CModules/*.so
