@@ -19,7 +19,7 @@ class InteractiveTrackingApp:
                  tracking_params, filtering_params, labels, default_id=None,
                  success_threshold=5, batch_mode=False, agg_filename=None,
                  avg_filename=None, anim_app=None, extended_db=False,
-                 write_tracking_data=False, tracking_data_fname=None):
+                 write_tracking_data=False, tracking_data_fname=None, camera_id = 0):
         self.auto_start = False
         self.extended_db = extended_db
         self.root_path = root_path
@@ -103,6 +103,8 @@ class InteractiveTrackingApp:
         self.src_img = None
         self.img = None
         self.no_of_frames = 1
+        self.data_file = None
+        self.camera_id = camera_id
 
         self.updates = None
         self.success_threshold = success_threshold
@@ -269,6 +271,8 @@ class InteractiveTrackingApp:
         # print "Using ", self.tracker_name, " tracker"
         if self.source == 'jpeg' or self.source == 'mpeg':
             self.processDatasetParams()
+        else:
+            self.data_file=self.source
 
         if xv_input_found and self.pipeline == 'XVision':
             if self.source == 'usb camera':
@@ -293,7 +297,7 @@ class InteractiveTrackingApp:
             if self.source == 'usb camera':
                 print "Initializing camera..."
                 self.from_cam = True
-                if not self.cap.open(0):
+                if not self.cap.open(self.camera_id):
                     raise SystemExit("No valid camera found")
                 dWidth = self.cap.get(3)
                 dHeight = self.cap.get(4)

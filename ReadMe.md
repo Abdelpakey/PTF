@@ -26,7 +26,7 @@ Basic Usage
 ===========
 Setting parameters:
 
-Set `db_root_path` in `main.py` if running on dataset sequences and adjust remaining settings in `config.py`.
+Set `db_root_path` in `main.py` if running on dataset sequences otherwise select `usb camera` for `source` and adjust `camera_id` in `main.py`. All other parameters can be  adjusted either from the GUI or in `config.py`.
 
 Running with GUI:
 ```
