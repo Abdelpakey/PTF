@@ -24,7 +24,7 @@ class StandaloneTrackingApp(InteractiveTrackingApp):
                  buffer_size, success_threshold=5, batch_mode=False,
                  agg_filename=None, avg_filename=None, anim_app=None, extended_db=False,
                  write_tracking_data=False, tracking_data_fname=None, camera_id = 0):
-        track_window_name = 'Tracked Images'
+        track_window_name = 'Tracked Images - Press space to pause and r to rewind'
         InteractiveTrackingApp.__init__(self, init_frame, root_path, track_window_name, params,
                                         tracking_params, filtering_params, labels, default_id,
                                         success_threshold, batch_mode, agg_filename, avg_filename,
@@ -486,7 +486,7 @@ if __name__ == '__main__':
     init_frame = 0
     success_threshold = 5
     frame_buffer_size = 1000
-    db_root_path = '../../Datasets'
+    db_root_path = '../Datasets'
     camera_id = 1
     agg_filename = None
     avg_filename = None

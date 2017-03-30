@@ -3,6 +3,8 @@ Welcome to the home of **Python Tracking Framework (PTF)** - a collection of reg
 Prerequisites:
 ==============
 * [OpenCV](http://opencv.org/)
+* [Numpy](http://www.numpy.org/)
+* [Scipy](https://www.scipy.org/)
 * [FLANN](http://www.cs.ubc.ca/research/flann/) (optional)
 * [Cython](http://cython.org/) (optional)
 * [MTF](http://webdocs.cs.ualberta.ca/~vis/mtf/) (optional)
@@ -20,13 +22,15 @@ All optional Cython and C modules used by PTF can be compiled and installed by s
     * `make cython`
     * `make l1`
     * `make mtf`
+	
+* If make does not work on your system (e.g. if it has Windows OS), run `python setup_cython.py build_ext --inplace` to compile the Cython modules.	
 
 
 Basic Usage
 ===========
 Setting parameters:
 
-Set `db_root_path` in `main.py` if running on dataset sequences otherwise select `usb camera` for `source` and adjust `camera_id` in `main.py`. All other parameters can be  adjusted either from the GUI or in `config.py`.
+Set `db_root_path` in `main.py` if running on a dataset sequence otherwise select `usb camera` for `source` and adjust `camera_id` in `main.py`. All other parameters can be  adjusted either from the GUI or in `config.py`.
 
 Running with GUI:
 ```

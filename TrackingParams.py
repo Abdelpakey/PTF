@@ -14,7 +14,8 @@ xvision_found = True
 mtf_found = True
 try:
     from NNTracker import NNTracker
-except:
+except ImportError:
+    print 'FLANN not found'
     flann_found = False
 try:
     from cython_trackers.BMICTracker import BMICTracker as BMICTracker_c
@@ -24,7 +25,8 @@ try:
     from cython_trackers.PFTracker import PFTracker as PFTracker
     from cython_trackers.DESMTracker import DESMTracker as DESMTracker
     from cython_trackers.DLKTracker import DLKTracker as DLKTracker
-except:
+except ImportError:
+    print 'Cython modules not found'
     cython_found = False
 if cython_found and flann_found:
     from cython_trackers.NNTracker import NNTracker as NNTracker_c
@@ -32,11 +34,13 @@ if cython_found and flann_found:
     import cython_trackers.TurnkeyTrackers as cy_tt
 try:
     from XVSSDTracker import XVSSDTracker
-except:
+except ImportError:
+    print 'Xvision not found'
     xvision_found = False
 try:
     from mtfTracker import mtfTracker
-except:
+except ImportError as err:
+    print 'MTF not found: {:s}'.format(err)
     mtf_found = False
 from Homography import random_homography
 
