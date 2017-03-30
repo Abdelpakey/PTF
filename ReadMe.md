@@ -5,6 +5,7 @@ Prerequisites:
 * [OpenCV](http://opencv.org/)
 * [Numpy](http://www.numpy.org/)
 * [Scipy](https://www.scipy.org/)
+* [Matplotlib](http://matplotlib.org/)
 * [FLANN](http://www.cs.ubc.ca/research/flann/) (optional)
 * [Cython](http://cython.org/) (optional)
 * [MTF](http://webdocs.cs.ualberta.ca/~vis/mtf/) (optional)
