@@ -21,14 +21,13 @@ import utility as util
 if __name__ == '__main__':
 
     params_dict = getParamDict()
-    param_ids = readDistGridParams()
     actors = params_dict['actors']
     sequences = params_dict['sequences']
     db_root_dir = '../Datasets'
     # img_name_fmt='img%03d.jpg'
     img_name_fmt = 'frame%05d.jpg'
 
-    gt_col_name = 'red'
+    gt_col_name = 'green'
     gt_thickness = 2
     conn_col_name = 'blue'
     conn_thickness = 2
@@ -57,7 +56,7 @@ if __name__ == '__main__':
     use_opt_gt = 1
     use_reinit_gt = 0
 
-    actor_id = 7
+    actor_id = 0
     seq_id = 0
     init_frame_id = 0
 
@@ -66,12 +65,12 @@ if __name__ == '__main__':
     end_id = -1
     pause_seq = 0
 
-    seq_ids = None
-    # seq_ids = [0, 1, 2, 3, 16]
+    # seq_ids = None
+    seq_ids = [0, 1, 2, 3, 16]
 
-    write_img = 0
+    write_img = 1
     show_frame_id = 0
-    dst_root_dir = '../../Reports/Thesis/Presentation'
+    dst_root_dir = '../../..//206'
 
     # settings for synthetic sequences
     syn_ssm = 'c8'
