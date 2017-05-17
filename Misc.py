@@ -487,7 +487,10 @@ def drawRegion(img, corners, color, thickness=1, annotate_corners=False,
     for i in xrange(4):
         p1 = (int(corners[0, i]), int(corners[1, i]))
         p2 = (int(corners[0, (i + 1) % 4]), int(corners[1, (i + 1) % 4]))
-        cv2.line(img, p1, p2, color, thickness, cv2.LINE_AA)
+        if cv2.__version__ .startswith('3'):
+            cv2.line(img, p1, p2, color, thickness, cv2.LINE_AA)
+        else:
+            cv2.line(img, p1, p2, color, thickness, cv2.CV_AA)
         if annotate_corners:
             if annotation_col is None:
                 annotation_col = color
@@ -1660,6 +1663,7 @@ def readReinitGT(gt_path, reinit_frame_id):
     gt_fid.close()
     return n_gt_frames, reinit_gt
 
+
 def getMeanCornerDistanceError(tracker_pos, gt_pos, _overflow_err=1e3):
     # mean corner distance error
     err = 0
@@ -1922,6 +1926,8 @@ def getTrackingErrors(tracker_path_orig, gt_path, _arch_fid=None, _reinit_from_g
                 n_lines, n_gt_frames - failure_count * (_reinit_frame_skip - 1))
             return None, None
     return tracking_errors, failure_count
+
+
 def arrangeCorners(orig_corners):
     # print 'orig_corners:\n', orig_corners
     # print 'orig_corners.shape:\n', orig_corners.shape
@@ -2025,8 +2031,8 @@ def arrangeCornersWithIDs(orig_corners):
 
 
 def getSyntheticSeqSuffix(syn_ssm, syn_ssm_sigma_id, syn_ilm='0',
-                        syn_am_sigma_id=0, syn_add_noise=0,
-                        syn_noise_mean=0, syn_noise_sigma=10):
+                          syn_am_sigma_id=0, syn_add_noise=0,
+                          syn_noise_mean=0, syn_noise_sigma=10):
     syn_out_suffix = 'warped_{:s}_s{:d}'.format(syn_ssm, syn_ssm_sigma_id)
     if syn_ilm != "0":
         syn_out_suffix = '{:s}_{:s}_s{:d}'.format(syn_out_suffix,
@@ -2678,7 +2684,7 @@ def getParamDict():
         39: 'wall_range'
     }
 
-    sequences_tmt_fine = {
+    sequences_tfmt = {
         0: 'fish_lure_left',
         1: 'fish_lure_right',
         2: 'fish_lure_fast_left',
@@ -2690,7 +2696,19 @@ def getParamDict():
         8: 'hexagon_task_left',
         9: 'hexagon_task_right',
         10: 'hexagon_task_fast_left',
-        11: 'hexagon_task_fast_right'
+        11: 'hexagon_task_fast_right',
+        12: 'fish_lure_cam1',
+        13: 'fish_lure_cam2',
+        14: 'fish_lure_fast_cam1',
+        15: 'fish_lure_fast_cam2',
+        16: 'key_task_cam1',
+        17: 'key_task_cam2',
+        18: 'key_task_fast_cam1',
+        19: 'key_task_fast_cam2',
+        20: 'hexagon_task_cam1',
+        21: 'hexagon_task_cam2',
+        22: 'hexagon_task_fast_cam1',
+        23: 'hexagon_task_fast_cam2'
     }
 
     sequences_tmt_fine_full = {
@@ -2748,31 +2766,31 @@ def getParamDict():
         4: 'chess_board_4'
     }
     sequences_synthetic = {
-        0:	'bear',
-        1:	'board_robot',
-        2:	'book4',
-        3:	'box',
-        4:	'box_robot',
-        5:	'building_dynamic_lighting',
-        6:	'cat_cylinder',
-        7:	'cube',
-        8:	'dft_still',
-        9:	'lemming',
-        10:	'mission_dynamic_lighting',
-        11:	'mouse_pad',
-        12:	'nl_bookI_s3',
-        13:	'nl_bus',
-        14:	'nl_cereal_s3',
-        15:	'nl_juice_s3',
-        16:	'nl_letter',
-        17:	'nl_mugI_s3',
-        18:	'nl_newspaper',
-        19:	'paris_dynamic_lighting',
-        20:	'phone',
-        21:	'sunset_dynamic_lighting',
-        22:	'sylvester',
-        23:	'towel',
-        24:	'wood_dynamic_lighting'
+        0: 'bear',
+        1: 'board_robot',
+        2: 'book4',
+        3: 'box',
+        4: 'box_robot',
+        5: 'building_dynamic_lighting',
+        6: 'cat_cylinder',
+        7: 'cube',
+        8: 'dft_still',
+        9: 'lemming',
+        10: 'mission_dynamic_lighting',
+        11: 'mouse_pad',
+        12: 'nl_bookI_s3',
+        13: 'nl_bus',
+        14: 'nl_cereal_s3',
+        15: 'nl_juice_s3',
+        16: 'nl_letter',
+        17: 'nl_mugI_s3',
+        18: 'nl_newspaper',
+        19: 'paris_dynamic_lighting',
+        20: 'phone',
+        21: 'sunset_dynamic_lighting',
+        22: 'sylvester',
+        23: 'towel',
+        24: 'wood_dynamic_lighting'
     }
 
     sequences_live = {
@@ -2785,7 +2803,7 @@ def getParamDict():
         1: 'UCSB',
         2: 'LinTrack',
         3: 'PAMI',
-        4: 'LinTrackShort',
+        4: 'TMT_FINE',
         5: 'METAIO',
         6: 'CMT',
         7: 'VOT',
@@ -2793,7 +2811,7 @@ def getParamDict():
         9: 'VTB',
         10: 'VIVID',
         11: 'TrakMark',
-        12: 'TMT_FINE',
+        12: 'LinTrackShort',
         13: 'Mosaic',
         14: 'Misc',
         15: 'Synthetic',
@@ -2857,7 +2875,7 @@ def getParamDict():
                           sequences_ucsb,
                           sequences_lintrack,
                           sequences_pami,
-                          sequences_lintrack_short,
+                          sequences_tfmt,
                           sequences_metaio,
                           sequences_cmt,
                           sequences_vot,
@@ -2865,7 +2883,7 @@ def getParamDict():
                           sequences_vtb,
                           sequences_vivid,
                           sequences_trakmark,
-                          sequences_tmt_fine,
+                          sequences_lintrack_short,
                           sequences_mosaic,
                           sequences_misc,
                           sequences_synthetic,

@@ -10,9 +10,9 @@ tracker_configs[config_id] = [
     {'sm': 'opt_gt', 'am': 'ccre25r30i4u', 'ssm': '8', 'iiw': 0, 'legend': 'Homography', 'col': 'red'},
     {'sm': 'opt_gt', 'am': 'lscv50r30i4u', 'ssm': '6', 'iiw': 0, 'legend': 'Affine', 'col': 'green'},
     {'sm': 'opt_gt', 'am': 'rscv50r30i4u', 'ssm': '4', 'iiw': 0, 'legend': 'Similitude', 'col': 'orange'},
-    {'sm': 'opt_gt', 'am': 'scv50r30i4u', 'ssm': '2', 'iiw': 0, 'legend': 'Translation', 'col': 'cyan'},
     {'sm': 'opt_gt', 'am': 'rscv50r30i4u', 'ssm': '3', 'iiw': 0, 'legend': 'Isometry', 'col': 'magenta'},
-    {'sm': 'opt_gt', 'am': 'rscv50r30i4u', 'ssm': '3s', 'iiw': 0, 'legend': 'Transcaling', 'col': 'purple'}
+    {'sm': 'opt_gt', 'am': 'rscv50r30i4u', 'ssm': '3s', 'iiw': 0, 'legend': 'IST', 'col': 'purple'},
+    {'sm': 'opt_gt', 'am': 'scv50r30i4u', 'ssm': '2', 'iiw': 0, 'legend': 'Translation', 'col': 'cyan'}
 ]
 
 # compare variants of LK
@@ -306,4 +306,93 @@ tracker_configs[config_id] = [
      'arch_name': 'resl_fa_ia_fc_ic_esm_nn_nnic_ssim_50r_30i_4u_2r_subseq10_tulp_reinit_gt'},
     {'fname': 'rklfc10rLMS25p10Ki5t_ssim50r30i4uReinitGT_2r_0', 'legend': 'LMES', 'col': 'cyan',
      'arch_name': 'resh_grid_rkl_pf_pffc_ssim_50r_30i_4u_2r_subseq10_tulp_reinit_gt'},
+]
+# resh_dsst_2_3_4_cmt_2_3_4_tmtfineEIH_jacc
+# cmt2_50r30i4u_4_0.txt
+# cmt3_50r30i4u_4_0.txt
+# cmt4_50r30i4u_4_0.txt
+# dsst2_50r30i4u_4_0.txt
+# dsst3_50r30i4u_4_0.txt
+# dsst4_50r30i4u_4_0.txt
+
+# resl_kcf_mil_rct_strk_tld_gtrn_frg_tmtfineEIH_jacc
+# frg_50r30i4u_4_0.txt
+# gtrn_50r30i4u_4_0.txt
+# kcf_50r30i4u_4_0.txt
+# mil_50r30i4u_4_0.txt
+# rct_50r30i4u_4_0.txt
+# strk_50r30i4u_4_0.txt
+# tld_50r30i4u_4_0.txt
+
+# res_grid_rkl_cv50r10ki25pfc_ncc_50r10ki_30i_4u_4_subseq10_tmtfineEIH_jaccard_mcd
+# gridcv50r10ki25p_ssd50r30i4u_4_0.txt
+# rklcv50r10ki5pfc_ncc50r30i4u_4_0.txt
+
+
+config_id = 28
+out_dirs[config_id] = 'crv_17_demo_tfmt_1'
+tracker_configs[config_id] = [
+    {'fname': 'dsst4_50r30i4u_4_0', 'legend': 'RSST', 'col': 'red',
+    'arch_name': 'resh_dsst_2_3_4_cmt_2_3_4_tmtfineEIH_jacc'},
+    {'sm': 'gt', 'am': 'ccre25r30i4u', 'ssm': '8', 'iiw': 0, 'legend': '', 'col': 'green', 'no_stack': 1},
+    {'fname': 'dsst3_50r30i4u_4_0', 'legend': 'DSST', 'col': 'magenta',
+     'arch_name': 'resh_dsst_2_3_4_cmt_2_3_4_tmtfineEIH_jacc'},
+    {'fname': 'strk_50r30i4u_4_0', 'legend': 'Struck', 'col': 'blue',
+     'arch_name': 'resl_kcf_mil_rct_strk_tld_gtrn_frg_tmtfineEIH_jacc'},
+    {'fname': 'kcf_50r30i4u_4_0', 'legend': 'KCF', 'col': 'cyan',
+     'arch_name': 'resl_kcf_mil_rct_strk_tld_gtrn_frg_tmtfineEIH_jacc'},
+]
+config_id = 29
+out_dirs[config_id] = 'crv_17_demo_tfmt_2'
+tracker_configs[config_id] = [
+    {'fname': 'dsst4_50r30i4u_4_0', 'legend': 'RSST', 'col': 'red',
+    'arch_name': 'resh_dsst_2_3_4_cmt_2_3_4_tmtfineEIH_jacc'},
+    {'sm': 'gt', 'am': 'ccre25r30i4u', 'ssm': '8', 'iiw': 0, 'legend': '', 'col': 'green', 'no_stack': 1},
+    {'fname': 'gtrn_50r30i4u_4_0', 'legend': 'GOTURN', 'col': 'magenta',
+     'arch_name': 'resh_dsst_2_3_4_cmt_2_3_4_tmtfineEIH_jacc'},
+    {'fname': 'rklcv50r10ki5pfc_ncc50r30i4u_4_0', 'legend': 'RKLT', 'col': 'blue',
+     'arch_name': 'res_grid_rkl_cv50r10ki25pfc_ncc_50r10ki_30i_4u_4_subseq10_tmtfineEIH_jaccard_mcd'},
+    {'fname': 'gridcv50r10ki25p_ssd50r30i4u_4_0', 'legend': 'RANSAC', 'col': 'cyan',
+     'arch_name': 'res_grid_rkl_cv50r10ki25pfc_ncc_50r10ki_30i_4u_4_subseq10_tmtfineEIH_jaccard_mcd'},
+]
+config_id = 30
+out_dirs[config_id] = 'crv_17_demo_tfmt_3'
+tracker_configs[config_id] = [
+    {'fname': 'dsst4_50r30i4u_4_0', 'legend': 'RSST', 'col': 'red',
+    'arch_name': 'resh_dsst_2_3_4_cmt_2_3_4_tmtfineEIH_jacc'},
+    {'sm': 'gt', 'am': 'ccre25r30i4u', 'ssm': '8', 'iiw': 0, 'legend': '', 'col': 'green', 'no_stack': 1},
+    {'fname': 'gtrn_50r30i4u_4_0', 'legend': 'GOTURN', 'col': 'magenta',
+     'arch_name': 'resh_dsst_2_3_4_cmt_2_3_4_tmtfineEIH_jacc'},
+    {'fname': 'strk_50r30i4u_4_0', 'legend': 'Struck', 'col': 'blue',
+     'arch_name': 'resl_kcf_mil_rct_strk_tld_gtrn_frg_tmtfineEIH_jacc'},
+    {'fname': 'tld_50r30i4u_4_0', 'legend': 'TLD', 'col': 'cyan',
+     'arch_name': 'resl_kcf_mil_rct_strk_tld_gtrn_frg_tmtfineEIH_jacc'},
+]
+config_id = 31
+out_dirs[config_id] = 'crv_17_demo_tfmt'
+tracker_configs[config_id] = [
+    {'fname': 'dsst4_50r30i4uNPP_4_0', 'legend': 'RSST', 'col': 'red',
+    'arch_name': 'resw_dsst_2_3_4_cmt_2_3_4_tkcf_mil_rct_strk_tld_gtrn_frg_tmtfineEIH_jacc_no_preproc'},
+    {'sm': 'gt', 'am': 'ccre25r30i4u', 'ssm': '8', 'iiw': 0, 'legend': '', 'col': 'green', 'no_stack': 1},
+    {'fname': 'dsst3_50r30i4uNPP_4_0', 'legend': 'DSST', 'col': 'magenta',
+     'arch_name': 'resw_dsst_2_3_4_cmt_2_3_4_tkcf_mil_rct_strk_tld_gtrn_frg_tmtfineEIH_jacc_no_preproc'},
+    {'fname': 'strk_50r30i4uNPP_4_0', 'legend': 'Struck', 'col': 'blue',
+     'arch_name': 'resw_dsst_2_3_4_cmt_2_3_4_tkcf_mil_rct_strk_tld_gtrn_frg_tmtfineEIH_jacc_no_preproc'},
+    {'fname': 'kcf_50r30i4uNPP_4_0', 'legend': 'KCF', 'col': 'cyan',
+     'arch_name': 'resw_dsst_2_3_4_cmt_2_3_4_tkcf_mil_rct_strk_tld_gtrn_frg_tmtfineEIH_jacc_no_preproc'},
+]
+config_id = 32
+out_dirs[config_id] = 'crv_17_demo_tmt'
+tracker_configs[config_id] = [
+    {'fname': 'dsst4_50r30i4u_4_0', 'legend': 'RSST', 'col': 'red',
+    'arch_name': 'resf_dsst_2_3_4_subseq10_tmt_corrected'},
+    {'fname': 'dsst3_50r30i4u_4_0', 'legend': 'DSST (3 DOF)', 'col': 'red',
+    'arch_name': 'resf_dsst_2_3_4_subseq10_tmt_corrected'},
+    {'sm': 'gt', 'am': 'ccre25r30i4u', 'ssm': '8', 'iiw': 0, 'legend': '', 'col': 'green', 'no_stack': 1},
+    {'fname': 'tld_50r30i4u_2r_0', 'legend': 'TLD', 'col': 'magenta',
+     'arch_name': 'resf_cmt_dsst_kcf_rct_frg_strk_tld_subseq10_tulp_reinit_gt'},
+    {'fname': 'strk_50r30i4u_2r_0', 'legend': 'Struck', 'col': 'blue',
+     'arch_name': 'resf_cmt_dsst_kcf_rct_frg_strk_tld_subseq10_tulp_reinit_gt'},
+    {'fname': 'kcf_50r30i4u_2r_0', 'legend': 'KCF', 'col': 'cyan',
+     'arch_name': 'resf_cmt_dsst_kcf_rct_frg_strk_tld_subseq10_tulp_reinit_gt'},
 ]
