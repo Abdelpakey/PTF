@@ -328,7 +328,6 @@ tracker_configs[config_id] = [
 # gridcv50r10ki25p_ssd50r30i4u_4_0.txt
 # rklcv50r10ki5pfc_ncc50r30i4u_4_0.txt
 
-
 config_id = 28
 out_dirs[config_id] = 'crv_17_demo_tfmt_1'
 tracker_configs[config_id] = [
@@ -345,13 +344,19 @@ tracker_configs[config_id] = [
 config_id = 29
 out_dirs[config_id] = 'crv_17_demo_tfmt_2'
 tracker_configs[config_id] = [
-    {'fname': 'dsst4_50r30i4u_4_0', 'legend': 'RSST', 'col': 'red',
+    {'fname': 'dsst4_50r30i4u_4_0', 'legend': 'RSST', 'col': 'blue',
     'arch_name': 'resh_dsst_2_3_4_cmt_2_3_4_tmtfineEIH_jacc'},
     {'sm': 'gt', 'am': 'ccre25r30i4u', 'ssm': '8', 'iiw': 0, 'legend': '', 'col': 'green', 'no_stack': 1},
-    {'fname': 'gtrn_50r30i4u_4_0', 'legend': 'GOTURN', 'col': 'magenta',
-     'arch_name': 'resh_dsst_2_3_4_cmt_2_3_4_tmtfineEIH_jacc'},
-    {'fname': 'rklcv50r10ki5pfc_ncc50r30i4u_4_0', 'legend': 'RKLT', 'col': 'blue',
+    {'fname': 'rklcv50r10ki5pfc_ncc50r30i4u_4_0', 'legend': 'RKLT', 'col': 'red',
      'arch_name': 'res_grid_rkl_cv50r10ki25pfc_ncc_50r10ki_30i_4u_4_subseq10_tmtfineEIH_jaccard_mcd'},
+    {'fname': 'gtrn_50r30i4u_4_0', 'legend': 'GOTURN', 'col': 'magenta',
+     'arch_name': 'resl_kcf_mil_rct_strk_tld_gtrn_frg_tmtfineEIH_jacc'},
+    {'fname': 'strk_50r30i4u_4_0', 'legend': 'Struck', 'col': 'forest_green',
+     'arch_name': 'resl_kcf_mil_rct_strk_tld_gtrn_frg_tmtfineEIH_jacc'},
+    {'fname': 'kcf_50r30i4u_4_0', 'legend': 'KCF', 'col': 'cyan',
+     'arch_name': 'resl_kcf_mil_rct_strk_tld_gtrn_frg_tmtfineEIH_jacc'},
+    {'fname': 'tld_50r30i4u_4_0', 'legend': 'TLD', 'col': 'orange',
+     'arch_name': 'resl_kcf_mil_rct_strk_tld_gtrn_frg_tmtfineEIH_jacc'},
     {'fname': 'gridcv50r10ki25p_ssd50r30i4u_4_0', 'legend': 'RANSAC', 'col': 'cyan',
      'arch_name': 'res_grid_rkl_cv50r10ki25pfc_ncc_50r10ki_30i_4u_4_subseq10_tmtfineEIH_jaccard_mcd'},
 ]
@@ -386,13 +391,70 @@ out_dirs[config_id] = 'crv_17_demo_tmt'
 tracker_configs[config_id] = [
     {'fname': 'dsst4_50r30i4u_4_0', 'legend': 'RSST', 'col': 'red',
     'arch_name': 'resf_dsst_2_3_4_subseq10_tmt_corrected'},
-    {'fname': 'dsst3_50r30i4u_4_0', 'legend': 'DSST (3 DOF)', 'col': 'red',
-    'arch_name': 'resf_dsst_2_3_4_subseq10_tmt_corrected'},
     {'sm': 'gt', 'am': 'ccre25r30i4u', 'ssm': '8', 'iiw': 0, 'legend': '', 'col': 'green', 'no_stack': 1},
-    {'fname': 'tld_50r30i4u_2r_0', 'legend': 'TLD', 'col': 'magenta',
-     'arch_name': 'resf_cmt_dsst_kcf_rct_frg_strk_tld_subseq10_tulp_reinit_gt'},
-    {'fname': 'strk_50r30i4u_2r_0', 'legend': 'Struck', 'col': 'blue',
+    {'fname': 'rklcv50rLMS10ki25pfc_ncc50r30i4u_4_0', 'legend': 'RKLT', 'col': 'blue',
+    'arch_name': 'resh_grid_rkl_cv50rLMS10ki25p_ncc_50r_30i_4u_2_3_4_6_8_subseq10_mcd'},
+    {'fname': 'dsst3_50r30i4u_4_0', 'legend': 'DSST (3 DOF)', 'col': 'maroon',
+    'arch_name': 'resf_dsst_2_3_4_subseq10_tmt_corrected'},
+    {'fname': 'gtrn_50r30i4u_4_0', 'legend': 'GOTURN', 'col': 'magenta',
+     'arch_name': 'resl_gtrn_subseq10_vot_tmt_reinit_mcd_jacc'},
+    {'fname': 'strk_50r30i4u_2r_0', 'legend': 'Struck', 'col': 'forest_green',
      'arch_name': 'resf_cmt_dsst_kcf_rct_frg_strk_tld_subseq10_tulp_reinit_gt'},
     {'fname': 'kcf_50r30i4u_2r_0', 'legend': 'KCF', 'col': 'cyan',
+     'arch_name': 'resf_cmt_dsst_kcf_rct_frg_strk_tld_subseq10_tulp_reinit_gt', 'no_stack': 0},
+    {'fname': 'tld_50r30i4u_2r_0', 'legend': 'TLD', 'col': 'orange',
      'arch_name': 'resf_cmt_dsst_kcf_rct_frg_strk_tld_subseq10_tulp_reinit_gt'},
+]
+# resh_grid_rkl_cv50rLMS10ki25p_ncc_50r_30i_4u_2_3_4_6_8_subseq10_mcd
+# gridcv50rLMS10ki25p_ncc50r30i4u_2_0.txt
+# gridcv50rLMS10ki25p_ncc50r30i4u_3_0.txt
+# gridcv50rLMS10ki25p_ncc50r30i4u_4_0.txt
+# gridcv50rLMS10ki25p_ncc50r30i4u_6_0.txt
+# gridcv50rLMS10ki25p_ncc50r30i4u_8_0.txt
+# rklcv50rLMS10ki25pfc_ncc50r30i4u_2_0.txt
+# rklcv50rLMS10ki25pfc_ncc50r30i4u_3_0.txt
+# rklcv50rLMS10ki25pfc_ncc50r30i4u_4_0.txt
+# rklcv50rLMS10ki25pfc_ncc50r30i4u_6_0.txt
+# rklcv50rLMS10ki25pfc_ncc50r30i4u_8_0.txt
+
+# resh_dsst_2_3_4_cmt_2_3_4_vot16_jacc
+# dsst2_50r30i4u_4_0.txt
+# dsst3_50r30i4u_4_0.txt
+# dsst4_50r30i4u_4_0.txt
+# cmt2_50r30i4u_4_0.txt
+# cmt3_50r30i4u_4_0.txt
+# cmt4_50r30i4u_4_0.txt
+
+# resl_kcf_mil_rct_strk_tld_gtrn_frg_vot16_jacc_no_pre_proc
+# tld_50r30i4uNPP_4_0.txt
+# frg_50r30i4uNPP_4_0.txt
+# gtrn_50r30i4uNPP_4_0.txt
+# kcf_50r30i4uNPP_4_0.txt
+# mil_50r30i4uNPP_4_0.txt
+# rct_50r30i4uNPP_4_0.txt
+# strk_50r30i4uNPP_4_0.txt
+
+# resf_DAMAGED_3S_rklcv50rLMS10ki25pfc_ncc_50r_30i_4u_2_3_3s_4_subseq10_vot16_jac
+# rklcv50rLMS10ki25pfc_ncc50r30i4u_3s_0.txt
+# rklcv50rLMS10ki25pfc_ncc50r30i4u_4_0.txt
+# rklcv50rLMS10ki25pfc_ncc50r30i4u_2_0.txt
+# rklcv50rLMS10ki25pfc_ncc50r30i4u_3_0.txt
+config_id = 33
+out_dirs[config_id] = 'crv_17_demo_vot16'
+tracker_configs[config_id] = [
+    {'fname': 'dsst4_50r30i4u_4_0', 'legend': 'RSST', 'col': 'red',
+    'arch_name': 'resh_dsst_2_3_4_cmt_2_3_4_vot16_jacc'},
+    {'sm': 'gt', 'am': 'ccre25r30i4u', 'ssm': '8', 'iiw': 0, 'legend': '', 'col': 'green', 'no_stack': 1},
+    {'fname': 'rklcv50rLMS10ki25pfc_ncc50r30i4u_4_0', 'legend': 'RKLT', 'col': 'blue',
+    'arch_name': 'resf_DAMAGED_3S_rklcv50rLMS10ki25pfc_ncc_50r_30i_4u_2_3_3s_4_subseq10_vot16_jac'},
+    {'fname': 'dsst3_50r30i4u_4_0', 'legend': 'DSST (3 DOF)', 'col': 'maroon',
+    'arch_name': 'resh_dsst_2_3_4_cmt_2_3_4_vot16_jacc'},
+    {'fname': 'gtrn_50r30i4uNPP_4_0', 'legend': 'GOTURN', 'col': 'magenta',
+     'arch_name': 'resl_kcf_mil_rct_strk_tld_gtrn_frg_vot16_jacc_no_pre_proc'},
+    {'fname': 'strk_50r30i4uNPP_4_0', 'legend': 'Struck', 'col': 'forest_green',
+     'arch_name': 'resl_kcf_mil_rct_strk_tld_gtrn_frg_vot16_jacc_no_pre_proc'},
+    {'fname': 'kcf_50r30i4uNPP_4_0', 'legend': 'KCF', 'col': 'cyan',
+     'arch_name': 'resl_kcf_mil_rct_strk_tld_gtrn_frg_vot16_jacc_no_pre_proc', 'no_stack': 0},
+    {'fname': 'cmt4_50r30i4u_2r_0', 'legend': 'CMT', 'col': 'orange',
+     'arch_name': 'resh_dsst_2_3_4_cmt_2_3_4_vot16_jacc'},
 ]

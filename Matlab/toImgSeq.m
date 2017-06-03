@@ -1,7 +1,7 @@
 % root_dir='.';
-root_dir='../../Datasets';
+root_dir='../../Datasets/PTW';
 
-read_from_list = 0;
+read_from_list = 1;
 if read_from_list
     file_list=importdata(sprintf('%s/list.txt',root_dir))    
     format='';

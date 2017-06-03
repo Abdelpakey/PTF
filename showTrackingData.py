@@ -28,26 +28,28 @@ if __name__ == '__main__':
     db_root_dir = '../Datasets'
     tracking_data_root_dir = 'C++/MTF/log'
     out_root_dir = 'C++/MTF/log'
-    out_root_dir = '../../Reports/Thesis/Presentation'
+    out_root_dir = '../../Reports/CRV17'
 
-    data_config_id = 28
-    n_trackers = 5
+    data_config_id = 33
+    n_trackers = 7
 
-    actor_id = 4
+    actor_id = 8
     # start_id = 3 + 1 * 16
-    start_id = 0
-    end_id = 11
+    start_id = 43
+    end_id = -1
+    # start_id = 0
+    # end_id = 11
     # end_id = 9 + 1 * 16
     actor = 'Live'
     seq_name = 'usb_cam'
     sub_seq_name = ''
 
-    pause_seq = 0
-    write_img = 0
+    write_img = 1
     show_stacked = 1
     stack_order = 0  # 0: row major 1: column major
     resize_stacked_img = 1
     resize_factor = 0.75
+    pause_seq = 0
     convert_to_gs = 0
     show_header = 1
     show_legend = 1
@@ -66,7 +68,7 @@ if __name__ == '__main__':
     legend_font_size = 1.5
     legend_font_thickness = 2
     legend_font_face = cv2.FONT_HERSHEY_COMPLEX_SMALL
-    if cv2.__version__ .startswith('3'):
+    if cv2.__version__.startswith('3'):
         legend_font_line_type = cv2.LINE_AA
     else:
         legend_font_line_type = cv2.CV_AA
@@ -152,13 +154,13 @@ if __name__ == '__main__':
         arch_fid = None
         # if use_arch:
         # arch_path = '{:s}/{:s}.zip'.format(arch_root_dir, arch_name)
-        #     print 'Reading tracking data from zip archive: {:s}'.format(arch_path)
+        # print 'Reading tracking data from zip archive: {:s}'.format(arch_path)
         #     arch_fid = zipfile.ZipFile(arch_path, 'r')
 
         tracking_data_list = []
         trackers = tracker_configs[data_config_id]
-        if n_trackers>len(trackers):
-            n_trackers=len(trackers)
+        if n_trackers > len(trackers):
+            n_trackers = len(trackers)
         for tracker_id in xrange(n_trackers):
             tracker = trackers[tracker_id]
             if 'fname' in tracker.keys():
@@ -241,6 +243,7 @@ if __name__ == '__main__':
             # print 'legend_x: ', legend_x
 
 
+            text_size_list = []
             for tracker_id in xrange(n_trackers):
                 tracker = trackers[tracker_id]
                 text_size, baseline = cv2.getTextSize(tracker['legend'], legend_font_face,
@@ -248,6 +251,12 @@ if __name__ == '__main__':
                 no_stack = not show_stacked
                 if 'no_stack' in tracker.keys():
                     no_stack = tracker['no_stack'] and curr_img_list
+
+                if show_stacked:
+                    if no_stack:
+                        legend_x += text_size_list[-1][0] + legend_gap
+                    else:
+                        legend_x = header_location[0]
 
                 if show_header:
                     legend_y = header_location[1] + text_size[1] + baseline + header_baseline + legend_gap
@@ -267,11 +276,12 @@ if __name__ == '__main__':
                     if show_stacked:
                         new_img = np.copy(curr_img)
                         cv2.putText(new_img, 'Tracker Failed', (legend_x, legend_y), legend_font_face,
-                                failure_font_size, col_rgb['red'],  failure_font_thickness, legend_font_line_type)
+                                    failure_font_size, col_rgb['red'], failure_font_thickness, legend_font_line_type)
                         curr_img_list.append(new_img)
                     else:
-                        cv2.putText(curr_img, 'Tracker Failed', (curr_img.shape[0]/2, curr_img.shape[1]/2), legend_font_face,
-                                failure_font_size, col_rgb['red'],  failure_font_thickness, legend_font_line_type)
+                        cv2.putText(curr_img, 'Tracker Failed', (curr_img.shape[0] / 2, curr_img.shape[1] / 2),
+                                    legend_font_face,
+                                    failure_font_size, col_rgb['red'], failure_font_thickness, legend_font_line_type)
                     continue
 
                 if show_grid:
@@ -288,8 +298,8 @@ if __name__ == '__main__':
                         new_img = np.copy(curr_img)
                     if show_legend and tracker['legend']:
                         cv2.rectangle(new_img, (legend_x, legend_y + baseline),
-                                  (legend_x + text_size[0], legend_y - text_size[1] - baseline),
-                                  legend_bkg_col, -1)
+                                      (legend_x + text_size[0], legend_y - text_size[1] - baseline),
+                                      legend_bkg_col, -1)
 
                         cv2.putText(new_img, tracker['legend'], (legend_x, legend_y), legend_font_face,
                                     legend_font_size, col_rgb[tracker['col']],
@@ -301,14 +311,16 @@ if __name__ == '__main__':
                                annotate_corners, annotation_col, annotation_font_size)
                     if not no_stack:
                         curr_img_list.append(new_img)
+                        text_size_list.append(text_size)
+
                 else:
                     if show_legend and tracker['legend']:
                         cv2.rectangle(curr_img, (legend_x, legend_y + baseline),
                                       (legend_x + text_size[0], legend_y - text_size[1] - baseline),
                                       legend_bkg_col, -1)
                         cv2.putText(curr_img, tracker['legend'], (legend_x, legend_y), legend_font_face,
-                                legend_font_size, col_rgb[tracker['col']],
-                                legend_font_thickness, legend_font_line_type)
+                                    legend_font_size, col_rgb[tracker['col']],
+                                    legend_font_thickness, legend_font_line_type)
                     if show_grid:
                         drawGrid(curr_img, curr_pts, grid_res_x, grid_res_y,
                                  col_rgb[tracker['col']], line_thickness)

@@ -24,6 +24,8 @@ if __name__ == '__main__':
     actors = params_dict['actors']
     sequences = params_dict['sequences']
     db_root_dir = '../Datasets'
+    # video_fmt = None
+    video_fmt = 'avi'
     # img_name_fmt='img%03d.jpg'
     img_name_fmt = 'frame%05d.jpg'
 
@@ -56,8 +58,8 @@ if __name__ == '__main__':
     use_opt_gt = 1
     use_reinit_gt = 0
 
-    actor_id = 12
-    seq_id = 13
+    actor_id = 5
+    seq_id = 0
     seq_ids = None
     # seq_ids = [0, 1, 2, 3, 16]
     init_frame_id = 0
@@ -65,13 +67,21 @@ if __name__ == '__main__':
     show_all_seq = 0
     start_id = 0
     end_id = -1
-    pause_seq = 0
+    pause_seq = 1
 
-
-
-    write_img = 1
+    write_img = 0
     show_frame_id = 0
     dst_root_dir = '../../..//206'
+
+    show_legend = 1
+    legend_font_size = 1.5
+    legend_font_thickness = 2
+    legend_font_face = cv2.FONT_HERSHEY_COMPLEX_SMALL
+    if cv2.__version__.startswith('3'):
+        legend_font_line_type = cv2.LINE_AA
+    else:
+        legend_font_line_type = cv2.CV_AA
+    legend_bkg_col = (0, 0, 0)
 
     # settings for synthetic sequences
     syn_ssm = 'c8'
@@ -165,7 +175,13 @@ if __name__ == '__main__':
             no_of_frames, ground_truth = readGT(gt_corners_fname)
 
         src_dir = db_root_dir + '/' + actor + '/' + seq_name
-        src_fname = db_root_dir + '/' + actor + '/' + seq_name + '/' + img_name_fmt
+        if video_fmt is None:
+            src_fname = db_root_dir + '/' + actor + '/' + seq_name + '/' + img_name_fmt
+            file_list = [each for each in os.listdir(src_dir) if each.endswith('.jpg')]
+            n_files = len(file_list)
+        else:
+            src_fname = db_root_dir + '/' + actor + '/' + seq_name + '.' + video_fmt
+            n_files = -1
         cap = cv2.VideoCapture()
         if not cap.open(src_fname):
             print 'The video file ', src_fname, ' could not be opened'
@@ -173,11 +189,7 @@ if __name__ == '__main__':
 
         # img_width = cap.get(cv2.cv.CV_CAP_PROP_FRAME_WIDTH)
         # img_height = cap.get(cv2.cv.CV_CAP_PROP_FRAME_HEIGHT)
-
-        file_list = [each for each in os.listdir(src_dir) if each.endswith('.jpg')]
-        n_files = len(file_list)
-
-        if n_files != no_of_frames:
+        if n_files > 0 and n_files != no_of_frames:
             raise StandardError(
                 'No. of frames in the ground truth: {:d} does not match the no. of images in the sequence: {:d}'.format(
                     no_of_frames, n_files))
@@ -276,6 +288,9 @@ if __name__ == '__main__':
                 displayed_img = stackImages([init_img, curr_img], stack_order)
             else:
                 displayed_img = curr_img
+            if show_legend:
+                cv2.putText(displayed_img, 'frame {:d}'.format(frame_id + 1), (10, 20),
+                            legend_font_face, legend_font_size, (0, 0, 255), 2, legend_font_line_type)
             cv2.imshow(gt_corners_window_name, displayed_img)
             if write_img:
                 out_fname = '{:s}/{:s}_frame{:05d}.jpg'.format(dst_folder, seq_name, frame_id + 1)
