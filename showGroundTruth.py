@@ -64,7 +64,7 @@ if __name__ == '__main__':
     # seq_ids = [0, 1, 2, 3, 16]
     init_frame_id = 0
 
-    show_all_seq = 0
+    show_all_seq = 1
     start_id = 0
     end_id = -1
     pause_seq = 1

@@ -56,9 +56,10 @@ if __name__ == '__main__':
 
     actor = 'PTW'
     sequences = sequences[actor]
-    n_seq = 210
+    start_id = 49
+    end_id = 62
 
-    for seq_id in xrange(n_seq):
+    for seq_id in xrange(start_id, end_id + 1):
         seq_name = sequences[seq_id]
         # seq_name = 'nl_mugII_s1'
 
