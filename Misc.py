@@ -384,6 +384,47 @@ def readTrackingData(filename, arch_fid=None):
     return data_array
 
 
+def getFileList(root_dir, ext):
+    file_list = []
+    for file in os.listdir(root_dir):
+        if file.endswith(ext):
+            file_list.append(os.path.join(root_dir, file))
+    return file_list
+
+def readTrackingDataMOT(filename, arch_fid=None):
+    if arch_fid is not None:
+        data_file = arch_fid.open(filename, 'r')
+    else:
+        if not os.path.isfile(filename):
+            print "Tracking data file not found:\n ", filename
+            return None
+        data_file = open(filename, 'r')
+    lines = data_file.readlines()
+    data_file.close()
+    no_of_lines = len(lines)
+    data_array = np.empty([no_of_lines, 10])
+    line_id = 0
+    n_frames = 0
+    for line in lines:
+        # print(line)
+        words = line.split(',')
+        data = []
+        if len(words) != 10:
+            if len(words) == 7:
+                for i in xrange(3):
+                    words.append('-1')
+            else:
+                msg = "Invalid formatting on line %d" % line_id + " in file %s" % filename + ":\n%s" % line
+                raise SyntaxError(msg)
+        for word in words:
+            data.append(float(word))
+        data_array[line_id, :] = data
+        # print words
+        line_id += 1
+
+    return data_array
+
+
 # new version that supports reinit data as well as invalid tracker states
 def readTrackingData2(tracker_path, n_frames, _arch_fid=None, _reinit_from_gt=0):
     print 'Reading tracking data from: {:s}...'.format(tracker_path)
@@ -580,6 +621,14 @@ def writeCorners(file_id, corners, frame_id=-1, write_header=0):
         corner_str = corner_str + '{:5.2f}\t{:5.2f}\t'.format(corners[0, i], corners[1, i])
     if frame_id > 0:
         file_id.write('frame{:05d}.jpg\t'.format(frame_id))
+    file_id.write(corner_str + '\n')
+
+def writeCornersMOT(file_id, data, frame_id = None):
+    if frame_id is None:
+        frame_id = int(data[0])
+    corner_str = '{:d},{:d}'.format(frame_id, int(data[1]))
+    for i in xrange(2, 10):
+        corner_str = corner_str + ',{:5.2f}'.format(data[i])
     file_id.write(corner_str + '\n')
 
 
@@ -1611,7 +1660,7 @@ def readDistGridParams(filename='distanceGridParams.txt'):
 def readGT(gt_path):
     gt_data = open(gt_path, 'r').readlines()
     if len(gt_data) < 2:
-        print 'Tracking data file is invalid'
+        print 'Ground truth file is invalid'
         return None, None
     del (gt_data[0])
     n_lines = len(gt_data)
@@ -1625,7 +1674,7 @@ def readGT(gt_path):
         gt_frame_fname_2 = gt_frame_fname[- 4:]
         if len(
                 gt_line) != 9 or gt_frame_fname_1 != 'frame' or gt_frame_fname_2 != '.jpg' or gt_frame_num != line_id + 1:
-            print 'Invaid formatting on GT data line {:d}: {:s}'.format(line_id + 1, gt_line)
+            print 'Invaid formatting on GT  line {:d}: {:s}'.format(line_id + 1, gt_line)
             print 'gt_frame_fname_1: {:s}'.format(gt_frame_fname_1)
             print 'gt_frame_fname_2: {:s}'.format(gt_frame_fname_2)
             print 'gt_frame_num: {:d}'.format(gt_frame_num)
