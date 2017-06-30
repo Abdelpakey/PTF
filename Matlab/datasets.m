@@ -496,7 +496,7 @@ sequences_ptw = {
     'Woman_4',...%206
     'Woman_5',...%207
     'Woman_6',...%208
-    'Woman_7'//209
+    'Woman_7',...%209
     };
 
 sequences_metaio = {
@@ -1266,7 +1266,7 @@ actors = {
     'UCSB',...%1
     'LinTrack',...%2
     'PAMI',...%3
-    'TFMT',...%4
+    'TMT_FINE',...%4
     'PTW',...%5
     'METAIO',...%6
     'CMT',...%7

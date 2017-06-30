@@ -22,9 +22,9 @@ if __name__ == '__main__':
     # actor = None
     # seq_name = None
     actor = 'GRAM'
-    # seq_name = 'M-30'
+    seq_name = 'M-30'
     # seq_name = 'M-30-HD'
-    seq_name = 'Urban1'
+    # seq_name = 'Urban1'
 
 
     split_frames = None
