@@ -391,6 +391,7 @@ def getFileList(root_dir, ext):
             file_list.append(os.path.join(root_dir, file))
     return file_list
 
+
 def readTrackingDataMOT(filename, arch_fid=None):
     if arch_fid is not None:
         data_file = arch_fid.open(filename, 'r')
@@ -622,6 +623,7 @@ def writeCorners(file_id, corners, frame_id=-1, write_header=0):
     if frame_id > 0:
         file_id.write('frame{:05d}.jpg\t'.format(frame_id))
     file_id.write(corner_str + '\n')
+
 
 def writeCornersMOT(file_id, data, frame_id=None):
     if frame_id is None:
@@ -1673,8 +1675,8 @@ def readGT(gt_path):
         gt_frame_fname_1 = gt_frame_fname[0:5]
         gt_frame_fname_2 = gt_frame_fname[- 4:]
         if len(gt_line) != 9 \
-                or gt_frame_fname_1 != 'frame'\
-                or gt_frame_fname_2 != '.jpg'\
+                or gt_frame_fname_1 != 'frame' \
+                or gt_frame_fname_2 != '.jpg' \
                 or gt_frame_num != line_id + 1:
             print 'Invaid formatting on GT  line {:d}: {:s}'.format(line_id + 1, gt_line)
             print 'gt_frame_fname_1: {:s}'.format(gt_frame_fname_1)
@@ -3060,7 +3062,6 @@ def getParamDict():
         0: 'usb_cam',
         1: 'firewire_cam'
     }
-
     actors = {
         0: 'TMT',
         1: 'UCSB',
@@ -3081,6 +3082,138 @@ def getParamDict():
         16: 'Synthetic',
         17: 'Live'
     }
+    sequences = dict(zip([actors[i] for i in xrange(len(actors))],
+                         [sequences_tmt,
+                          sequences_ucsb,
+                          sequences_lintrack,
+                          sequences_pami,
+                          sequences_tfmt,
+                          sequences_ptw,
+                          sequences_metaio,
+                          sequences_cmt,
+                          sequences_vot,
+                          sequences_vot16,
+                          sequences_vtb,
+                          sequences_vivid,
+                          sequences_trakmark,
+                          sequences_lintrack_short,
+                          sequences_mosaic,
+                          sequences_misc,
+                          sequences_synthetic,
+                          sequences_live]))
+
+    sequences_mot2015_train = {
+        0: 'TUD-Stadtmitte',
+        1: 'TUD-Campus',
+        2: 'PETS09-S2L1',
+        3: 'ETH-Bahnhof',
+        4: 'ETH-Sunnyday',
+        5: 'ETH-Pedcross2',
+        6: 'ADL-Rundle-6',
+        7: 'ADL-Rundle-8',
+        8: 'KITTI-13',
+        9: 'KITTI-17',
+        10: 'Venice-2'
+    }
+    sequences_mot2015_test = {
+        0: 'TUD-Crossing',
+        1: 'PETS09-S2L2',
+        2: 'ETH-Jelmoli',
+        3: 'ETH-Linthescher',
+        4: 'ETH-Crossing',
+        5: 'AVG-TownCentre',
+        6: 'ADL-Rundle-1',
+        7: 'ADL-Rundle-3',
+        8: 'KITTI-16',
+        9: 'KITTI-19',
+        10: 'Venice-1'
+    }
+    sequences_kitti_train = {
+        0: '0000',
+        1: '0001',
+        2: '0002',
+        3: '0003',
+        4: '0004',
+        5: '0005',
+        6: '0006',
+        7: '0007',
+        8: '0008',
+        9: '0009',
+        10: '0010',
+        11: '0011',
+        12: '0012',
+        13: '0013',
+        14: '0014',
+        15: '0015',
+        16: '0016',
+        17: '0017',
+        18: '0018',
+        19: '0019',
+        20: '0020'
+    }
+    sequences_kitti_test = {
+        0: '0000',
+        1: '0001',
+        2: '0002',
+        3: '0003',
+        4: '0004',
+        5: '0005',
+        6: '0006',
+        7: '0007',
+        8: '0008',
+        9: '0009',
+        10: '0010',
+        11: '0011',
+        12: '0012',
+        13: '0013',
+        14: '0014',
+        15: '0015',
+        16: '0016',
+        17: '0017',
+        18: '0018',
+        19: '0019',
+        20: '0020',
+        21: '0021',
+        22: '0022',
+        23: '0023',
+        24: '0024',
+        25: '0025',
+        26: '0026',
+        27: '0027',
+        28: '0028'
+    }
+    sequences_gram = {
+        0: 'M-30',
+        1: 'M-30-HD',
+        2: 'Urban1'
+    }
+    sequences_idot = {
+        0: 'seq_1',
+        1: 'seq_2',
+        2: 'seq_3',
+        3: 'seq_4',
+        4: 'seq_5',
+        5: 'seq_6',
+        6: 'seq_7',
+        7: 'seq_8',
+        8: 'seq_9',
+        9: 'seq_10',
+        10: 'seq_11',
+        11: 'seq_12',
+        12: 'seq_13'
+    }
+    mot_actors = {
+        0: 'MOT2015',
+        1: 'KITTI',
+        2: 'GRAM',
+        3: 'IDOT',
+    }
+    mot_sequences = dict(zip([mot_actors[i] for i in xrange(len(mot_actors))],
+                             [[sequences_mot2015_train, sequences_mot2015_test],
+                              [sequences_kitti_train, sequences_kitti_test],
+                              sequences_gram,
+                              sequences_idot]))
+
     challenges = {0: 'angle',
                   1: 'fast_close',
                   2: 'fast_far',
@@ -3134,39 +3267,21 @@ def getParamDict():
         9: 'COBYLA',
         10: 'SLSQP'
     }
-    sequences = dict(zip([actors[i] for i in xrange(len(actors))],
-                         [sequences_tmt,
-                          sequences_ucsb,
-                          sequences_lintrack,
-                          sequences_pami,
-                          sequences_tfmt,
-                          sequences_ptw,
-                          sequences_metaio,
-                          sequences_cmt,
-                          sequences_vot,
-                          sequences_vot16,
-                          sequences_vtb,
-                          sequences_vivid,
-                          sequences_trakmark,
-                          sequences_lintrack_short,
-                          sequences_mosaic,
-                          sequences_misc,
-                          sequences_synthetic,
-                          sequences_live]))
-
     params_dict = {'actors': actors,
+                   'sequences': sequences,
+                   'mot_actors': mot_actors,
+                   'mot_sequences': mot_sequences,
                    'tracker_types': tracker_types,
                    'grid_types': grid_types,
                    'filter_types': filter_types,
                    'inc_types': inc_types,
                    'appearance_models': appearance_models,
-                   'sequences': sequences,
                    'opt_types': opt_types,
                    'challenges': challenges,
                    'mtf_sms': mtf_sms,
                    'mtf_ams': mtf_ams,
                    'mtf_ssms': mtf_ssms,
-                   'opt_methods': opt_methods,
+                   'opt_methods': opt_methods
     }
     return params_dict
 

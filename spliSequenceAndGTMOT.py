@@ -10,20 +10,24 @@ import numpy as np
 if __name__ == '__main__':
 
     params_dict = getParamDict()
-    actors = params_dict['actors']
-    sequences = params_dict['sequences']
+    mot_actors = params_dict['mot_actors']
+    mot_sequences = params_dict['mot_sequences']
 
-    split_images = 0
+    split_images = 1
     fix_frame_ids = 0
-    n_split_seq = 15
+
+    n_split_seq = 10
+    # n_split_seq = 15
     # n_split_seq = 30
 
-    actor_id = 2
-    seq_id = 2
-    # actor = None
-    # seq_name = None
-    actor = 'GRAM'
-    seq_name = 'M-30'
+    actor_id = 3
+    seq_type_id = 0
+    seq_id = 0
+
+    actor = None
+    seq_name = None
+    # actor = 'GRAM'
+    # seq_name = 'M-30'
     # seq_name = 'M-30-HD'
     # seq_name = 'Urban1'
 
@@ -49,9 +53,11 @@ if __name__ == '__main__':
         arg_id += 1
 
     if actor is None:
-        actor = actors[actor_id]
+        actor = mot_actors[actor_id]
     if seq_name is None:
-        sequences = sequences[actor]
+        sequences = mot_sequences[actor]
+        if isinstance(sequences[0], list):
+            sequences = sequences[seq_type_id]
         if seq_id >= len(sequences):
             print 'Invalid dataset_id: ', seq_id
             sys.exit()
