@@ -1,5 +1,5 @@
 % root_dir='.';
-root_dir='../../Datasets/PTW';
+root_dir='C:/Datasets/IDOT/videos';
 
 read_from_list = 1;
 if read_from_list
@@ -29,7 +29,7 @@ for file_id=1:length(file_list)
         frame_id=frame_id+1;
         fprintf('\tDone processing %d frames\n',frame_id);
         img = readFrame(video);
-        imwrite(img, sprintf('%s/frame%05d.jpg',image_dir, frame_id), 'Quality', 100);
+        imwrite(img, sprintf('%s/image%06d.jpg',image_dir, frame_id), 'Quality', 100);
     end
 end
 

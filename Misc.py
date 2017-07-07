@@ -623,7 +623,7 @@ def writeCorners(file_id, corners, frame_id=-1, write_header=0):
         file_id.write('frame{:05d}.jpg\t'.format(frame_id))
     file_id.write(corner_str + '\n')
 
-def writeCornersMOT(file_id, data, frame_id = None):
+def writeCornersMOT(file_id, data, frame_id=None):
     if frame_id is None:
         frame_id = int(data[0])
     corner_str = '{:d},{:d}'.format(frame_id, int(data[1]))
@@ -1672,8 +1672,10 @@ def readGT(gt_path):
         gt_frame_num = int(gt_frame_fname[5:-4])
         gt_frame_fname_1 = gt_frame_fname[0:5]
         gt_frame_fname_2 = gt_frame_fname[- 4:]
-        if len(
-                gt_line) != 9 or gt_frame_fname_1 != 'frame' or gt_frame_fname_2 != '.jpg' or gt_frame_num != line_id + 1:
+        if len(gt_line) != 9 \
+                or gt_frame_fname_1 != 'frame'\
+                or gt_frame_fname_2 != '.jpg'\
+                or gt_frame_num != line_id + 1:
             print 'Invaid formatting on GT  line {:d}: {:s}'.format(line_id + 1, gt_line)
             print 'gt_frame_fname_1: {:s}'.format(gt_frame_fname_1)
             print 'gt_frame_fname_2: {:s}'.format(gt_frame_fname_2)

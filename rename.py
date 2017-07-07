@@ -42,7 +42,12 @@ if dst_substr == '__space__' or dst_substr == '__sp__':
     dst_substr = ' '
 if dst_substr == '__none__' or dst_substr == '__n__':
     dst_substr = ''
-if remove_files:
+
+if add_as_prefix:
+	print 'Adding {:s} as prefix'.format(dst_substr)
+elif add_as_suffix:
+	print 'Adding {:s} as suffix'.format(dst_substr)
+elif remove_files:
     print 'Searching for {:s} to remove in {:s}'.format(src_substr, src_dir)
 else:
     print 'Searching for {:s} to replace with {:s} in {:s}'.format(src_substr, dst_substr, src_dir)

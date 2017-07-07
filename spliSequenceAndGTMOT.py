@@ -15,7 +15,8 @@ if __name__ == '__main__':
 
     split_images = 0
     fix_frame_ids = 0
-    n_split_seq = 30
+    n_split_seq = 15
+    # n_split_seq = 30
 
     actor_id = 2
     seq_id = 2
