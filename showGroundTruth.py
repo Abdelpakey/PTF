@@ -184,7 +184,7 @@ if __name__ == '__main__':
             n_files = -1
         cap = cv2.VideoCapture()
         if not cap.open(src_fname):
-            print 'The video file ', src_fname, ' could not be opened'
+            print 'The image sequence ', src_fname, ' could not be opened'
             sys.exit()
 
         # img_width = cap.get(cv2.cv.CV_CAP_PROP_FRAME_WIDTH)
