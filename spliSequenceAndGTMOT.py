@@ -13,16 +13,16 @@ if __name__ == '__main__':
     mot_actors = params_dict['mot_actors']
     mot_sequences = params_dict['mot_sequences']
 
-    split_images = 1
+    split_images = 0
     fix_frame_ids = 0
 
-    n_split_seq = 10
-    # n_split_seq = 15
+    # n_split_seq = 10
+    n_split_seq = 15
     # n_split_seq = 30
 
-    actor_id = 3
+    actor_id = 2
     seq_type_id = 0
-    seq_id = 0
+    seq_id = 3
 
     actor = None
     seq_name = None
@@ -32,7 +32,7 @@ if __name__ == '__main__':
     # seq_name = 'Urban1'
 
 
-    split_frames = None
+    split_frame_ids = None
     # split_frames = [1000, 1884, 2917, 3878, 4885, 5800]
     # split_frames = [805, 1568]
     # split_frames = [828, 1639,2487]
@@ -72,39 +72,41 @@ if __name__ == '__main__':
         exit(0)
 
     n_gt_lines = len(ground_truth)
-    img_list = getFileList(src_dir, img_ext)
-    n_images = len(img_list)
 
     print 'actor: ', actor
     print 'seq_id:', seq_id, 'seq_name:', seq_name
-    no_of_frames = int(ground_truth[-1][0])
+
+    n_gt_frames = int(ground_truth[-1][0])
     if fix_frame_ids:
-        no_of_frames += 1
+        n_gt_frames += 1
 
-    print 'no_of_frames: ', no_of_frames
+    if split_images:
+        img_list = getFileList(src_dir, img_ext)
+        n_images = len(img_list)
+        if n_images != n_gt_frames:
+            msg = 'No. of frames in GT: {:d} does not match the number of images in the sequence: {:d}'.format(
+                n_gt_frames, n_images)
+            raise SyntaxError(msg)
 
-    if n_images != no_of_frames:
-        msg = 'No. of frames in GT: {:d} does not match the number of images in the sequence: {:d}'.format(
-            no_of_frames, n_images)
-        raise SyntaxError(msg)
+    print 'no_of_frames: ', n_gt_frames
 
-    if split_frames is None:
-        split_size = int(no_of_frames / n_split_seq)
-        split_frames = range(split_size, no_of_frames + 1, split_size)
-        split_frames[-1] = no_of_frames
+    if split_frame_ids is None:
+        split_size = int(n_gt_frames / n_split_seq)
+        split_frame_ids = range(split_size, n_gt_frames + 1, split_size)
+        split_frame_ids[-1] = n_gt_frames
     else:
-        split_frames.append(no_of_frames)
-        n_split_seq = len(split_frames)
+        split_frame_ids.append(n_gt_frames)
+        n_split_seq = len(split_frame_ids)
 
     print 'Splitting sequence: {:s} into {:d} parts ending at the following frames:'.format(
         seq_name, n_split_seq)
-    print split_frames
+    print split_frame_ids
 
     start_frame_id = 0
     gt_line_id = 0
     for split_seq_id in xrange(n_split_seq):
-        end_frame = split_frames[split_seq_id]
-        if end_frame > no_of_frames:
+        end_frame = split_frame_ids[split_seq_id]
+        if end_frame > n_gt_frames:
             raise StandardError('Invalid split frame: {:d}'.format(end_frame))
         split_seq_name = '{:s}_{:d}'.format(seq_name, split_seq_id + 1)
         if split_images:

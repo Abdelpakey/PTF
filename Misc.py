@@ -3185,7 +3185,9 @@ def getParamDict():
     sequences_gram = {
         0: 'M-30',
         1: 'M-30-HD',
-        2: 'Urban1'
+        2: 'Urban1',
+        3: 'M-30-Large',
+        4: 'M-30-HD-Small'
     }
     sequences_idot = {
         0: 'seq_1',

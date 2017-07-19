@@ -14,7 +14,7 @@ if __name__ == '__main__':
     mot_actors = params_dict['mot_actors']
     mot_sequences = params_dict['mot_sequences']
 
-    resize_images = 1
+    resize_images = 0
     resize_mult_factor = 1.0/1.5
     # n_split_seq = 15
     # n_split_seq = 30
@@ -23,7 +23,7 @@ if __name__ == '__main__':
     seq_id = 1
 
     seq_type_id = 0
-    
+
     actor = None
     seq_name = None
     # actor = 'GRAM'
@@ -63,6 +63,11 @@ if __name__ == '__main__':
             sys.exit()
         seq_name = sequences[seq_id]
 
+    if resize_mult_factor < 1:
+        out_prefix = '-Small'
+    else:
+        out_prefix = '-Large'
+
     gt_in_fname = db_root_dir + '/' + actor + '/' + seq_name + '.txt'
     gt_in = readTrackingDataMOT(gt_in_fname)
     if gt_in is None:
@@ -73,7 +78,7 @@ if __name__ == '__main__':
     print 'seq_id:', seq_id, 'seq_name:', seq_name
     n_gt_frames = int(gt_in[-1][0])
 
-    print 'Resizing sequence: {:s} by a factor of {:f}:'.format(seq_name, resize_mult_factor)
+    print 'Resizing sequence: {:s} by a factor of {:f}'.format(seq_name, resize_mult_factor)
 
     if resize_images:
         # cap = cv2.VideoCapture()
@@ -90,7 +95,7 @@ if __name__ == '__main__':
                 n_gt_frames, n_frames)
             raise SyntaxError(msg)
         in_img_template = in_img_dir + '/' + img_name_fmt
-        out_img_dir = db_root_dir + '/' + actor + '/' + seq_name + '_resized'
+        out_img_dir = db_root_dir + '/' + actor + '/' + seq_name + out_prefix
         print 'Writing resized images to: {:s}'.format(out_img_dir)
         if not os.path.exists(out_img_dir):
             os.makedirs(out_img_dir)
@@ -109,7 +114,7 @@ if __name__ == '__main__':
             if (frame_id + 1) % 100 == 0:
                 print 'Done {:d} frames'.format(frame_id + 1)
 
-    gt_out_fname = db_root_dir + '/' + actor + '/' + seq_name + '_resized.txt'
+    gt_out_fname = db_root_dir + '/' + actor + '/' + seq_name + out_prefix + '.txt'
     gt_out_fid = open(gt_out_fname, 'w')
 
     print 'Writing resized GT to: {:s}'.format(gt_out_fname)
