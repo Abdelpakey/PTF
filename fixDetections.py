@@ -21,10 +21,13 @@ if __name__ == '__main__':
     invert_x = 0
     invert_y = 0
 
-    remove_oversized = 1
+    remove_oversized = 0
     height_thresh = 300
     width_thresh = 300
     area_thresh = 90000
+
+    xmin_thresh = 0
+    ymin_thresh = 83
 
     conf_thresh = -1
 
@@ -152,6 +155,19 @@ if __name__ == '__main__':
             if area_thresh > 0 and area > area_thresh:
                 n_skipped_detections += 1
                 print 'Skipping detection {:d} as its area {:f} is too large'.format(det_id, area)
+                continue
+
+        xmin_thresh = 0
+        if ymin_thresh > 0:
+            ymax = y + height
+            if ymax < ymin_thresh:
+                print 'Skipping detection {:d} as its ymax {:f} is too small'.format(det_id, ymax)
+                continue
+
+        if xmin_thresh > 0:
+            xmax = x + width
+            if xmax < xmin_thresh:
+                print 'Skipping detection {:d} as its xmax {:f} is too small'.format(det_id, xmax)
                 continue
 
         if conf_thresh > 0 and conf < conf_thresh:

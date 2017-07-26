@@ -195,8 +195,10 @@ if __name__ == '__main__':
         detection_path = args.detection_path
         ovthresh = args.ovthresh
     else:
-        # seq_name = 'M-30-Large.txt'
-        seq_name = 'M-30-HD-Small.txt'
+        seq_name = 'M-30-Large.txt'
+        # seq_name = 'M-30-HD-Small.txt'
+        # seq_name = 'M-30.txt'
+        # seq_name = 'M-30-HD.txt'
 
         gt_type = 'txt'
         detection_type = 'txt'

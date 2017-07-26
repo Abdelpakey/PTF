@@ -14,28 +14,30 @@ if __name__ == '__main__':
     mot_sequences = params_dict['mot_sequences']
 
     split_images = 0
-    fix_frame_ids = 0
+    fix_frame_ids = 1
 
-    # n_split_seq = 10
-    n_split_seq = 15
+    n_split_seq = 13
+    # n_split_seq = 15
     # n_split_seq = 30
 
     actor_id = 2
     seq_type_id = 0
-    seq_id = 3
+    seq_id = 1
 
-    actor = None
-    seq_name = None
-    # actor = 'GRAM'
+    # actor = None
+    # seq_name = None
+    actor = 'GRAM'
+    seq_name = 'IDOT'
     # seq_name = 'M-30'
     # seq_name = 'M-30-HD'
     # seq_name = 'Urban1'
 
 
-    split_frame_ids = None
-    # split_frames = [1000, 1884, 2917, 3878, 4885, 5800]
-    # split_frames = [805, 1568]
-    # split_frames = [828, 1639,2487]
+    # split_frame_ids = None
+    split_frame_ids = [8991, 17981, 26962, 35828, 44679, 53470, 62434, 71396, 80362, 87862, 95362, 102862]
+    # split_frame_ids = [1000, 1884, 2917, 3878, 4885, 5800]
+    # split_frame_ids = [805, 1568]
+    # split_frame_ids = [828, 1639,2487]
 
     # db_root_dir = '../Datasets'
     db_root_dir = 'C:/Datasets'
