@@ -15,6 +15,7 @@ if __name__ == '__main__':
 
     split_images = 0
     fix_frame_ids = 1
+    arranged_by_frame_id = 0
 
     n_split_seq = 13
     # n_split_seq = 15
@@ -28,6 +29,7 @@ if __name__ == '__main__':
     # seq_name = None
     actor = 'GRAM'
     seq_name = 'IDOT'
+    # seq_name = '009_2011-04-24_07-00-00'
     # seq_name = 'M-30'
     # seq_name = 'M-30-HD'
     # seq_name = 'Urban1'
@@ -65,6 +67,9 @@ if __name__ == '__main__':
             sys.exit()
         seq_name = sequences[seq_id]
 
+    print 'actor: ', actor
+    print 'seq_id:', seq_id, 'seq_name:', seq_name
+
     src_dir = db_root_dir + '/' + actor + '/' + seq_name
     src_fname = db_root_dir + '/' + actor + '/' + seq_name + '/' + img_name_fmt
     ground_truth_fname = db_root_dir + '/' + actor + '/' + seq_name + '.txt'
@@ -74,13 +79,18 @@ if __name__ == '__main__':
         exit(0)
 
     n_gt_lines = len(ground_truth)
+    print 'n_gt_lines: ', n_gt_lines
 
-    print 'actor: ', actor
-    print 'seq_id:', seq_id, 'seq_name:', seq_name
+    if not arranged_by_frame_id:
+        # sort by frame IDs
+        print 'Sorting ground truth by frame IDs'
+        ground_truth = ground_truth[ground_truth[:,0].argsort()]
+        print 'Done'
+
+    if fix_frame_ids:
+        ground_truth[:, 0] += 1
 
     n_gt_frames = int(ground_truth[-1][0])
-    if fix_frame_ids:
-        n_gt_frames += 1
 
     if split_images:
         img_list = getFileList(src_dir, img_ext)
@@ -104,12 +114,13 @@ if __name__ == '__main__':
         seq_name, n_split_seq)
     print split_frame_ids
 
-    start_frame_id = 0
+    start_frame_id = 1
+    curr_frame_id = 1
     gt_line_id = 0
     for split_seq_id in xrange(n_split_seq):
-        end_frame = split_frame_ids[split_seq_id]
-        if end_frame > n_gt_frames:
-            raise StandardError('Invalid split frame: {:d}'.format(end_frame))
+        end_frame_id = split_frame_ids[split_seq_id]
+        if end_frame_id > n_gt_frames:
+            raise StandardError('Invalid split frame: {:d}'.format(end_frame_id))
         split_seq_name = '{:s}_{:d}'.format(seq_name, split_seq_id + 1)
         if split_images:
             split_seq_dir = '{:s}/{:s}/{:s}'.format(db_root_dir, actor, split_seq_name)
@@ -117,24 +128,28 @@ if __name__ == '__main__':
                 os.makedirs(split_seq_dir)
         split_seq_gt_fname = '{:s}/{:s}/{:s}.txt'.format(db_root_dir, actor, split_seq_name)
         split_seq_gt_file = open(split_seq_gt_fname, 'w')
-        print 'Creating split sequence {:d} that goes from {:d} to {:d}'.format(split_seq_id + 1, start_frame_id + 1,
-                                                                                end_frame)
+        print 'Creating split sequence {:d} that goes from {:d} to {:d}'.format(split_seq_id + 1, start_frame_id,
+                                                                                end_frame_id)
         if split_images:
-            for frame_id in xrange(start_frame_id, end_frame):
-                split_frame_id = frame_id - start_frame_id
-                src_fname = '{:s}/{:s}/{:s}/image{:06d}.jpg'.format(db_root_dir, actor, seq_name, frame_id + 1)
-                dst_fname = '{:s}/{:s}/{:s}/image{:06d}.jpg'.format(db_root_dir, actor, split_seq_name,
-                                                                    split_frame_id + 1)
+            for frame_id in xrange(start_frame_id, end_frame_id + 1):
+                split_frame_id = frame_id - start_frame_id + 1
+                src_fname = '{:s}/{:s}/{:s}/image{:06d}.jpg'.format(db_root_dir, actor, seq_name, frame_id)
+                dst_fname = '{:s}/{:s}/{:s}/image{:06d}.jpg'.format(db_root_dir, actor, split_seq_name, split_frame_id)
                 shutil.copyfile(src_fname, dst_fname)
         while gt_line_id < n_gt_lines:
             curr_frame_id = int(ground_truth[gt_line_id][0])
-            if curr_frame_id > end_frame:
+            if curr_frame_id > end_frame_id:
                 break
-            writeCornersMOT(split_seq_gt_file, ground_truth[gt_line_id], curr_frame_id - start_frame_id)
+            writeCornersMOT(split_seq_gt_file, ground_truth[gt_line_id], curr_frame_id - start_frame_id + 1)
             gt_line_id += 1
-
-        start_frame_id = end_frame
+        start_frame_id = end_frame_id + 1
+        # for frame_id in xrange(start_frame_id, end_frame_id + 1):
+        #     curr_gt = np.copy(ground_truth[ground_truth[:, 0] == frame_id])
+        #     curr_gt[:, 0] -= (start_frame_id - 1)
+        #     for gt in curr_gt:
+        #         writeCornersMOT(split_seq_gt_file, gt)
         split_seq_gt_file.close()
+
 
 
 

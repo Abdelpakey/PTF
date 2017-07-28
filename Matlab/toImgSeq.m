@@ -1,13 +1,14 @@
 % root_dir='.';
-root_dir='C:/Datasets/IDOT/videos';
+root_dir='C:/Datasets/LOST';
 
-read_from_list = 1;
+read_from_list = 0;
+
 if read_from_list
     file_list=importdata(sprintf('%s/list.txt',root_dir))    
     format='';
 else
-    file_list={'poster_mos3'}
-    format='wmv';
+    file_list={'009_2011-04-24_07-00-00'}
+    format='avi';
 end
 for file_id=1:length(file_list)
     filename=file_list{file_id};   
