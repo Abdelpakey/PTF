@@ -17,7 +17,7 @@ if __name__ == '__main__':
     fix_frame_ids = 1
     arranged_by_frame_id = 0
 
-    n_split_seq = 13
+    n_split_seq = 1
     # n_split_seq = 15
     # n_split_seq = 30
 
@@ -28,15 +28,15 @@ if __name__ == '__main__':
     # actor = None
     # seq_name = None
     actor = 'GRAM'
-    seq_name = 'IDOT'
+    seq_name = 'isl_1_20170620-055940'
     # seq_name = '009_2011-04-24_07-00-00'
     # seq_name = 'M-30'
     # seq_name = 'M-30-HD'
     # seq_name = 'Urban1'
 
 
-    # split_frame_ids = None
-    split_frame_ids = [8991, 17981, 26962, 35828, 44679, 53470, 62434, 71396, 80362, 87862, 95362, 102862]
+    split_frame_ids = None
+    # split_frame_ids = [8991, 17981, 26962, 35828, 44679, 53470, 62434, 71396, 80362, 87862, 95362, 102862]
     # split_frame_ids = [1000, 1884, 2917, 3878, 4885, 5800]
     # split_frame_ids = [805, 1568]
     # split_frame_ids = [828, 1639,2487]

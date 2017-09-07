@@ -36,7 +36,8 @@ cdef class DLKTracker:
         int Algo
         dict options      
 
-    def __init__(self, int max_iters, double threshold, int resx, int resy, bint use_scv, int MModel = 1, int Algo = 1):
+    def __init__(self, int max_iters, double threshold, int resx, int resy, bint use_scv,
+                 int MModel = 1, int Algo = 1):
         self.max_iters = max_iters
         self.threshold = threshold
         self.resx = resx

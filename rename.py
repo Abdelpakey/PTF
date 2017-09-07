@@ -29,10 +29,10 @@ if len(sys.argv) > arg_id:
     arg_id += 1
 
 if src_substr == '__prefix__' or src_substr == '__pf__':
-    src_substr=''
+    src_substr = ''
     add_as_prefix = 1
 elif src_substr == '__suffix__' or src_substr == '__sf__':
-    src_substr=''
+    src_substr = ''
     add_as_suffix = 1
 elif src_substr == '__space__' or src_substr == '__sp__':
     src_substr = ' '
@@ -44,9 +44,9 @@ if dst_substr == '__none__' or dst_substr == '__n__':
     dst_substr = ''
 
 if add_as_prefix:
-	print 'Adding {:s} as prefix'.format(dst_substr)
+    print 'Adding {:s} as prefix'.format(dst_substr)
 elif add_as_suffix:
-	print 'Adding {:s} as suffix'.format(dst_substr)
+    print 'Adding {:s} as suffix'.format(dst_substr)
 elif remove_files:
     print 'Searching for {:s} to remove in {:s}'.format(src_substr, src_dir)
 else:
@@ -75,7 +75,7 @@ for src_path in src_file_paths:
     #
     # if src_fname_dir != dst_fname_dir:
     # if show_names:
-    #         print 'renaming folder {:s} to {:s}'.format(src_fname_dir, dst_fname_dir)
+    # print 'renaming folder {:s} to {:s}'.format(src_fname_dir, dst_fname_dir)
     #         os.rename(src_fname_dir, dst_fname_dir)
     #     dst_fname = src_fname.replace(src_substr, dst_substr)
 

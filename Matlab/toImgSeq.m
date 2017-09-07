@@ -1,5 +1,5 @@
 % root_dir='.';
-root_dir='C:/Datasets/LOST';
+root_dir='C:/Datasets/ISL';
 
 read_from_list = 0;
 
@@ -7,8 +7,8 @@ if read_from_list
     file_list=importdata(sprintf('%s/list.txt',root_dir))    
     format='';
 else
-    file_list={'009_2011-04-24_07-00-00'}
-    format='avi';
+    file_list={'20170620-055940'}
+    format='mp4';
 end
 for file_id=1:length(file_list)
     filename=file_list{file_id};   

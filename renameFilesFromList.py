@@ -56,8 +56,8 @@ for file_id in xrange(n_files):
     src_fname, src_ext = os.path.splitext(src_file)
     src_path = unicode('{:s}/{:s}'.format(src_root_dir, src_file), 'utf-8-sig')
 
-    if not os.path.isfile(src_path):
-        raise SyntaxError('Original file {:s} does not exist'.format(src_path))
+    if not os.path.isfile(src_path) and not os.path.isdir(src_path):
+        raise SyntaxError('Original file/folder {:s} does not exist'.format(src_path))
 
     dst_file = dst_lines[file_id].strip()
     dst_fname, dst_ext = os.path.splitext(dst_file)
