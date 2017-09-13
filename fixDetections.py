@@ -22,9 +22,10 @@ if __name__ == '__main__':
     # remove background detections
     remove_background = 1
     # minimum intensity difference between input and background images to be considered foreground
-    bkg_thresh = 10
+    bkg_thresh = 25
     # minimum ratio of foreground to background for detection to be retained
-    frg_ratio_thresh = 0.75
+    frg_ratio_thresh = 0.50
+    save_frg_mask = 1
 
     remove_oversized = 0
     height_thresh = 300
@@ -109,6 +110,8 @@ if __name__ == '__main__':
         print 'img_height: ', img_height
         print 'img_width: ', img_width
 
+    frame_id = 1
+
     if remove_background:
         bkg_fname = db_root_dir + '/' + actor + '/Images/' + seq_name + '_bkg.jpg'
         bkg_img = cv2.imread(bkg_fname)
@@ -117,7 +120,14 @@ if __name__ == '__main__':
         sub_img = cv2.absdiff(img_gs, bkg_img_gs)
         frg_mask = sub_img > bkg_thresh
         cv2.imshow('Subtracted image', sub_img.astype(np.uint8))
-        cv2.imshow('Foreground Mask', frg_mask.astype(np.uint8)*255)
+        frg_mask_disp = frg_mask.astype(np.uint8)*255
+        cv2.imshow('Foreground Mask', frg_mask_disp)
+        if save_frg_mask:
+            frg_mask_dir = db_root_dir + '/' + actor + '/Images/' + seq_name + '_frg_mask_{:d}'.format(bkg_thresh)
+            if not os.path.exists(frg_mask_dir):
+                os.makedirs(frg_mask_dir)
+            frg_mask_fname = frg_mask_dir + '/' + 'image{:06d}.jpg'.format(frame_id)
+            cv2.imwrite(frg_mask_fname, frg_mask_disp)
 
     print 'actor: ', actor
     print 'seq_name:', seq_name
@@ -125,7 +135,6 @@ if __name__ == '__main__':
     print 'n_frames: ', n_frames
 
     n_skipped_detections = 0
-    frame_id = 1
 
     for det_id in xrange(n_detections):
         curr_frame_id = int(detections[det_id][0])
@@ -206,9 +215,15 @@ if __name__ == '__main__':
                 sub_img = cv2.absdiff(img_gs, bkg_img_gs)
                 frg_mask = sub_img > bkg_thresh
                 frame_id = curr_frame_id
+                frg_mask_disp = frg_mask.astype(np.uint8)*255
+                if save_frg_mask:
+                    frg_mask_fname = frg_mask_dir + '/' + 'image{:06d}.jpg'.format(frame_id)
+                    cv2.imwrite(frg_mask_fname, frg_mask_disp)
+
             cv2.imshow('Subtracted image', sub_img.astype(np.uint8))
-            cv2.imshow('Foreground Mask', frg_mask.astype(np.uint8)*255)
+            cv2.imshow('Foreground Mask', frg_mask_disp)
             cv2.waitKey(1)
+
             min_x = int(max(out_x, 0))
             min_y = int(max(out_y, 0))
             max_x = int(min(out_x + out_width, img_width - 1))
@@ -217,7 +232,8 @@ if __name__ == '__main__':
 
             frg_ratio = float(np.count_nonzero(frg_mask_patch))/float(frg_mask_patch.size)
             if frg_ratio < frg_ratio_thresh:
-                print 'removing detection {:d} in frame{:d} with foreground ration {:f}'.format(det_id, frame_id, frg_ratio)
+                print 'removing detection {:d} in frame {:d} with foreground ratio {:f}'.format(
+                    det_id, frame_id, frg_ratio)
                 continue
 
         corr_detection = [curr_frame_id, obj_id, out_x, out_y, out_width, out_height, conf, pt_x, pt_y, pt_z]

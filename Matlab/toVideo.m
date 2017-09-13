@@ -1,7 +1,7 @@
 function toVideo
 % clear all;
 % workingDir='../../../Reports/Thesis/Presentation/tracking_videos';
-workingDir='../../../Reports/CRV17/tracking_videos';
+workingDir='C:\Datasets\GRAM\Images';
 % workingDir='../../../../206';
 
 getParamLists;
@@ -16,7 +16,7 @@ seq_name = sequences{actor_id + 1}{seq_id + 1};
 % nl_bookII_s3
 % nl_bookIII_s3
 % nl_bus
-seq_name='crv_17_demo_vot16_pedestrian2_stacked';
+seq_name='isl_1_20170620-055940_frg_mask_25';
 
 start_frame_id = 1;
 end_frame_id = 0;
