@@ -5,6 +5,8 @@ import sys
 src_dir = '.'
 src_substr = '4u'
 dst_substr = ''
+recursive_search = 1
+include_folders = 0
 replace_existing = 0
 show_names = 1
 add_as_prefix = 0
@@ -17,6 +19,12 @@ if len(sys.argv) > arg_id:
     arg_id += 1
 if len(sys.argv) > arg_id:
     dst_substr = sys.argv[arg_id]
+    arg_id += 1
+if len(sys.argv) > arg_id:
+    recursive_search = int(sys.argv[arg_id])
+    arg_id += 1
+if len(sys.argv) > arg_id:
+    include_folders = int(sys.argv[arg_id])
     arg_id += 1
 if len(sys.argv) > arg_id:
     replace_existing = int(sys.argv[arg_id])
@@ -51,10 +59,23 @@ elif remove_files:
     print 'Searching for {:s} to remove in {:s}'.format(src_substr, src_dir)
 else:
     print 'Searching for {:s} to replace with {:s} in {:s}'.format(src_substr, dst_substr, src_dir)
+if recursive_search:
+    print 'Searching for files recursively in all sub folders'
+else:
+    print 'Searching for files only in the top level folder'
+if include_folders:
+    print 'Searching for folders too'
+else:
+    print 'Not searching for folders'
 src_file_paths = []
 for root, dirnames, filenames in os.walk(src_dir):
+    if include_folders:
+        for dirname in fnmatch.filter(dirnames, '*{:s}*'.format(src_substr)):
+            src_file_paths.append(os.path.join(root, dirname))
     for filename in fnmatch.filter(filenames, '*{:s}*'.format(src_substr)):
         src_file_paths.append(os.path.join(root, filename))
+    if not recursive_search:
+        break
 print 'Found {:d} matches'.format(len(src_file_paths))
 for src_path in src_file_paths:
     if remove_files:

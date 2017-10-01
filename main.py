@@ -324,11 +324,11 @@ def processArguments(args):
     tracker_index = labels.index('tracker')
     filter_index = labels.index('filter')
 
-    for i in xrange(no_of_args / 2):
-        arg = sys.argv[i * 2 + 1].split('::')
+    for arg_id in xrange(no_of_args / 2):
+        arg = sys.argv[arg_id * 2 + 1].split('::')
         arg_type = arg[0]
         arg_label = arg[1]
-        arg_val = sys.argv[i * 2 + 2]
+        arg_val = sys.argv[arg_id * 2 + 2]
         print 'arg_type: ', arg_type, '\targ_label: ', arg_label, '\targ_val: ', arg_val
         if arg_type == 'ptf':
             if arg_label == 'pause_after_frame':
