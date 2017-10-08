@@ -15,7 +15,7 @@ if len(sys.argv) > arg_id:
 
 print 'Filtering lines starting with {:s} in {:s} to {:s}'.format(filter_string, in_fname, out_fname)
 
-out_fid = open(in_fname, 'w')
+out_fid = open(out_fname, 'w')
 lines = open(in_fname, 'r').readlines()
 n_filtered_lines = 0
 for line in lines:
