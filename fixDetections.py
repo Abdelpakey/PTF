@@ -14,13 +14,13 @@ if __name__ == '__main__':
     actors = params_dict['actors']
     sequences = params_dict['sequences']
 
-    fix_frame_ids = 0
+    fix_frame_ids = 1
     swap_coords = 0
     swap_dimensions = 0
     invert_x = 0
     invert_y = 0
     # remove background detections
-    remove_background = 1
+    remove_background = 0
     # minimum intensity difference between input and background images to be considered foreground
     bkg_thresh = 25
     # minimum ratio of foreground to background for detection to be retained
@@ -33,7 +33,7 @@ if __name__ == '__main__':
     area_thresh = 90000
 
     xmin_thresh = 0
-    ymin_thresh = 83
+    ymin_thresh = 0
 
     conf_thresh = -1
 
@@ -44,9 +44,9 @@ if __name__ == '__main__':
     # actor = None
     # seq_name = None
     actor = 'GRAM'
-    seq_name = 'isl_1_20170620-055940'
     # seq_name = 'M-30-HD'
-    # seq_name = 'Urban1'
+    # seq_name = 'M-30'
+    seq_name = 'Urban1'
 
     # db_root_dir = '../Datasets'
     db_root_dir = 'C:/Datasets'
@@ -173,7 +173,6 @@ if __name__ == '__main__':
         else:
             out_width = width
             out_height = height
-
 
         if remove_oversized:
             if width_thresh > 0 and out_width > width_thresh:

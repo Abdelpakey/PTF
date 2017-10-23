@@ -215,7 +215,7 @@ def mouseHandlerResized(event, x_resized, y_resized, flags=None, param=None):
 if __name__ == '__main__':
 
     params_dict = getParamDict()
-    param_ids = readDistGridParams()
+    # param_ids = readDistGridParams()
     pause_seq = 1
     gt_col = (0, 255, 0)
     text_col = (0, 255, 0)
@@ -339,7 +339,7 @@ if __name__ == '__main__':
     init_hom_mat = np.mat(util.compute_homography(std_corners, init_corners))
     init_pts = util.dehomogenize(init_hom_mat * std_pts_hm)
 
-    init_img_gs = cv2.cvtColor(init_img, cv2.cv.CV_BGR2GRAY).astype(np.float64)
+    init_img_gs = cv2.cvtColor(init_img, cv2.COLOR_BGR2GRAY).astype(np.float64)
     img_height, img_width = init_img_gs.shape
     init_pixel_vals = np.mat([util.bilin_interp(init_img_gs, init_pts[0, pt_id], init_pts[1, pt_id]) for pt_id in
                               xrange(n_pts)])
@@ -363,7 +363,7 @@ if __name__ == '__main__':
         templ_img = cv2.imread(templ_fname)
         if len(templ_img.shape) == 2:
             templ_img = cv2.cvtColor(templ_img, cv2.COLOR_GRAY2RGB)
-        templ_img_gs = cv2.cvtColor(templ_img, cv2.cv.CV_BGR2GRAY).astype(np.float64)
+        templ_img_gs = cv2.cvtColor(templ_img, cv2.COLOR_BGR2GRAY).astype(np.float64)
         templ_hom_mat = np.mat(util.compute_homography(std_corners, templ_corners))
         templ_pts = util.dehomogenize(templ_hom_mat * std_pts_hm)
         templ_pixel_vals = np.mat(
@@ -450,7 +450,7 @@ if __name__ == '__main__':
             curr_img = cv2.imread('{:s}/frame{:05d}.jpg'.format(src_dir, frame_id))
             if len(curr_img.shape) == 2:
                 curr_img = cv2.cvtColor(curr_img, cv2.COLOR_GRAY2RGB)
-            curr_img_gs = cv2.cvtColor(curr_img, cv2.cv.CV_BGR2GRAY).astype(np.float64)
+            curr_img_gs = cv2.cvtColor(curr_img, cv2.COLOR_BGR2GRAY).astype(np.float64)
             # try:
             # if show_patches:
             # curr_pixel_vals = getPixVals(curr_pts, curr_img_gs)

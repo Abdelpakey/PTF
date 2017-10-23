@@ -1,4 +1,5 @@
 import sys
+import os
 
 filter_string = 'magnet'
 # 0: only at start
@@ -11,11 +12,18 @@ if len(sys.argv) > arg_id:
     filter_string = sys.argv[arg_id]
     arg_id += 1
 if len(sys.argv) > arg_id:
+    filter_type = int(sys.argv[arg_id])
+    arg_id += 1
+if len(sys.argv) > arg_id:
     in_fname = sys.argv[arg_id]
     arg_id += 1
 if len(sys.argv) > arg_id:
     out_fname = sys.argv[arg_id]
     arg_id += 1
+
+if not os.path.isfile(in_fname):
+    print 'Input file {:s} does not exist'.format(in_fname)
+    exit(0)
 
 if filter_type == 0:
     print 'Filtering lines starting with {:s} in {:s} to {:s}'.format(filter_string, in_fname, out_fname)
