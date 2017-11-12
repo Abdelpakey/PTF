@@ -10,7 +10,7 @@ params = {
     'seq_name': 'ISL16F8J_TMC_SCU2DJ_2016-10-05_0700',
     'vid_fmt': 'mp4',
     'show_img': 0,
-    'n_frames': 100
+    'n_frames': 10000
 }
 
 if __name__ == '__main__':
