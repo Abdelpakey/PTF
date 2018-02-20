@@ -106,7 +106,7 @@ if __name__ == '__main__':
     resize_vis_images = vis_resize_factor != 1
 
     src_fname = root_dir + '/' + seq_name + '.' + vid_fmt
-    dst_fname = root_dir + '/' + seq_name + '_masked_{:d}_{:s}.'.format(n_frames, getDateTime()) + vid_fmt
+    dst_fname = root_dir + '/' + seq_name + '_masked_{:d}_{:s}.'.format(n_frames, getDateTime()) + save_fmt[0]
 
     print('Reading video file: {:s}'.format(src_fname))
     cap = cv2.VideoCapture()
