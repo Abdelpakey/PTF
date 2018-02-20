@@ -105,8 +105,8 @@ if __name__ == '__main__':
 
     resize_vis_images = vis_resize_factor != 1
 
-    src_fname = root_dir + '/' +  '/' + seq_name + '.' + vid_fmt
-    dst_fname = root_dir + '/' +  '/' + seq_name + '_masked_{:d}_{:s}.'.format(n_frames, getDateTime()) + vid_fmt
+    src_fname = root_dir + '/' + seq_name + '.' + vid_fmt
+    dst_fname = root_dir + '/' + seq_name + '_masked_{:d}_{:s}.'.format(n_frames, getDateTime()) + vid_fmt
 
     print('Reading video file: {:s}'.format(src_fname))
     cap = cv2.VideoCapture()
@@ -178,10 +178,10 @@ if __name__ == '__main__':
             region_fid.write('\n')
         corners = np.array(region, dtype=np.int32)
         cv2.fillConvexPoly(frame_mask, corners, fill_col)
-        drawRegion(disp_frame, (corners*vis_resize_factor).transpose(),
+        drawRegion(disp_frame, (corners * vis_resize_factor).transpose(),
                    thickness=2, color=line_col)
         if read_from_file and show_img:
-            win_title = 'Regions 1-{:d}. Press any key to continue'.format(i+1)
+            win_title = 'Regions 1-{:d}. Press any key to continue'.format(i + 1)
             cv2.imshow(win_title, disp_frame)
             cv2.waitKey(0)
             cv2.destroyWindow(win_title)
