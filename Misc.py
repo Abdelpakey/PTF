@@ -535,7 +535,7 @@ def getNormalizedUnitSquarePts(resx=100, resy=100, c=1.0):
 
 def drawRegion(img, corners, color, thickness=1, annotate_corners=False,
                annotation_col=(0, 255, 0), annotation_font_size=1):
-    for i in xrange(4):
+    for i in xrange(corners.shape[1]):
         p1 = (int(corners[0, i]), int(corners[1, i]))
         p2 = (int(corners[0, (i + 1) % 4]), int(corners[1, (i + 1) % 4]))
         if cv2.__version__.startswith('3'):
