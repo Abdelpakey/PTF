@@ -82,7 +82,7 @@ params = {
     'n_pts': -1,
     'n_regions': 1,
     'remove_regions': 1,
-    'vis_resize_factor': 1,
+    'vis_resize_factor': 1.0,
     'read_from_file': 0,
     'region_fname': 'mask_regions.txt',
     'save_fmt': ('avi', 'XVID', 30)
@@ -103,6 +103,9 @@ if __name__ == '__main__':
     save_fmt = params['save_fmt']
     read_from_file = params['read_from_file']
     region_fname = params['region_fname']
+    vis_resize_factor = params['vis_resize_factor']
+
+    resize_vis_images = vis_resize_factor != 1
 
     print('actor: ', actor)
     print('seq_name: ', seq_name)
@@ -139,7 +142,10 @@ if __name__ == '__main__':
         print('Writing regions to {:s}'.format(region_fname))
         region_fid = open(region_fname, 'w')
 
-    disp_frame = frame.copy()
+    if resize_vis_images:
+        disp_frame = cv2.resize(frame, (0, 0), fx=vis_resize_factor, fy=vis_resize_factor)
+    else:
+        disp_frame = frame.copy()
     for i in range(n_regions):
         if read_from_file:
             line_x = region_fid.readline()
@@ -171,8 +177,10 @@ if __name__ == '__main__':
             for j in range(len(region)):
                 region_fid.write('{:f}\t'.format(region[j][1]))
             region_fid.write('\n')
-        corners = np.array(region, dtype=np.int32)
-        cv2.fillConvexPoly(frame_mask, corners, fill_col)
+        corners = np.array(region, dtype=np.float64)
+        if resize_vis_images:
+            corners = corners / vis_resize_factor
+        cv2.fillConvexPoly(frame_mask, corners.astype(np.int32), fill_col)
         drawRegion(disp_frame, corners, thickness=2, color=line_col)
         regions.append(region)
 
@@ -181,7 +189,11 @@ if __name__ == '__main__':
     # frame_mask = cv2.cvtColor(frame_mask, cv2.COLOR_GRAY2RGB)
 
     if show_img:
-        cv2.imshow('Remove mask', frame_mask)
+        if resize_vis_images:
+            disp_frame_mask = cv2.resize(frame_mask, (0, 0), fx=vis_resize_factor, fy=vis_resize_factor)
+        else:
+            disp_frame_mask = frame_mask
+        cv2.imshow('Remove mask', disp_frame_mask)
         cv2.waitKey(0)
 
     frame_mask = frame_mask.astype(np.bool)
@@ -206,7 +218,11 @@ if __name__ == '__main__':
     while True:
         frame[frame_mask] = 0
         if show_img:
-            cv2.imshow('Frame', frame)
+            if resize_vis_images:
+                disp_frame = cv2.resize(frame, (0, 0), fx=vis_resize_factor, fy=vis_resize_factor)
+            else:
+                disp_frame = frame
+            cv2.imshow('Frame', disp_frame)
             if cv2.waitKey(1) == 27:
                 break
         video_writer.write(frame)
