@@ -2,7 +2,7 @@ import os
 import cv2
 import numpy as np
 import sys
-from Misc import processArguments, drawRegion
+from Misc import processArguments, drawRegion, getDateTime
 
 
 def getConvexRegion(img, n_pts=-1, col=(0, 0, 255), title=None, line_thickness=1):
@@ -31,7 +31,7 @@ def getConvexRegion(img, n_pts=-1, col=(0, 0, 255), title=None, line_thickness=1
         cv2.imshow(title, img)
 
     def mouseHandler(event, x, y, flags=None, param=None):
-        if len(pts) >= 4:
+        if n_pts > 0 and len(pts) >= n_pts:
             return
         if event == cv2.EVENT_LBUTTONDOWN:
             pts.append((x, y))
@@ -61,20 +61,19 @@ def getConvexRegion(img, n_pts=-1, col=(0, 0, 255), title=None, line_thickness=1
             break
         key = cv2.waitKey(1)
         if key == 27:
-            if n_pts < 0:
+            if n_pts <= 0:
                 break
             sys.exit()
         elif key == 13:
             break
+    drawLines(annotated_img, pts[0])
     cv2.waitKey(250)
     cv2.destroyWindow(title)
-    drawLines(annotated_img, pts[0])
     return pts
 
 
 params = {
-    'db_root_dir': 'N:\Datasets',
-    'actor': 'ISL',
+    'root_dir': 'N:\Datasets',
     'seq_name': 'DJI_0020',
     'vid_fmt': 'mov',
     'show_img': 1,
@@ -91,8 +90,7 @@ params = {
 if __name__ == '__main__':
     processArguments(sys.argv[1:], params)
 
-    db_root_dir = params['db_root_dir']
-    actor = params['actor']
+    root_dir = params['root_dir']
     seq_name = params['seq_name']
     show_img = params['show_img']
     vid_fmt = params['vid_fmt']
@@ -107,11 +105,8 @@ if __name__ == '__main__':
 
     resize_vis_images = vis_resize_factor != 1
 
-    print('actor: ', actor)
-    print('seq_name: ', seq_name)
-
-    src_fname = db_root_dir + '/' + actor + '/' + seq_name + '.' + vid_fmt
-    dst_fname = db_root_dir + '/' + actor + '/' + seq_name + '_masked.' + vid_fmt
+    src_fname = root_dir + '/' +  '/' + seq_name + '.' + vid_fmt
+    dst_fname = root_dir + '/' +  '/' + seq_name + '_masked_{:d}_{:s}.'.format(n_frames, getDateTime()) + vid_fmt
 
     print('Reading video file: {:s}'.format(src_fname))
     cap = cv2.VideoCapture()
@@ -146,6 +141,7 @@ if __name__ == '__main__':
         disp_frame = cv2.resize(frame, (0, 0), fx=vis_resize_factor, fy=vis_resize_factor)
     else:
         disp_frame = frame.copy()
+
     for i in range(n_regions):
         if read_from_file:
             line_x = region_fid.readline()
@@ -171,17 +167,25 @@ if __name__ == '__main__':
                 win_title = '{:s}. Press Esc when done.'.format(win_title)
             region = getConvexRegion(disp_frame, n_pts=n_pts, line_thickness=2, col=line_col,
                                      title=win_title)
+            # cv2.destroyWindow(win_title)
+            if resize_vis_images:
+                region = [(x / vis_resize_factor, y / vis_resize_factor) for x, y in region]
             for j in range(len(region)):
                 region_fid.write('{:f}\t'.format(region[j][0]))
             region_fid.write('\n')
             for j in range(len(region)):
                 region_fid.write('{:f}\t'.format(region[j][1]))
             region_fid.write('\n')
-        corners = np.array(region, dtype=np.float64)
-        if resize_vis_images:
-            corners = corners / vis_resize_factor
-        cv2.fillConvexPoly(frame_mask, corners.astype(np.int32), fill_col)
-        drawRegion(disp_frame, corners, thickness=2, color=line_col)
+        corners = np.array(region, dtype=np.int32)
+        cv2.fillConvexPoly(frame_mask, corners, fill_col)
+        drawRegion(disp_frame, (corners*vis_resize_factor).transpose(),
+                   thickness=2, color=line_col)
+        if read_from_file and show_img:
+            win_title = 'Regions 1-{:d}. Press any key to continue'.format(i+1)
+            cv2.imshow(win_title, disp_frame)
+            cv2.waitKey(0)
+            cv2.destroyWindow(win_title)
+
         regions.append(region)
 
     region_fid.close()
@@ -193,8 +197,11 @@ if __name__ == '__main__':
             disp_frame_mask = cv2.resize(frame_mask, (0, 0), fx=vis_resize_factor, fy=vis_resize_factor)
         else:
             disp_frame_mask = frame_mask
-        cv2.imshow('Remove mask', disp_frame_mask)
+        win_title = 'Remove mask. Press any key to continue'
+        cv2.imshow(win_title, disp_frame_mask)
+        # cv2.imshow('Original mask. Press any key to continue', frame_mask)
         cv2.waitKey(0)
+        cv2.destroyWindow(win_title)
 
     frame_mask = frame_mask.astype(np.bool)
 
@@ -210,7 +217,7 @@ if __name__ == '__main__':
                           fps=save_fmt[2], frameSize=frame_size)
 
     if not video_writer.isOpened():
-        print('Video file {:s} could not be opened'.format(dst_fname))
+        print('Video file {:s} could not be opened for writing'.format(dst_fname))
         exit(0)
 
     print('Writing video file: {:s}'.format(dst_fname))
@@ -219,10 +226,11 @@ if __name__ == '__main__':
         frame[frame_mask] = 0
         if show_img:
             if resize_vis_images:
-                disp_frame = cv2.resize(frame, (0, 0), fx=vis_resize_factor, fy=vis_resize_factor)
+                _disp_frame = cv2.resize(frame, (0, 0), fx=vis_resize_factor, fy=vis_resize_factor)
             else:
-                disp_frame = frame
-            cv2.imshow('Frame', disp_frame)
+                _disp_frame = frame
+            cv2.imshow('Frame', _disp_frame)
+            # cv2.imshow('Original Frame', frame)
             if cv2.waitKey(1) == 27:
                 break
         video_writer.write(frame)
@@ -233,7 +241,6 @@ if __name__ == '__main__':
         if not ret:
             print('Frame {:d} could not be read'.format(frame_id + 1))
             break
-
         sys.stdout.write('\rDone {:d}/{:d} frames'.format(
             frame_id + 1, n_frames))
         sys.stdout.flush()

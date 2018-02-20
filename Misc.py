@@ -11,6 +11,7 @@ from matplotlib.mlab import PCA
 from matplotlib import animation
 import copy
 import struct
+import time
 from DecompUtils import getBinaryPtsImage2
 
 from mpl_toolkits.mplot3d import Axes3D
@@ -535,9 +536,10 @@ def getNormalizedUnitSquarePts(resx=100, resy=100, c=1.0):
 
 def drawRegion(img, corners, color, thickness=1, annotate_corners=False,
                annotation_col=(0, 255, 0), annotation_font_size=1):
-    for i in xrange(corners.shape[1]):
+    n_pts = corners.shape[1]
+    for i in xrange(n_pts):
         p1 = (int(corners[0, i]), int(corners[1, i]))
-        p2 = (int(corners[0, (i + 1) % 4]), int(corners[1, (i + 1) % 4]))
+        p2 = (int(corners[0, (i + 1) % n_pts]), int(corners[1, (i + 1) % n_pts]))
         if cv2.__version__.startswith('3'):
             cv2.line(img, p1, p2, color, thickness, cv2.LINE_AA)
         else:
@@ -2113,6 +2115,9 @@ def getSyntheticSeqName(source_name, syn_ssm, syn_ssm_sigma_id, syn_ilm='0',
                                                syn_am_sigma_id, syn_add_noise, syn_noise_mean, syn_noise_sigma)
 
     return '{:s}_{:d}_{:s}'.format(source_name, syn_frame_id, syn_out_suffix)
+
+def getDateTime():
+    return time.strftime("%y%m%d_%H%M", time.localtime())
 
 
 def getParamDict():
