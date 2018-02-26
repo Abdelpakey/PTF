@@ -125,7 +125,7 @@ if __name__ == '__main__':
         op_type = 'remove'
         line_col = (0, 0, 255)
     else:
-        frame_mask = np.ones((n_rows, n_cols, n_channels), dtype=np.uint8)
+        frame_mask = np.full((n_rows, n_cols, n_channels), fill_value=255, dtype=np.uint8)
         fill_col = (0, 0, 0)
         op_type = 'retain'
         line_col = (0, 255, 0)
