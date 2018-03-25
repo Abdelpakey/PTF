@@ -52,7 +52,7 @@ if __name__ == '__main__':
     while True:
         ret, frame = cap.read()
         if not ret:
-            print('Frame {:d} could not be read'.format(frame_id + 1))
+            print('\nFrame {:d} could not be read'.format(frame_id + 1))
             break
         if roi_enabled:
             frame = frame[roi[1]:roi[3], roi[0]:roi[2], :]
