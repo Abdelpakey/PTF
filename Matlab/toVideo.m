@@ -1,31 +1,31 @@
 function toVideo
 % clear all;
 % workingDir='../../../Reports/Thesis/Presentation/tracking_videos';
-workingDir='C:\Datasets\GRAM\Images';
+workingDir='N:\Datasets\MPI-Sintel-complete\test\final';
 % workingDir='../../../../206';
 
 getParamLists;
 
-actor_id = 1;
-seq_id = 46;
-actor = actors{actor_id+1};
-seq_name = sequences{actor_id + 1}{seq_id + 1};
+% actor_id = 1;
+% seq_id = 46;
+% actor = actors{actor_id+1};
+% seq_name = sequences{actor_id + 1}{seq_id + 1};
 
 % nl_cereal_s3
 % nl_bookI_s3
 % nl_bookII_s3
 % nl_bookIII_s3
 % nl_bus
-seq_name='isl_1_20170620-055940_frg_mask_25';
+seq_name='wall';
 
 start_frame_id = 1;
 end_frame_id = 0;
 
 src_dir=seq_name;
 
-fps = 60;
+fps = 24;
 quality = 100;
-img_fmt='jpg';
+img_fmt='png';
 vid_fmt='mp4';
 % profile='Motion JPEG AVI';
 profile='MPEG-4';
@@ -35,6 +35,10 @@ imageNames = dir(fullfile(workingDir, src_dir,sprintf('*.%s', img_fmt)));
 imageNames = {imageNames.name}';
 if end_frame_id<=0 || end_frame_id>length(imageNames)
     end_frame_id=length(imageNames);
+end
+if end_frame_id < start_frame_id
+    fprintf('No input frames found\n');
+    return
 end
 out_fname=sprintf('%s_%d_%d_%d_%d.%s', src_dir, fps, quality,...
     start_frame_id, end_frame_id, vid_fmt);
