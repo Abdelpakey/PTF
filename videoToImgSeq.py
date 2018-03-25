@@ -11,7 +11,7 @@ params = {
     'vid_fmt': 'mov',
     'show_img': 0,
     'n_frames': 2000,
-    'roi': [1821,231,2373,467]
+    'roi': None
 }
 
 if __name__ == '__main__':
