@@ -27,7 +27,7 @@ if __name__ == '__main__':
 
     roi_enabled = False
 
-    if roi is not None and isinstance(roi, (list, tuple)):
+    if roi is not None and isinstance(roi, (list, tuple)) and len(roi)==4:
         xmin, ymin, xmax, ymax = roi
         if xmax > xmin and ymax > ymin:
             print('Using roi: ', roi)
