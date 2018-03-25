@@ -10,7 +10,7 @@ params = {
     'seq_name': 'DJI_0002',
     'vid_fmt': 'mov',
     'show_img': 0,
-    'n_frames': 2000,
+    'n_frames': 0,
     'roi': None
 }
 
@@ -27,7 +27,7 @@ if __name__ == '__main__':
 
     roi_enabled = False
 
-    if roi is not None and isinstance(roi, (list, tuple)) and len(roi)==4:
+    if roi is not None and isinstance(roi, (list, tuple)) and len(roi) == 4:
         xmin, ymin, xmax, ymax = roi
         if xmax > xmin and ymax > ymin:
             print('Using roi: ', roi)
