@@ -48,6 +48,17 @@ if __name__ == '__main__':
     if not cap.open(src_fname):
         raise StandardError('The video file ' + src_fname + ' could not be opened')
 
+    if cv2.__version__.startswith('3'):
+        cv_prop = cv2.CAP_PROP_FRAME_COUNT
+    else:
+        cv_prop = cv2.cv.CAP_PROP_FRAME_COUNT
+    total_frames = int(cap.get(cv_prop))
+
+    if n_frames <= 0:
+        n_frames = total_frames
+    elif total_frames > 0 and n_frames < total_frames:
+        raise AssertionError('Invalid n_frames {} for video with {} frames'.format(n_frames, total_frames))
+
     frame_id = 0
     while True:
         ret, frame = cap.read()
@@ -69,5 +80,3 @@ if __name__ == '__main__':
         sys.stdout.flush()
     sys.stdout.write('\n')
     sys.stdout.flush()
-
-
