@@ -56,7 +56,7 @@ if __name__ == '__main__':
 
     if n_frames <= 0:
         n_frames = total_frames
-    elif total_frames > 0 and n_frames < total_frames:
+    elif total_frames > 0 and n_frames > total_frames:
         raise AssertionError('Invalid n_frames {} for video with {} frames'.format(n_frames, total_frames))
 
     frame_id = 0
