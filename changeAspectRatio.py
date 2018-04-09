@@ -10,7 +10,7 @@ params = {
     'height': 9,
     'dst_path': '',
     'show_img': 0,
-    'quality': 9,
+    'quality': 3,
 }
 
 if __name__ == '__main__':
