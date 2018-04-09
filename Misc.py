@@ -182,7 +182,13 @@ def processArguments(args, params):
         if len(arg) != 2 or not arg[0] in params.keys():
             print 'Invalid argument provided: {:s}'.format(args[arg_id])
             return
-        params[arg[0]] = type(params[arg[0]])(arg[1])
+        if not arg[1] or not arg[0]:
+            continue
+        try:
+            params[arg[0]] = type(params[arg[0]])(arg[1])
+        except ValueError:
+            print 'Invalid argument value {} provided for {}'.format(arg[1], arg[0])
+            return
 
 def str2num(s):
     try:
