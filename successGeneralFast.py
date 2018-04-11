@@ -15,6 +15,7 @@ if __name__ == '__main__':
     arch_root_dir = './C++/MTF/log/archives'
     arch_name = 'ncc__esm__3_4_6__lintrack'
     in_arch_path = 'tracking_data'
+	
     tracking_root_dir = './C++/MTF/log/tracking_data'
     gt_root_dir = '../Datasets'
     out_dir = './C++/MTF/log/success_rates'
