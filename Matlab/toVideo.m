@@ -1,7 +1,7 @@
 function toVideo
 % clear all;
 % workingDir='../../../Reports/Thesis/Presentation/tracking_videos';
-workingDir='N:\Datasets\MPI-Sintel-complete\test\final';
+workingDir='J:/deeplab';
 % workingDir='../../../../206';
 
 getParamLists;
@@ -16,7 +16,7 @@ getParamLists;
 % nl_bookII_s3
 % nl_bookIII_s3
 % nl_bus
-seq_name='wall';
+seq_name='YUN00001_0_239_640_640_640_640';
 
 start_frame_id = 1;
 end_frame_id = 0;
@@ -25,7 +25,7 @@ src_dir=seq_name;
 
 fps = 24;
 quality = 100;
-img_fmt='png';
+img_fmt='jpg';
 vid_fmt='mp4';
 % profile='Motion JPEG AVI';
 profile='MPEG-4';

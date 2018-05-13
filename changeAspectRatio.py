@@ -11,6 +11,7 @@ params = {
     'dst_path': '',
     'show_img': 0,
     'quality': 3,
+    'resize': 0,
 }
 
 if __name__ == '__main__':
@@ -21,6 +22,7 @@ if __name__ == '__main__':
     dst_path = params['dst_path']
     show_img = params['show_img']
     quality = params['quality']
+    resize = params['resize']
 
     print('Reading source images from: {}'.format(src_path))
 
@@ -33,6 +35,10 @@ if __name__ == '__main__':
     print('total_frames: {}'.format(total_frames))
     src_file_list.sort()
 
+    # total_frames = len(src_file_list)
+    # print('total_frames after sorting: {}'.format(total_frames))
+    # sys.exit()
+
     aspect_ratio = float(width) / float(height)
 
     if not dst_path:
@@ -43,6 +49,9 @@ if __name__ == '__main__':
         os.makedirs(dst_path)
 
     img_id = 0
+
+    if resize:
+        print('Resizing images to {}x{}'.format(width, height))
 
     for img_fname in src_file_list:
 
@@ -56,7 +65,11 @@ if __name__ == '__main__':
         src_height, src_width, n_channels = src_img.shape
         src_aspect_ratio = float(src_width) / float(src_height)
 
-        if src_aspect_ratio > aspect_ratio:
+        if src_aspect_ratio == aspect_ratio:
+            dst_width = src_width
+            dst_height = src_height
+            start_row = start_col = 0
+        elif src_aspect_ratio > aspect_ratio:
             dst_width = src_width
             dst_height = int(src_width / aspect_ratio)
             start_row = int((dst_height - src_height) / 2.0)
@@ -71,6 +84,9 @@ if __name__ == '__main__':
 
         dst_img[start_row:start_row + src_height, start_col:start_col + src_width, :] = src_img
         dst_img_fname = os.path.join(dst_path, '{}.png'.format(img_fname_no_ext))
+
+        if resize:
+            dst_img = cv2.resize(dst_img, (width, height))
 
         cv2.imwrite(dst_img_fname, dst_img, [int(cv2.IMWRITE_PNG_COMPRESSION), quality])
 
