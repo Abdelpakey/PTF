@@ -6,6 +6,7 @@ seq_prefix = 'Seq'
 seq_root_dir = '.'
 seq_start_id = 1
 shuffle_files = 1
+filename_fmt = 0
 
 arg_id = 1
 if len(sys.argv) > arg_id:
@@ -18,12 +19,16 @@ if len(sys.argv) > arg_id:
     shuffle_files = int(sys.argv[arg_id])
     arg_id += 1
 if len(sys.argv) > arg_id:
+    filename_fmt = int(sys.argv[arg_id])
+    arg_id += 1
+if len(sys.argv) > arg_id:
     seq_root_dir = sys.argv[arg_id]
     arg_id += 1
 
 print 'seq_prefix: {:s}'.format(seq_prefix)
 print 'seq_start_id: {:d}'.format(seq_start_id)
 print 'shuffle_files: {:d}'.format(shuffle_files)
+print 'file_fmt: {:d}'.format(filename_fmt)
 
 src_file_names = [f for f in os.listdir(seq_root_dir) if os.path.isfile(os.path.join(seq_root_dir, f))]
 if shuffle_files:
@@ -36,10 +41,16 @@ n_files = len(src_file_names)
 for src_fname in src_file_names:
     filename, file_extension = os.path.splitext(src_fname)
     src_path = os.path.join(seq_root_dir, src_fname)
-    dst_path = os.path.join(seq_root_dir, '{:s}_{:d}{:s}'.format(seq_prefix, seq_id, file_extension))
+    if filename_fmt == 0:
+        dst_path = os.path.join(seq_root_dir, '{:s}_{:d}{:s}'.format(seq_prefix, seq_id, file_extension))
+    else:
+        dst_path = os.path.join(seq_root_dir, '{:s}{:06d}{:s}'.format(seq_prefix, seq_id, file_extension))
     while os.path.exists(dst_path):
         seq_id += 1
-        dst_path = os.path.join(seq_root_dir, '{:s}_{:d}{:s}'.format(seq_prefix, seq_id, file_extension))
+        if filename_fmt == 0:
+            dst_path = os.path.join(seq_root_dir, '{:s}_{:d}{:s}'.format(seq_prefix, seq_id, file_extension))
+        else:
+            dst_path = os.path.join(seq_root_dir, '{:s}{:06d}{:s}'.format(seq_prefix, seq_id, file_extension))
     os.rename(src_path, dst_path)
     seq_id += 1
     if file_count % 10 == 0 or file_count == n_files:

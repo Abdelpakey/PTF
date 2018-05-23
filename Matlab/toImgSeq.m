@@ -1,5 +1,5 @@
 % root_dir='.';
-root_dir='C:/Datasets/ISL';
+root_dir='H:\UofA\Acamp\Karthik PhD Project\object_detection\videos';
 
 read_from_list = 0;
 
@@ -7,7 +7,7 @@ if read_from_list
     file_list=importdata(sprintf('%s/list.txt',root_dir))    
     format='';
 else
-    file_list={'20170620-055940'}
+    file_list={'deer_2'}
     format='mp4';
 end
 for file_id=1:length(file_list)

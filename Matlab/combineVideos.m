@@ -1,7 +1,7 @@
 function combineVideos
 % clear all;
 % workingDir='../../../Reports/Thesis/Presentation/tracking_videos';
-workingDir='H:\UofA\PhD\Reports\Summer 2018 GSIP internship\Karthik PhD Project\object_detection\results';
+workingDir='H:\UofA\PhD\Reports\Summer 2018 GSIP internship\Karthik PhD Project\object_detection\results\rfcn_resnet101_coco_2018_01_28';
 % workingDir='../../../../206';
 
 read_from_list = 1;
