@@ -9,7 +9,7 @@ params = {
     'width': 1920,
     'height': 1080,
     'min_height_ratio': 0.40,
-    'speed': 1.0,
+    'speed': 0.5,
     'show_img': 0,
     'quality': 3,
     'resize': 0,
