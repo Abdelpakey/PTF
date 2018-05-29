@@ -101,7 +101,8 @@ if __name__ == '__main__':
 
     win_name = 'VWM'
 
-    cv2.namedWindow(win_name)
+    cv2.namedWindow(win_name, cv2.WND_PROP_FULLSCREEN)
+    cv2.setWindowProperty(win_name, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
 
     direction = -1
 
