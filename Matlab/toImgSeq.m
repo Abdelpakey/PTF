@@ -1,14 +1,14 @@
 % root_dir='.';
-root_dir='H:\UofA\Acamp\Karthik PhD Project\object_detection\videos';
+root_dir='H:\UofA\Acamp\code\object_detection\videos';
 
-read_from_list = 0;
+read_from_list = 1;
 
 if read_from_list
     file_list=importdata(sprintf('%s/list.txt',root_dir))    
     format='';
 else
-    file_list={'deer_2'}
-    format='mp4';
+    file_list={'M2U00021'}
+    format='MPG';
 end
 for file_id=1:length(file_list)
     filename=file_list{file_id};   

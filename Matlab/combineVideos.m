@@ -1,7 +1,7 @@
 function combineVideos
 % clear all;
 % workingDir='../../../Reports/Thesis/Presentation/tracking_videos';
-workingDir='H:\UofA\PhD\Reports\Summer 2018 GSIP internship\Karthik PhD Project\object_detection\results\rfcn_resnet101_coco_2018_01_28';
+workingDir='H:\UofA\Acamp\code\object_detection\videos';
 % workingDir='../../../../206';
 
 read_from_list = 1;
@@ -29,7 +29,7 @@ vid_fmt='mp4';
 profile='MPEG-4';
 
 
-out_fname=sprintf('combined.%s', vid_fmt);
+out_fname=sprintf('grizzly_bear_1_1_4.%s', vid_fmt);
 fprintf('Writing to: %s\n', out_fname);
 
 outputVideo = VideoWriter(fullfile(workingDir,out_fname), profile);
@@ -44,8 +44,8 @@ aspect_ratio = double(width) / double(height);
 for video_id = 1:n_videos
     
     vid_name=videos{video_id};
-    vid_path = vid_name;
-    % vid_path = fullfile(workingDir, vid_name);
+%     vid_path = vid_name;
+    vid_path = fullfile(workingDir, vid_name);
     fprintf('Processing file: %s\n',vid_path);
     
     video = VideoReader(vid_path);
