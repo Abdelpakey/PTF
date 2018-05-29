@@ -47,7 +47,7 @@ if __name__ == '__main__':
 
     aspect_ratio = float(width) / float(height)
 
-    _pause = 1
+    _pause = 0
 
     img_id = 0
 
@@ -99,55 +99,66 @@ if __name__ == '__main__':
     target_width = dst_width
     target_height = dst_height
 
-    cv2.namedWindow(img_fname)
+    win_name = 'VWM'
+
+    cv2.namedWindow(win_name)
 
     direction = -1
 
     start_row = start_col = 0
-    end_row = int(dst_height)
-    end_col = int(dst_width)
+    end_row = dst_height
+    end_col = dst_width
 
-    min_height = int(dst_height * min_height_ratio)
+    min_height = dst_height * min_height_ratio
 
     while True:
-        temp = src_img_ar[start_row:end_row, start_col:end_col, :]
+        temp = src_img_ar[int(start_row):int(end_row), int(start_col):int(end_col), :]
 
-        temp_height, temp_width, _ = temp.shape
-        temp_aspect_ratio = float(temp_width) / float(temp_height)
-
+        # temp_height, temp_width, _ = temp.shape
+        # temp_aspect_ratio = float(temp_width) / float(temp_height)
         # print('temp_height: ', temp_height)
         # print('temp_width: ', temp_width)
         # print('temp_aspect_ratio: ', temp_aspect_ratio)
 
         dst_img = cv2.resize(temp, (width, height))
 
-        cv2.imshow(img_fname, dst_img)
+        cv2.imshow(win_name, dst_img)
         k = cv2.waitKey(1 - _pause)
         if k == 27:
             break
         elif k == 32:
             _pause = 1 - _pause
-        elif k == ord('+'):
-            speed += 0.05
-        elif k == ord('-'):
-            speed -= 0.05
+        elif k == ord('+') or k == ord('d'):
+            speed += 0.01
+            print('speed: ', speed)
+        elif k == ord('-') or k == ord('a'):
+            speed -= 0.01
+            if speed <= 0:
+                speed = 0.01
+            print('speed: ', speed)
         elif k == ord('i'):
             direction = -direction
 
-        target_height = int(target_height + direction * speed)
+        target_height = target_height + direction * speed
 
-        if target_height < min_height or target_height > dst_height:
-            direction = -direction
-            target_height = int(target_height + direction * speed)
+        if target_height < min_height:
+            target_height = min_height
+            direction = 1
 
-        target_width = int(target_height * aspect_ratio)
+        if target_height > dst_height:
+            target_height = dst_height
+            direction = -1
 
+        target_width = target_height * aspect_ratio
+
+        # print('speed: ', speed)
+        # print('min_height: ', min_height)
         # print('target_height: ', target_height)
         # print('target_width: ', target_width)
 
         end_row = target_height
 
-        col_diff = int((dst_width - target_width) / 2.0)
+        col_diff = (dst_width - target_width) / 2.0
         start_col = col_diff
         end_col = dst_width - col_diff
 
@@ -157,6 +168,4 @@ if __name__ == '__main__':
 
         # print('\n')
 
-
-
-    cv2.destroyWindow(img_fname)
+    cv2.destroyWindow(win_name)
