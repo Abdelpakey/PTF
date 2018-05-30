@@ -34,7 +34,6 @@ if __name__ == '__main__':
         [0, -1080],
         [1920, 0],
     ]
-
     aspect_ratio = float(width) / float(height)
     _pause = 0
     direction = -1
@@ -68,6 +67,36 @@ if __name__ == '__main__':
     target_height, target_width, min_height, start_col, end_col = [None] * 5
 
 
+    def createWindow():
+        global mode
+
+        cv2.destroyWindow(win_name)
+
+        if mode == 0:
+            cv2.namedWindow(win_name, cv2.WND_PROP_FULLSCREEN)
+            cv2.setWindowProperty(win_name, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
+        else:
+            cv2.namedWindow(win_name)
+            cv2.moveWindow(win_name, monitors[2][0], monitors[2][1])
+
+        cv2.setMouseCallback(win_name, mouseHandler)
+
+
+    def changeMode():
+        global mode, height, aspect_ratio
+        mode = 1 - mode
+
+        if mode == 0:
+            height = int(height / 2.0)
+        else:
+            height = int(2 * height)
+
+        print('changeMode :: height: ', height)
+        aspect_ratio = float(width) / float(height)
+        createWindow()
+        loadImage()
+
+
     def loadImage():
         global src_img_ar, start_row, end_row, start_col, end_col, dst_height, dst_width
         global target_height, target_width, min_height, start_col, end_col
@@ -83,37 +112,38 @@ if __name__ == '__main__':
         src_height, src_width, n_channels = src_img.shape
         src_aspect_ratio = float(src_width) / float(src_height)
 
-        if mode == 0:
-            if src_aspect_ratio == aspect_ratio:
-                dst_width = src_width
-                dst_height = src_height
-                start_row = start_col = 0
-            elif src_aspect_ratio > aspect_ratio:
-                dst_width = src_width
-                dst_height = int(src_width / aspect_ratio)
-                start_row = int((dst_height - src_height) / 2.0)
-                start_col = 0
-            else:
-                dst_height = src_height
-                dst_width = int(src_height * aspect_ratio)
-                start_col = int((dst_width - src_width) / 2.0)
-                start_row = 0
+        if src_aspect_ratio == aspect_ratio:
+            dst_width = src_width
+            dst_height = src_height
+            start_row = start_col = 0
+        elif src_aspect_ratio > aspect_ratio:
+            dst_width = src_width
+            dst_height = int(src_width / aspect_ratio)
+            start_row = int((dst_height - src_height) / 2.0)
+            start_col = 0
         else:
-            if src_aspect_ratio == aspect_ratio:
-                dst_width = width
-                dst_height = height
-            elif src_aspect_ratio > aspect_ratio:
-                # too tall
-                dst_height = int(height)
-                dst_width = int(height * src_aspect_ratio)
-            else:
-                # too wide
-                dst_width = int(width)
-                dst_height = int(width / aspect_ratio)
+            dst_height = src_height
+            dst_width = int(src_height * aspect_ratio)
+            start_col = int((dst_width - src_width) / 2.0)
+            start_row = 0
+
+        # if mode == 0:
+        # else:
+        #     if src_aspect_ratio == aspect_ratio:
+        #         dst_width = width
+        #         dst_height = height
+        #     elif src_aspect_ratio > aspect_ratio:
+        #         # too tall
+        #         dst_height = int(height)
+        #         dst_width = int(height * src_aspect_ratio)
+        #     else:
+        #         # too wide
+        #         dst_width = int(width)
+        #         dst_height = int(width / aspect_ratio)
 
         # src_img = np.zeros((height, width, n_channels), dtype=np.uint8)
         src_img_ar = np.zeros((dst_height, dst_width, n_channels), dtype=np.uint8)
-        src_img_ar[start_row:start_row + src_height, start_col:start_col + src_width, :] = src_img
+        src_img_ar[int(start_row):int(start_row + src_height), int(start_col):int(start_col + src_width), :] = src_img
 
         target_width = dst_width
         target_height = dst_height
@@ -124,9 +154,42 @@ if __name__ == '__main__':
 
         min_height = dst_height * min_height_ratio
 
+        print('height: ', height)
+        print('dst_height: ', dst_height)
+        print('dst_width: ', dst_width)
+
+
+    def motionStep(_direction):
+        global target_height, direction, end_row, start_col, end_col
+
+        target_height = target_height + _direction * speed
+
+        if target_height < min_height:
+            target_height = min_height
+            _direction = 1
+
+        if target_height > dst_height:
+            target_height = dst_height
+            _direction = -1
+
+        target_width = target_height * aspect_ratio
+
+        # print('speed: ', speed)
+        # print('min_height: ', min_height)
+        # print('target_height: ', target_height)
+        # print('target_width: ', target_width)
+
+        end_row = start_row + target_height
+
+        col_diff = (dst_width - target_width) / 2.0
+        start_col = col_diff
+        end_col = dst_width - col_diff
+
+        return _direction
+
 
     def mouseHandler(event, x, y, flags=None, param=None):
-        global img_id, _pause, start_row
+        global img_id, _pause, start_row, speed
         if event == cv2.EVENT_LBUTTONDOWN:
             img_id -= 1
             if img_id < 0:
@@ -145,13 +208,17 @@ if __name__ == '__main__':
             start_row = y
         elif event == cv2.EVENT_MOUSEMOVE:
             pass
+        elif event == cv2.EVENT_MOUSEWHEEL:
+            print('flags: ', flags)
+            # _delta = cv2.getMouseWheelDelta(flags)
+            if flags > 0:
+                motionStep(1)
+            else:
+                motionStep(-1)
 
 
     win_name = 'VWM'
-    cv2.namedWindow(win_name, cv2.WND_PROP_FULLSCREEN)
-    cv2.setWindowProperty(win_name, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
-    cv2.setMouseCallback(win_name, mouseHandler)
-
+    createWindow()
     loadImage()
 
     while True:
@@ -170,6 +237,8 @@ if __name__ == '__main__':
 
         if k == 27:
             break
+        elif k == 13 or k == ord('m'):
+            changeMode()
         elif k == ord('1'):
             cv2.moveWindow(win_name, monitors[0][0], monitors[0][1])
         elif k == ord('2'):
@@ -201,28 +270,7 @@ if __name__ == '__main__':
                 img_id = total_frames - 1
             loadImage()
 
-        target_height = target_height + direction * speed
-
-        if target_height < min_height:
-            target_height = min_height
-            direction = 1
-
-        if target_height > dst_height:
-            target_height = dst_height
-            direction = -1
-
-        target_width = target_height * aspect_ratio
-
-        # print('speed: ', speed)
-        # print('min_height: ', min_height)
-        # print('target_height: ', target_height)
-        # print('target_width: ', target_width)
-
-        end_row = start_row + target_height
-
-        col_diff = (dst_width - target_width) / 2.0
-        start_col = col_diff
-        end_col = dst_width - col_diff
+        direction = motionStep(direction)
 
         # print('end_row: ', end_row)
         # print('start_col: ', start_col)
