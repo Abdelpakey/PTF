@@ -25,6 +25,15 @@ if len(sys.argv) > arg_id:
     seq_root_dir = sys.argv[arg_id]
     arg_id += 1
 
+if len(sys.argv) < 3:
+    # extract start_id from name
+    split_str = seq_prefix.split('_')
+    seq_start_id = int(split_str[-1]) + 1
+    seq_prefix = split_str[0]
+    for _str in split_str[1:-1]:
+        seq_prefix = '{}_{}'.format(seq_prefix, _str)
+
+
 print 'seq_prefix: {:s}'.format(seq_prefix)
 print 'seq_start_id: {:d}'.format(seq_start_id)
 print 'shuffle_files: {:d}'.format(shuffle_files)
