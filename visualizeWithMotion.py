@@ -91,7 +91,7 @@ if __name__ == '__main__':
         else:
             height = int(2 * height)
 
-        print('changeMode :: height: ', height)
+        # print('changeMode :: height: ', height)
         aspect_ratio = float(width) / float(height)
         createWindow()
         loadImage()
@@ -154,9 +154,9 @@ if __name__ == '__main__':
 
         min_height = dst_height * min_height_ratio
 
-        print('height: ', height)
-        print('dst_height: ', dst_height)
-        print('dst_width: ', dst_width)
+        # print('height: ', height)
+        # print('dst_height: ', dst_height)
+        # print('dst_width: ', dst_width)
 
 
     def motionStep(_direction):
