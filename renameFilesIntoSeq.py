@@ -43,6 +43,8 @@ src_file_names = [f for f in os.listdir(seq_root_dir) if os.path.isfile(os.path.
 if shuffle_files:
     print 'Shuffling files...'
     random.shuffle(src_file_names)
+else:
+    src_file_names.sort()
 
 seq_id = seq_start_id
 file_count = 1
