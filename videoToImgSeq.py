@@ -38,7 +38,7 @@ if __name__ == '__main__':
 
     src_fname = db_root_dir + '/' + actor + '/' + seq_name + '.' + vid_fmt
 
-    dst_dir = db_root_dir + '/' + actor + '/Images/' + seq_name
+    dst_dir = db_root_dir + '/' + actor + '/' + seq_name
 
     if not os.path.isdir(dst_dir):
         os.makedirs(dst_dir)
