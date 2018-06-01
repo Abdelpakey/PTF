@@ -174,6 +174,19 @@ col_rgb = {
     'magenta': (255, 0, 255)
 }
 
+def sortKey(fname):
+    fname = os.path.splitext(fname)[0]
+    # print('fname: ', fname)
+    # split_fname = fname.split('_')
+    # print('split_fname: ', split_fname)
+    nums = [int(s) for s in fname.split('_') if s.isdigit()]
+    try:
+        key = nums[-1]
+    except IndexError:
+        return fname
+    # print('key: ', key)
+    return key
+
 def processArguments(args, params):
     # arguments specified as 'arg_name=argv_val'
     no_of_args = len(args)

@@ -2,7 +2,7 @@ import os
 import cv2
 import sys
 import numpy as np
-from Misc import processArguments
+from Misc import processArguments, sortKey
 
 params = {
     'src_path': './sample.jpg',
@@ -56,15 +56,20 @@ if __name__ == '__main__':
     if total_frames <= 0:
         raise SystemError('No input frames found')
     print('total_frames: {}'.format(total_frames))
-    src_file_list.sort()
 
     if img_fname is None:
         img_fname = src_file_list[img_id]
-    else:
-        img_id = src_file_list.index(img_fname)
+
+    try:
+        nums = int(os.path.splitext(img_fname)[0].split('_')[-1])
+        src_file_list.sort(key=sortKey)
+    except:
+        src_file_list.sort()
+
+    img_id = src_file_list.index(img_fname)
 
     src_img_ar, start_row, end_row, start_col, end_col, dst_height, dst_width = [None] * 7
-    target_height, target_width, min_height, start_col, end_col = [None] * 5
+    target_height, target_width, min_height, start_col, end_col, height_ratio = [None] * 6
 
 
     def createWindow():
@@ -99,7 +104,7 @@ if __name__ == '__main__':
 
     def loadImage():
         global src_img_ar, start_row, end_row, start_col, end_col, dst_height, dst_width
-        global target_height, target_width, min_height, start_col, end_col
+        global target_height, target_width, min_height, start_col, end_col, height_ratio, img_fname
 
         img_fname = src_file_list[img_id]
 
@@ -154,42 +159,55 @@ if __name__ == '__main__':
 
         min_height = dst_height * min_height_ratio
 
+        height_ratio = float(dst_height)/float(height)
+
         # print('height: ', height)
         # print('dst_height: ', dst_height)
         # print('dst_width: ', dst_width)
 
 
-    def motionStep(_direction):
-        global target_height, direction, end_row, start_col, end_col
+    # def motionStep(_direction):
+    #     global target_height, direction, end_row, start_col, end_col
+    #
+    #     target_height = target_height + _direction * speed
+    #
+    #     if target_height < min_height:
+    #         target_height = min_height
+    #         _direction = 1
+    #
+    #     if target_height > dst_height:
+    #         target_height = dst_height
+    #         _direction = -1
+    #
+    #     target_width = target_height * aspect_ratio
+    #
+    #     # print('speed: ', speed)
+    #     # print('min_height: ', min_height)
+    #     # print('target_height: ', target_height)
+    #     # print('target_width: ', target_width)
+    #
+    #     end_row = start_row + target_height
+    #
+    #     col_diff = (dst_width - target_width) / 2.0
+    #     start_col = col_diff
+    #     end_col = dst_width - col_diff
+    #
+    #     return _direction
 
-        target_height = target_height + _direction * speed
+    def increaseSpeed():
+        global speed
+        speed += 0.01
+        print('speed: ', speed)
 
-        if target_height < min_height:
-            target_height = min_height
-            _direction = 1
-
-        if target_height > dst_height:
-            target_height = dst_height
-            _direction = -1
-
-        target_width = target_height * aspect_ratio
-
-        # print('speed: ', speed)
-        # print('min_height: ', min_height)
-        # print('target_height: ', target_height)
-        # print('target_width: ', target_width)
-
-        end_row = start_row + target_height
-
-        col_diff = (dst_width - target_width) / 2.0
-        start_col = col_diff
-        end_col = dst_width - col_diff
-
-        return _direction
-
+    def decreaseSpeed():
+        global speed
+        speed -= 0.01
+        if speed <= 0:
+            speed = 0.01
+        print('speed: ', speed)
 
     def mouseHandler(event, x, y, flags=None, param=None):
-        global img_id, _pause, start_row, speed
+        global img_id, _pause, start_row
         if event == cv2.EVENT_LBUTTONDOWN:
             img_id -= 1
             if img_id < 0:
@@ -212,9 +230,11 @@ if __name__ == '__main__':
             print('flags: ', flags)
             # _delta = cv2.getMouseWheelDelta(flags)
             if flags > 0:
-                motionStep(1)
+                increaseSpeed()
+                # motionStep(1)
             else:
-                motionStep(-1)
+                decreaseSpeed()
+                # motionStep(-1)
 
 
     win_name = 'VWM'
@@ -250,13 +270,9 @@ if __name__ == '__main__':
         elif k == 32:
             _pause = 1 - _pause
         elif k == ord('+'):
-            speed += 0.01
-            print('speed: ', speed)
+            increaseSpeed()
         elif k == ord('-'):
-            speed -= 0.01
-            if speed <= 0:
-                speed = 0.01
-            print('speed: ', speed)
+            decreaseSpeed()
         elif k == ord('i'):
             direction = -direction
         elif k == 39 or k == ord('d'):
@@ -269,8 +285,33 @@ if __name__ == '__main__':
             if img_id < 0:
                 img_id = total_frames - 1
             loadImage()
+        elif k == ord('f'):
+            print(img_fname)
 
-        direction = motionStep(direction)
+        # direction = motionStep(direction)
+
+        target_height = target_height + direction * speed * height_ratio
+
+        if target_height < min_height:
+            target_height = min_height
+            direction = 1
+
+        if target_height > dst_height:
+            target_height = dst_height
+            direction = -1
+
+        target_width = target_height * aspect_ratio
+
+        # print('speed: ', speed)
+        # print('min_height: ', min_height)
+        # print('target_height: ', target_height)
+        # print('target_width: ', target_width)
+
+        end_row = start_row + target_height
+
+        col_diff = (dst_width - target_width) / 2.0
+        start_col = col_diff
+        end_col = dst_width - col_diff
 
         # print('end_row: ', end_row)
         # print('start_col: ', start_col)
