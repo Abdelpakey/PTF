@@ -33,8 +33,8 @@ if __name__ == '__main__':
             print('Using roi: ', roi)
             roi_enabled = True
 
-    print 'actor: ', actor
-    print 'seq_name: ', seq_name
+    print('actor: ', actor)
+    print('seq_name: ', seq_name)
 
     src_fname = db_root_dir + '/' + actor + '/' + seq_name + '.' + vid_fmt
 
@@ -43,7 +43,7 @@ if __name__ == '__main__':
     if not os.path.isdir(dst_dir):
         os.makedirs(dst_dir)
 
-    print 'Reading video file: {:s}'.format(src_fname)
+    print('Reading video file: {:s}'.format(src_fname))
     cap = cv2.VideoCapture()
     if not cap.open(src_fname):
         raise StandardError('The video file ' + src_fname + ' could not be opened')
