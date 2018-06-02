@@ -10,14 +10,14 @@ def processArguments(args, params):
     for arg_id in xrange(no_of_args):
         arg = args[arg_id].split('=')
         if len(arg) != 2 or not arg[0] in params.keys():
-            print 'Invalid argument provided: {:s}'.format(args[arg_id])
+            print('Invalid argument provided: {:s}'.format(args[arg_id]))
             return
         if not arg[1] or not arg[0]:
             continue
         try:
             params[arg[0]] = type(params[arg[0]])(arg[1])
         except ValueError:
-            print 'Invalid argument value {} provided for {}'.format(arg[1], arg[0])
+            print('Invalid argument value {} provided for {}'.format(arg[1], arg[0]))
             return
 
 params = {
