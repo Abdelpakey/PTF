@@ -7,7 +7,7 @@ import sys
 def processArguments(args, params):
     # arguments specified as 'arg_name=argv_val'
     no_of_args = len(args)
-    for arg_id in xrange(no_of_args):
+    for arg_id in range(no_of_args):
         arg = args[arg_id].split('=')
         if len(arg) != 2 or not arg[0] in params.keys():
             print('Invalid argument provided: {:s}'.format(args[arg_id]))
