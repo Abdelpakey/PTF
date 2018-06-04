@@ -1,6 +1,6 @@
 import os
 import cv2
-import sys
+import sys, time
 import numpy as np
 from Misc import processArguments, sortKey
 
@@ -16,6 +16,7 @@ params = {
     'mode': 0,
     'auto_progress': 0,
     'max_switches': 1,
+    'max_duration': 5,
 }
 
 if __name__ == '__main__':
@@ -31,6 +32,7 @@ if __name__ == '__main__':
     mode = params['mode']
     auto_progress = params['auto_progress']
     max_switches = params['max_switches']
+    max_duration = params['max_duration']
 
     monitors = [
         [0, 0],
@@ -42,6 +44,7 @@ if __name__ == '__main__':
     _pause = 0
     direction = -1
     n_switches = 0
+    start_time = end_time = 0
 
     img_id = 0
     if os.path.isdir(src_path):
@@ -77,7 +80,6 @@ if __name__ == '__main__':
     target_height, target_width, min_height, start_col, end_col, height_ratio = [None] * 6
 
 
-
     def createWindow():
         global mode
 
@@ -110,7 +112,7 @@ if __name__ == '__main__':
 
     def loadImage():
         global src_img_ar, start_row, end_row, start_col, end_col, dst_height, dst_width, n_switches, img_id
-        global target_height, target_width, min_height, start_col, end_col, height_ratio, img_fname
+        global target_height, target_width, min_height, start_col, end_col, height_ratio, img_fname, start_time
 
         if img_id >= total_frames:
             img_id = 0
@@ -126,6 +128,10 @@ if __name__ == '__main__':
             raise SystemError('Source image could not be read from: {}'.format(src_img_fname))
 
         src_height, src_width, n_channels = src_img.shape
+        if mode == 1 and src_height < src_width:
+            src_img = np.rot90(src_img)
+            src_height, src_width, n_channels = src_img.shape
+
         src_aspect_ratio = float(src_width) / float(src_height)
 
         if src_aspect_ratio == aspect_ratio:
@@ -173,6 +179,7 @@ if __name__ == '__main__':
         height_ratio = float(dst_height) / float(height)
 
         n_switches = 0
+        start_time = time.time()
 
         # print('height: ', height)
         # print('dst_height: ', dst_height)
@@ -216,8 +223,8 @@ if __name__ == '__main__':
     def decreaseSpeed():
         global speed
         speed -= 0.01
-        if speed <= 0:
-            speed = 0.01
+        if speed < 0:
+            speed = 0
         print('speed: ', speed)
 
 
@@ -278,8 +285,8 @@ if __name__ == '__main__':
                 print('Auto progression disabled')
         elif k == ord('m'):
             max_switches -= 1
-            if max_switches<1:
-                max_switches=1
+            if max_switches < 1:
+                max_switches = 1
         elif k == ord('n'):
             max_switches += 1
         elif k == ord('1'):
@@ -294,6 +301,8 @@ if __name__ == '__main__':
             _pause = 1 - _pause
         elif k == ord('+'):
             increaseSpeed()
+        elif k == ord('p'):
+            speed = 0
         elif k == ord('-'):
             decreaseSpeed()
         elif k == ord('i'):
@@ -313,15 +322,16 @@ if __name__ == '__main__':
 
         if target_height < min_height:
             target_height = min_height
-            n_switches += 1
-            if auto_progress and n_switches >= max_switches:
-                img_id += 1
-                loadImage()
             direction = 1
 
         if target_height > dst_height:
             target_height = dst_height
-            direction = -1
+            n_switches += 1
+            if auto_progress and n_switches >= max_switches:
+                img_id += 1
+                loadImage()
+            else:
+                direction = -1
 
         target_width = target_height * aspect_ratio
 
@@ -335,6 +345,12 @@ if __name__ == '__main__':
         col_diff = (dst_width - target_width) / 2.0
         start_col = col_diff
         end_col = dst_width - col_diff
+
+        if speed == 0:
+            end_time = time.time()
+            if end_time - start_time >= max_duration:
+                img_id += 1
+                loadImage()
 
         # print('end_row: ', end_row)
         # print('start_col: ', start_col)
