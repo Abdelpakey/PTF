@@ -14,6 +14,8 @@ params = {
     'quality': 3,
     'resize': 0,
     'mode': 0,
+    'auto_progress': 0,
+    'max_switches': 1,
 }
 
 if __name__ == '__main__':
@@ -27,6 +29,8 @@ if __name__ == '__main__':
     quality = params['quality']
     resize = params['resize']
     mode = params['mode']
+    auto_progress = params['auto_progress']
+    max_switches = params['max_switches']
 
     monitors = [
         [0, 0],
@@ -37,6 +41,7 @@ if __name__ == '__main__':
     aspect_ratio = float(width) / float(height)
     _pause = 0
     direction = -1
+    n_switches = 0
 
     img_id = 0
     if os.path.isdir(src_path):
@@ -72,6 +77,7 @@ if __name__ == '__main__':
     target_height, target_width, min_height, start_col, end_col, height_ratio = [None] * 6
 
 
+
     def createWindow():
         global mode
 
@@ -103,8 +109,13 @@ if __name__ == '__main__':
 
 
     def loadImage():
-        global src_img_ar, start_row, end_row, start_col, end_col, dst_height, dst_width
+        global src_img_ar, start_row, end_row, start_col, end_col, dst_height, dst_width, n_switches, img_id
         global target_height, target_width, min_height, start_col, end_col, height_ratio, img_fname
+
+        if img_id >= total_frames:
+            img_id = 0
+        elif img_id < 0:
+            img_id = total_frames - 1
 
         img_fname = src_file_list[img_id]
 
@@ -159,7 +170,9 @@ if __name__ == '__main__':
 
         min_height = dst_height * min_height_ratio
 
-        height_ratio = float(dst_height)/float(height)
+        height_ratio = float(dst_height) / float(height)
+
+        n_switches = 0
 
         # print('height: ', height)
         # print('dst_height: ', dst_height)
@@ -199,6 +212,7 @@ if __name__ == '__main__':
         speed += 0.01
         print('speed: ', speed)
 
+
     def decreaseSpeed():
         global speed
         speed -= 0.01
@@ -206,19 +220,16 @@ if __name__ == '__main__':
             speed = 0.01
         print('speed: ', speed)
 
+
     def mouseHandler(event, x, y, flags=None, param=None):
         global img_id, _pause, start_row
         if event == cv2.EVENT_LBUTTONDOWN:
             img_id -= 1
-            if img_id < 0:
-                img_id = total_frames - 1
             loadImage()
         elif event == cv2.EVENT_LBUTTONUP:
             pass
         elif event == cv2.EVENT_RBUTTONDOWN:
             img_id += 1
-            if img_id >= total_frames:
-                img_id = 0
             loadImage()
         elif event == cv2.EVENT_RBUTTONUP:
             pass
@@ -259,6 +270,12 @@ if __name__ == '__main__':
             break
         elif k == 13 or k == ord('m'):
             changeMode()
+        elif k == ord('c'):
+            auto_progress = 1 - auto_progress
+            if auto_progress:
+                print('Auto progression enabled')
+            else:
+                print('Auto progression disabled')
         elif k == ord('1'):
             cv2.moveWindow(win_name, monitors[0][0], monitors[0][1])
         elif k == ord('2'):
@@ -277,13 +294,9 @@ if __name__ == '__main__':
             direction = -direction
         elif k == 39 or k == ord('d'):
             img_id += 1
-            if img_id >= total_frames:
-                img_id = 0
             loadImage()
         elif k == 40 or k == ord('a'):
             img_id -= 1
-            if img_id < 0:
-                img_id = total_frames - 1
             loadImage()
         elif k == ord('f'):
             print(img_fname)
@@ -294,6 +307,10 @@ if __name__ == '__main__':
 
         if target_height < min_height:
             target_height = min_height
+            n_switches += 1
+            if auto_progress and n_switches > max_switches:
+                img_id += 1
+                loadImage()
             direction = 1
 
         if target_height > dst_height:
