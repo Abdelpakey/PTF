@@ -276,6 +276,12 @@ if __name__ == '__main__':
                 print('Auto progression enabled')
             else:
                 print('Auto progression disabled')
+        elif k == ord('m'):
+            max_switches -= 1
+            if max_switches<1:
+                max_switches=1
+        elif k == ord('n'):
+            max_switches += 1
         elif k == ord('1'):
             cv2.moveWindow(win_name, monitors[0][0], monitors[0][1])
         elif k == ord('2'):
@@ -308,7 +314,7 @@ if __name__ == '__main__':
         if target_height < min_height:
             target_height = min_height
             n_switches += 1
-            if auto_progress and n_switches > max_switches:
+            if auto_progress and n_switches >= max_switches:
                 img_id += 1
                 loadImage()
             direction = 1
