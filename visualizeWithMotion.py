@@ -1,6 +1,6 @@
 import os
 import cv2
-import sys, time
+import sys, time, random
 import numpy as np
 from Misc import processArguments, sortKey
 
@@ -17,6 +17,7 @@ params = {
     'auto_progress': 0,
     'max_switches': 1,
     'max_duration': 5,
+    'random_mode': 1,
 }
 
 if __name__ == '__main__':
@@ -33,6 +34,7 @@ if __name__ == '__main__':
     auto_progress = params['auto_progress']
     max_switches = params['max_switches']
     max_duration = params['max_duration']
+    random_mode = params['random_mode']
 
     monitors = [
         [0, 0],
@@ -64,7 +66,9 @@ if __name__ == '__main__':
     if total_frames <= 0:
         raise SystemError('No input frames found')
     print('total_frames: {}'.format(total_frames))
-
+    if random_mode:
+        print('Random mode enabled')
+        
     if img_fname is None:
         img_fname = src_file_list[img_id]
 
@@ -110,14 +114,25 @@ if __name__ == '__main__':
         loadImage()
 
 
-    def loadImage():
-        global src_img_ar, start_row, end_row, start_col, end_col, dst_height, dst_width, n_switches, img_id
+    def loadImage(_type=0):
+        global src_img_ar, start_row, end_row, start_col, end_col, dst_height, dst_width, n_switches, img_id, direction
         global target_height, target_width, min_height, start_col, end_col, height_ratio, img_fname, start_time
 
+        if _type == 1:
+            if random_mode:
+                img_id += random.randint(1, total_frames)
+            else:
+                img_id += 1
+        elif _type == -1:
+            if random_mode:
+                img_id -= random.randint(1, total_frames)
+            else:
+                img_id -= 1
+
         if img_id >= total_frames:
-            img_id = 0
+            img_id -= total_frames
         elif img_id < 0:
-            img_id = total_frames - 1
+            img_id += total_frames
 
         img_fname = src_file_list[img_id]
 
@@ -179,6 +194,7 @@ if __name__ == '__main__':
         height_ratio = float(dst_height) / float(height)
 
         n_switches = 0
+        direction = -1
         start_time = time.time()
 
         # print('height: ', height)
@@ -231,13 +247,11 @@ if __name__ == '__main__':
     def mouseHandler(event, x, y, flags=None, param=None):
         global img_id, _pause, start_row
         if event == cv2.EVENT_LBUTTONDOWN:
-            img_id -= 1
-            loadImage()
+            loadImage(-1)
         elif event == cv2.EVENT_LBUTTONUP:
             pass
         elif event == cv2.EVENT_RBUTTONDOWN:
-            img_id += 1
-            loadImage()
+            loadImage(1)
         elif event == cv2.EVENT_RBUTTONUP:
             pass
         elif event == cv2.EVENT_MBUTTONDOWN:
@@ -277,6 +291,12 @@ if __name__ == '__main__':
             break
         elif k == 13 or k == ord('m'):
             changeMode()
+        elif k == ord('r'):
+            random_mode = 1 - random_mode
+            if random_mode:
+                print('Random mode enabled')
+            else:
+                print('Random mode disabled')
         elif k == ord('c'):
             auto_progress = 1 - auto_progress
             if auto_progress:
@@ -308,11 +328,9 @@ if __name__ == '__main__':
         elif k == ord('i'):
             direction = -direction
         elif k == 39 or k == ord('d'):
-            img_id += 1
-            loadImage()
+            loadImage(1)
         elif k == 40 or k == ord('a'):
-            img_id -= 1
-            loadImage()
+            loadImage(-1)
         elif k == ord('f'):
             print(img_fname)
 
@@ -328,8 +346,7 @@ if __name__ == '__main__':
             target_height = dst_height
             n_switches += 1
             if auto_progress and n_switches >= max_switches:
-                img_id += 1
-                loadImage()
+                loadImage(1)
             else:
                 direction = -1
 
