@@ -20,10 +20,10 @@ for subfolder in subfolders:
     subfolders_path = os.path.join(folder_name, subfolder)
     src_files = [f for f in os.listdir(subfolders_path) if os.path.isfile(os.path.join(subfolders_path, f))]
     if file_ext:
-        src_files = [f for f in src_files if f.exndswith(file_ext)]
+        src_files = [f for f in src_files if f.endswith(file_ext)]
     n_files = len(src_files)
     total_files += n_files
-    print('{}:\t{}'.format(subfolder, n_files))
+    print('{}:\t{}\t{}'.format(subfolder, n_files, total_files))
 
 print('total_files: {}'.format(total_files))
 
