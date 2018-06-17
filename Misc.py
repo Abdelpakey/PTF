@@ -180,10 +180,24 @@ def sortKey(fname):
     # split_fname = fname.split('_')
     # print('split_fname: ', split_fname)
     nums = [int(s) for s in fname.split('_') if s.isdigit()]
-    try:
-        key = nums[-1]
-    except IndexError:
-        return fname
+    non_nums = [s for s in fname.split('_') if not s.isdigit()]
+    key = ''
+    for non_num in non_nums:
+        if not key:
+            key = non_num
+        else:
+            key = '{}_{}'.format(key, non_num)
+    for num in nums:
+        if not key:
+            key = '{:08d}'.format(num)
+        else:
+            key = '{}_{:08d}'.format(key, num)
+
+    # try:
+    #     key = nums[-1]
+    # except IndexError:
+    #     return fname
+
     # print('key: ', key)
     return key
 

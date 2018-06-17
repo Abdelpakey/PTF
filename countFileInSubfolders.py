@@ -1,6 +1,8 @@
 import os
 import sys
 
+from Misc import sortKey
+
 file_ext = ''
 out_file = 'list.txt'
 folder_name = '.'
@@ -20,7 +22,6 @@ print('Looking for files with extension {:s} in sub folders of {:s}'.format(file
 
 subfolders = [name for name in os.listdir(folder_name) if os.path.isdir(os.path.join(folder_name, name))]
 try:
-    nums = int(os.path.splitext(img_fname)[0].split('_')[-1])
     subfolders.sort(key=sortKey)
 except:
     subfolders.sort()
