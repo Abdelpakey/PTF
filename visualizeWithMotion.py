@@ -68,7 +68,7 @@ if __name__ == '__main__':
     print('total_frames: {}'.format(total_frames))
     if random_mode:
         print('Random mode enabled')
-        
+
     if img_fname is None:
         img_fname = src_file_list[img_id]
 
