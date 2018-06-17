@@ -174,6 +174,7 @@ col_rgb = {
     'magenta': (255, 0, 255)
 }
 
+
 def sortKey(fname):
     fname = os.path.splitext(fname)[0]
     # print('fname: ', fname)
@@ -201,21 +202,23 @@ def sortKey(fname):
     # print('key: ', key)
     return key
 
+
 def processArguments(args, params):
     # arguments specified as 'arg_name=argv_val'
     no_of_args = len(args)
-    for arg_id in xrange(no_of_args):
+    for arg_id in range(no_of_args):
         arg = args[arg_id].split('=')
         if len(arg) != 2 or not arg[0] in params.keys():
-            print 'Invalid argument provided: {:s}'.format(args[arg_id])
+            print('Invalid argument provided: {:s}'.format(args[arg_id]))
             return
         if not arg[1] or not arg[0]:
             continue
         try:
             params[arg[0]] = type(params[arg[0]])(arg[1])
         except ValueError:
-            print 'Invalid argument value {} provided for {}'.format(arg[1], arg[0])
+            print('Invalid argument value {} provided for {}'.format(arg[1], arg[0]))
             return
+
 
 def str2num(s):
     try:
@@ -227,8 +230,8 @@ def str2num(s):
 def printMatrixToFile(mat, mat_name, fname, fmt='{:15.9f}', mode='w', sep='\t'):
     fid = open(fname, mode)
     fid.write('{:s}:\n'.format(mat_name))
-    for i in xrange(mat.shape[0]):
-        for j in xrange(mat.shape[1]):
+    for i in range(mat.shape[0]):
+        for j in range(mat.shape[1]):
             fid.write(fmt.format(mat[i, j]) + sep)
         fid.write('\n')
     fid.write('\n\n')
@@ -248,7 +251,7 @@ def printVectorFile(mat, mat_name, fname, fmt='{:15.9f}', mode='w', sep='\t'):
     # print 'mat.size: ', mat.size
     # print 'mat.shape: ', mat.shape
     fid.write('{:s}:\n'.format(mat_name))
-    for i in xrange(mat.size):
+    for i in range(mat.size):
         val = mat[i]
         # print 'type( val ): ', type( val )
         # if not isinstance(val, (int, long, float)) or type( val )=='numpy.float64':
@@ -283,7 +286,7 @@ def getTrackingObject(img, col=(0, 0, 255), title=None):
         if len(pts) == 0:
             cv2.imshow(title, img)
             return
-        for i in xrange(len(pts) - 1):
+        for i in range(len(pts) - 1):
             cv2.line(img, pts[i], pts[i + 1], col, 1)
         if hover_pt is None:
             return
@@ -305,7 +308,7 @@ def getTrackingObject(img, col=(0, 0, 255), title=None):
             pass
         elif event == cv2.EVENT_RBUTTONDOWN:
             if len(pts) > 0:
-                print 'Removing last point'
+                print('Removing last point')
                 del (pts[-1])
             temp_img = annotated_img.copy()
             drawLines(temp_img)
@@ -343,7 +346,7 @@ def getTrackingObject2(img, col=(0, 0, 255), title=None, line_thickness=1):
         if len(pts) == 0:
             cv2.imshow(title, img)
             return
-        for i in xrange(len(pts) - 1):
+        for i in range(len(pts) - 1):
             cv2.line(img, pts[i], pts[i + 1], col, line_thickness)
         if hover_pt is None:
             return
@@ -365,7 +368,7 @@ def getTrackingObject2(img, col=(0, 0, 255), title=None, line_thickness=1):
             pass
         elif event == cv2.EVENT_RBUTTONDOWN:
             if len(pts) > 0:
-                print 'Removing last point'
+                print('Removing last point')
                 del (pts[-1])
             temp_img = annotated_img.copy()
             drawLines(temp_img)
@@ -395,7 +398,7 @@ def readTrackingData(filename, arch_fid=None):
         data_file = arch_fid.open(filename, 'r')
     else:
         if not os.path.isfile(filename):
-            print "Tracking data file not found:\n ", filename
+            print("Tracking data file not found:\n ", filename)
             return None
         data_file = open(filename, 'r')
 
@@ -411,7 +414,7 @@ def readTrackingData(filename, arch_fid=None):
         coordinates = []
         if len(words) != 9:
             if len(words) == 2 and words[1] == 'invalid_tracker_state':
-                for i in xrange(8):
+                for i in range(8):
                     coordinates.append(float('NaN'))
             else:
                 msg = "Invalid formatting on line %d" % line_id + " in file %s" % filename + ":\n%s" % line
@@ -440,7 +443,7 @@ def readTrackingDataMOT(filename, arch_fid=None):
         data_file = arch_fid.open(filename, 'r')
     else:
         if not os.path.isfile(filename):
-            print "Tracking data file not found:\n ", filename
+            print("Tracking data file not found:\n ", filename)
             return None
         data_file = open(filename, 'r')
     lines = data_file.readlines()
@@ -455,7 +458,7 @@ def readTrackingDataMOT(filename, arch_fid=None):
         data = []
         if len(words) != 10:
             if len(words) == 7:
-                for i in xrange(3):
+                for i in range(3):
                     words.append('-1')
             else:
                 msg = "Invalid formatting on line %d" % line_id + " in file %s" % filename + ":\n%s" % line
@@ -471,13 +474,13 @@ def readTrackingDataMOT(filename, arch_fid=None):
 
 # new version that supports reinit data as well as invalid tracker states
 def readTrackingData2(tracker_path, n_frames, _arch_fid=None, _reinit_from_gt=0):
-    print 'Reading tracking data from: {:s}...'.format(tracker_path)
+    print('Reading tracking data from: {:s}...'.format(tracker_path))
     if _arch_fid is not None:
         tracking_data = _arch_fid.open(tracker_path, 'r').readlines()
     else:
         tracking_data = open(tracker_path, 'r').readlines()
     if len(tracking_data) < 2:
-        print 'Tracking data file is invalid.'
+        print('Tracking data file is invalid.')
         return None, None
 
     # remove the header
@@ -485,8 +488,8 @@ def readTrackingData2(tracker_path, n_frames, _arch_fid=None, _reinit_from_gt=0)
     n_lines = len(tracking_data)
 
     if not _reinit_from_gt and n_lines != n_frames:
-        print "No. of frames in tracking result ({:d}) and the ground truth ({:d}) do not match".format(
-            n_lines, n_frames)
+        print("No. of frames in tracking result ({:d}) and the ground truth ({:d}) do not match".format(
+            n_lines, n_frames))
         return None
     line_id = 1
     failure_count = 0
@@ -499,28 +502,28 @@ def readTrackingData2(tracker_path, n_frames, _arch_fid=None, _reinit_from_gt=0)
         frame_fname_1 = frame_fname[0:5]
         frame_fname_2 = frame_fname[- 4:]
         if frame_fname_1 != 'frame' or frame_fname_2 != '.jpg':
-            print 'Invaid formatting on tracking data line {:d}: {:s}'.format(line_id + 1, tracking_data_line)
-            print 'frame_fname: {:s} fname_len: {:d} frame_fname_1: {:s} frame_fname_2: {:s}'.format(
-                frame_fname, fname_len, frame_fname_1, frame_fname_2)
+            print('Invaid formatting on tracking data line {:d}: {:s}'.format(line_id + 1, tracking_data_line))
+            print('frame_fname: {:s} fname_len: {:d} frame_fname_1: {:s} frame_fname_2: {:s}'.format(
+                frame_fname, fname_len, frame_fname_1, frame_fname_2))
             return None, None
         frame_id_str = frame_fname[5:-4]
         frame_num = int(frame_id_str)
         if len(tracking_data_line) != 9:
             if _reinit_from_gt and len(tracking_data_line) == 2 and tracking_data_line[1] == 'tracker_failed':
-                print 'tracking failure detected in frame: {:d} at line {:d}'.format(frame_num, line_id + 1)
+                print('tracking failure detected in frame: {:d} at line {:d}'.format(frame_num, line_id + 1))
                 failure_count += 1
                 data_array.append('tracker_failed')
                 line_id += 2
                 continue
             elif len(tracking_data_line) == 2 and tracking_data_line[1] == 'invalid_tracker_state':
                 if not invalid_tracker_state_found:
-                    print 'invalid tracker state detected in frame: {:d} at line {:d}'.format(frame_num, line_id + 1)
+                    print('invalid tracker state detected in frame: {:d} at line {:d}'.format(frame_num, line_id + 1))
                     invalid_tracker_state_found = True
                 line_id += 1
                 data_array.append('invalid_tracker_state')
                 continue
             else:
-                print 'Invalid formatting on line {:d}: {:s}'.format(line_id, tracking_data[line_id])
+                print('Invalid formatting on line {:d}: {:s}'.format(line_id, tracking_data[line_id]))
                 return None, None
         data_array.append([float(tracking_data_line[1]), float(tracking_data_line[2]),
                            float(tracking_data_line[3]), float(tracking_data_line[4]),
@@ -531,7 +534,7 @@ def readTrackingData2(tracker_path, n_frames, _arch_fid=None, _reinit_from_gt=0)
 
 def readWarpData(filename):
     if not os.path.isfile(filename):
-        print "Warp data file not found:\n ", filename
+        print("Warp data file not found:\n ", filename)
         sys.exit()
 
     data_file = open(filename, 'r')
@@ -570,7 +573,7 @@ def getNormalizedUnitSquarePts(resx=100, resy=100, c=1.0):
 def drawRegion(img, corners, color, thickness=1, annotate_corners=False,
                annotation_col=(0, 255, 0), annotation_font_size=1):
     n_pts = corners.shape[1]
-    for i in xrange(n_pts):
+    for i in range(n_pts):
         p1 = (int(corners[0, i]), int(corners[1, i]))
         p2 = (int(corners[0, (i + 1) % n_pts]), int(corners[1, (i + 1) % n_pts]))
         if cv2.__version__.startswith('3'):
@@ -592,7 +595,7 @@ def getPixValsRGB(pts, img):
     # print 'img: ', img
     n_pts = pts.shape[1]
     pix_vals = np.zeros((n_pts, n_channels), dtype=np.float64)
-    for channel_id in xrange(n_channels):
+    for channel_id in range(n_channels):
         try:
             curr_channel = img[:, :, channel_id].astype(np.float64)
         except IndexError:
@@ -640,8 +643,8 @@ def getPixVals(pts, img):
 
 def drawGrid(img, pts, res_x, res_y, color, thickness=1):
     # draw vertical lines
-    for x_id in xrange(res_x):
-        for y_id in xrange(res_y - 1):
+    for x_id in range(res_x):
+        for y_id in range(res_y - 1):
             pt_id1 = y_id * res_x + x_id
             pt_id2 = (y_id + 1) * res_x + x_id
             p1 = (int(pts[0, pt_id1]), int(pts[1, pt_id1]))
@@ -649,8 +652,8 @@ def drawGrid(img, pts, res_x, res_y, color, thickness=1):
             cv2.line(img, p1, p2, color, thickness, cv2.LINE_AA)
 
     # draw horizontal lines
-    for y_id in xrange(res_y):
-        for x_id in xrange(res_x - 1):
+    for y_id in range(res_y):
+        for x_id in range(res_x - 1):
             pt_id1 = y_id * res_x + x_id
             pt_id2 = y_id * res_x + x_id + 1
             p1 = (int(pts[0, pt_id1]), int(pts[1, pt_id1]))
@@ -662,7 +665,7 @@ def writeCorners(file_id, corners, frame_id=-1, write_header=0):
     if write_header:
         file_id.write('frame   ulx     uly     urx     ury     lrx     lry     llx     lly     \n')
     corner_str = ''
-    for i in xrange(4):
+    for i in range(4):
         corner_str = corner_str + '{:5.2f}\t{:5.2f}\t'.format(corners[0, i], corners[1, i])
     if frame_id > 0:
         file_id.write('frame{:05d}.jpg\t'.format(frame_id))
@@ -673,7 +676,7 @@ def writeCornersMOT(file_id, data, frame_id=None):
     if frame_id is None:
         frame_id = int(data[0])
     corner_str = '{:d},{:d}'.format(frame_id, int(data[1]))
-    for i in xrange(2, 10):
+    for i in range(2, 10):
         corner_str = corner_str + ',{:5.2f}'.format(data[i])
     file_id.write(corner_str + '\n')
 
@@ -685,7 +688,7 @@ def writeCorners2(file_name, corners, frame_id=-1, write_header=0):
     else:
         file_id = open(file_name, 'a')
     corner_str = ''
-    for i in xrange(4):
+    for i in range(4):
         corner_str = corner_str + '{:5.2f}\t{:5.2f}\t'.format(corners[0, i], corners[1, i])
     if frame_id > 0:
         file_id.write('frame{:05d}.jpg\t'.format(frame_id))
@@ -699,8 +702,8 @@ def getError(actual_corners, tracked_corners):
 
     # print 'inbuilt error: ', self.curr_error
     # self.curr_error=0
-    # for i in xrange(actual_corners.shape[0]):
-    # for j in xrange(actual_corners.shape[1]):
+    # for i in range(actual_corners.shape[0]):
+    # for j in range(actual_corners.shape[1]):
     # self.curr_error += math.pow(actual_corners[i, j] - tracked_corners[i, j], 2)
     # self.curr_error = math.sqrt(self.curr_error / 4)
     # print 'explicit error: ', self.curr_error
@@ -718,7 +721,7 @@ def getGroundTruthUpdates(filename):
     if os.path.exists(update_filename):
         os.remove(update_filename)
     update_file = open(update_filename, 'a')
-    for i in xrange(no_of_frames):
+    for i in range(no_of_frames):
         if current_corners is not None:
             last_corners = current_corners.copy()
         current_corners = np.array([ground_truth[i - 1, 0:2].tolist(),
@@ -728,7 +731,6 @@ def getGroundTruthUpdates(filename):
         update = compute_homography(last_corners, current_corners)
         # apply_to_pts(update, unit_square)
         # update.tofile(update_file)
-
 
         update = update.reshape((1, -1))
         update = np.delete(update, [8])
@@ -787,7 +789,7 @@ def plotPCA(data):
 
 
 def plotSuccessiveEuclideanDistance(data):
-    print 'data.shape=', data.shape
+    print('data.shape=', data.shape)
     no_of_items = data.shape[0]
     data_dim = data.shape[1]
 
@@ -798,7 +800,7 @@ def plotSuccessiveEuclideanDistance(data):
     x = range(no_of_items - 1)
     y = np.empty((no_of_items - 1, 1))
 
-    for i in xrange(no_of_items - 1):
+    for i in range(no_of_items - 1):
         y[i] = math.sqrt(np.sum(np.square(data[i + 1, :] - data[i, :])) / data_dim)
 
     plt.close('all')
@@ -824,10 +826,10 @@ def getTrackingError(ground_truth_path, result_path, dataset, tracker_id):
 
     error_filename = result_path + '/' + dataset + '_res_%s_error.txt' % tracker_id
     error_file = open(error_filename, 'w')
-    for i in xrange(no_of_frames):
+    for i in range(no_of_frames):
         data1 = ground_truth_data[i, :]
         data2 = result_data[i, :]
-        for j in xrange(no_of_pts):
+        for j in range(no_of_pts):
             error[i] += math.pow(data1[j] - data2[j], 2)
         error[i] = math.sqrt(error[i] / 4)
         error_file.write("%f\n" % error[i])
@@ -841,7 +843,7 @@ def extractColumn(filepath, filename, column, header_size=2):
     data_file = open(filepath + '/' + filename + '.txt', 'r')
     # remove header
     # read headersf
-    for i in xrange(header_size):
+    for i in range(header_size):
         data_file.readline()
     lines = data_file.readlines()
     column_array = []
@@ -879,7 +881,7 @@ def getThresholdRate(val_array, threshold, cmp_type):
 
 def getThresholdVariations(res_dir, filename, val_type, show_plot=False,
                            min_thresh=0, diff=1, max_thresh=100, max_rate=100, agg_filename=None):
-    print 'Getting threshold variations for', val_type
+    print('Getting threshold variations for', val_type)
     if val_type == 'error':
         cmp_type = 'less'
         column = 2
@@ -937,7 +939,7 @@ def getThresholdVariations(res_dir, filename, val_type, show_plot=False,
 
 
 def aggregateDataFromFiles(list_filename, plot_filename, header_size=0):
-    print 'Aggregating data from ', list_filename, '...'
+    print('Aggregating data from ', list_filename, '...')
     line_styles = ['-', '--', '-.', ':', '+', '*', 'D', 'x', 's', 'p', 'o', 'v', '^']
     colors = ['b', 'g', 'r', 'c', 'm', 'y', 'k']
     # no_of_colors=32
@@ -961,7 +963,7 @@ def aggregateDataFromFiles(list_filename, plot_filename, header_size=0):
             continue
         # print 'filename=', filename
         data_file = open(filename, 'r')
-        for i in xrange(header_size):
+        for i in range(header_size):
             data_file.readline()
         lines = data_file.readlines()
         data_file.close()
@@ -1021,17 +1023,17 @@ def plotThresholdVariationsFromFile(filename, plot_fname):
     line_count = len(lines)
 
     data_array = np.empty((line_count, header_count))
-    for i in xrange(line_count):
+    for i in range(line_count):
         # print(line)
         words = lines[i].split()
         if (len(words) != header_count):
             msg = "Invalid formatting on line %d" % i + " in file %s" % filename + ":\n%s" % lines[i]
             raise SyntaxError(msg)
-        for j in xrange(header_count):
+        for j in range(header_count):
             data_array[i, j] = float(words[j])
     thresholds = data_array[:, 0]
     combined_fig = plt.figure(0)
-    for i in xrange(1, header_count):
+    for i in range(1, header_count):
         rate_data = data_array[:, i]
         plt.plot(thresholds, rate_data)
 
@@ -1052,11 +1054,11 @@ def getRGBColors(no_of_colors):
     if channel_div == 0:
         return colors
     base_factor = float(1.0 / float(channel_div))
-    for i in xrange(channel_div):
+    for i in range(channel_div):
         red = base_factor * i
-        for j in xrange(channel_div):
+        for j in range(channel_div):
             green = base_factor * j
-            for k in xrange(channel_div):
+            for k in range(channel_div):
                 blue = base_factor * k
                 col = (red, green, blue)
                 colors.append(col)
@@ -1118,7 +1120,7 @@ def splitFiles(fname, keywords, root_dir=None, plot=False):
             for title in header:
                 split_file.write(title + '\t')
             split_file.write('\n')
-            for i in xrange(data_count):
+            for i in range(data_count):
                 if keyword in parameters[i]:
                     split_file.write(parameters[i] + '\t')
                     split_file.write(str(success_rate[i]) + '\t')
@@ -1169,7 +1171,6 @@ def getPointPlot(root_dir=None, filenames=None, plot_fname=None,
         plt.subplot(sub_plot_count, 1, 1)
     plt.title(title + ' Success Rate')
 
-
     # ----------------------initializing fps plot---------------------- #
     # plt.legend(filenames)
     if use_sep_fig:
@@ -1196,11 +1197,11 @@ def getPointPlot(root_dir=None, filenames=None, plot_fname=None,
     color_id = 0
     success_rate_y = range(0, 200, 5)
     avg_fps_y = range(0, 100, 5)
-    print 'success_rate_y=', success_rate_y
-    print 'avg_fps_y=', avg_fps_y
+    print('success_rate_y=', success_rate_y)
+    print('avg_fps_y=', avg_fps_y)
 
     for filename in filenames:
-        print 'filename=', filename
+        print('filename=', filename)
         header, data, data_count = readPerformanceSummary(filename, root_dir=root_dir)
         # parameters=data['parameters']
         success_rate = data['success_rate']
@@ -1254,7 +1255,7 @@ def getPointPlot(root_dir=None, filenames=None, plot_fname=None,
         # annotate_text_list=parameters
     # annotate_text=''
     # print 'annotate_text_list:\n', annotate_text_list
-    # for i in xrange(len(annotate_text_list)):
+    # for i in range(len(annotate_text_list)):
     # annotate_text=annotate_text+str(i)+': '+annotate_text_list[i]+'\n'
     #
     # print 'annotate_text=\n', annotate_text
@@ -1420,7 +1421,7 @@ class InteractivePlot:
         plt.show()
 
     def onKeyPress(self, event):
-        print 'key pressed=', event.key
+        print('key pressed=', event.key)
         if event.key == "escape" or event.key == "alt+escape":
             self.exit_event = True
             sys.exit()
@@ -1451,9 +1452,9 @@ class InteractivePlot:
             if key_id < self.no_of_lines:
                 self.show_lines[key_id] = 1 - self.show_lines[key_id]
                 if not self.show_lines[key_id]:
-                    print 'Removing line for', self.legend[key_id]
+                    print('Removing line for', self.legend[key_id])
                 else:
-                    print 'Restoring line for', self.legend[key_id]
+                    print('Restoring line for', self.legend[key_id])
         elif event.key == "i" or event.key == "alt+i":
             self.show_lines = [1 - x for x in self.show_lines]
         elif event.key == "r" or event.key == "alt+r":
@@ -1473,7 +1474,7 @@ class InteractivePlot:
         plot_empty = True
         max_y = 0
         if self.plot_all_lines:
-            for i in xrange(self.no_of_lines):
+            for i in range(self.no_of_lines):
                 y_data = self.plot_data[i][self.plot_types[self.plot_id]]
                 curr_y_max = max(y_data)
                 if max_y < curr_y_max:
@@ -1490,7 +1491,7 @@ class InteractivePlot:
                     # self.ax.get_legend().set_visible(True)
         else:
             plot_empty = False
-            for i in xrange(self.no_of_lines):
+            for i in range(self.no_of_lines):
                 self.plot_lines[i].set_data([], [])
                 self.plot_lines[i].set_label('_' + self.legend[i])
             y_data = self.plot_data[self.active_line][self.plot_types[self.plot_id]]
@@ -1571,11 +1572,11 @@ def getIntersectionPoints(lines_arr):
     min_theta_diff = np.inf
     min_i = 0
     min_j = 0
-    for i in xrange(4):
+    for i in range(4):
         theta1 = lines_arr[i, 1]
         # if theta1 > pi_2 and lines_arr[i, 0] < 0:
         # theta1 = pi - theta1
-        for j in xrange(i + 1, 4):
+        for j in range(i + 1, 4):
             theta2 = lines_arr[j, 1]
             # if theta2 > pi_2 and lines_arr[j, 0] < 0:
             # theta2 = pi - theta2
@@ -1587,27 +1588,26 @@ def getIntersectionPoints(lines_arr):
     line1 = lines_arr[min_i, :]
     line2 = lines_arr[min_j, :]
 
-    print 'before: lines_arr:\n', lines_arr
-    print 'min_i: ', min_i
-    print 'min_j: ', min_j
-    print 'line1: ', line1
-    print 'line2: ', line2
+    print('before: lines_arr:\n', lines_arr)
+    print('min_i: ', min_i)
+    print('min_j: ', min_j)
+    print('line1: ', line1)
+    print('line2: ', line2)
 
     pts = []
-    for i in xrange(4):
+    for i in range(4):
         if i != min_i and i != min_j:
-            print 'getting intersection between lines {:d} and {:d}'.format(min_i, i)
+            print('getting intersection between lines {:d} and {:d}'.format(min_i, i))
             pt = lineIntersection(line1, lines_arr[i, :])
-            print 'intersection pt: ', pt
+            print('intersection pt: ', pt)
             pts.append(pt)
-            print 'getting intersection between lines {:d} and {:d}'.format(min_j, i)
+            print('getting intersection between lines {:d} and {:d}'.format(min_j, i))
             pt = lineIntersection(line2, lines_arr[i, :])
-            print 'intersection pt: ', pt
+            print('intersection pt: ', pt)
             pts.append(pt)
     pt_arr = np.array(pts)
 
     # print 'theta_diff: \n', theta_diff
-
 
     # sort params by theta_diff
     # lines_arr = lines_arr[theta_diff.argsort()]
@@ -1686,7 +1686,7 @@ def isNumber(s):
 
 def getLinearInterpolatedImages(init_img, final_img, count):
     interpolated_images = []
-    for i in xrange(count):
+    for i in range(count):
         alpha = float(i + 1) / float(count + 1)
         curr_img = alpha * final_img + (1.0 - alpha) * init_img
         interpolated_images.append(np.copy(curr_img.astype(np.float64)))
@@ -1706,7 +1706,7 @@ def readDistGridParams(filename='distanceGridParams.txt'):
 def readGT(gt_path):
     gt_data = open(gt_path, 'r').readlines()
     if len(gt_data) < 2:
-        print 'Ground truth file is invalid'
+        print('Ground truth file is invalid')
         return None, None
     del (gt_data[0])
     n_lines = len(gt_data)
@@ -1722,10 +1722,10 @@ def readGT(gt_path):
                 or gt_frame_fname_1 != 'frame' \
                 or gt_frame_fname_2 != '.jpg' \
                 or gt_frame_num != line_id + 1:
-            print 'Invaid formatting on GT  line {:d}: {:s}'.format(line_id + 1, gt_line)
-            print 'gt_frame_fname_1: {:s}'.format(gt_frame_fname_1)
-            print 'gt_frame_fname_2: {:s}'.format(gt_frame_fname_2)
-            print 'gt_frame_num: {:d}'.format(gt_frame_num)
+            print('Invaid formatting on GT  line {:d}: {:s}'.format(line_id + 1, gt_line))
+            print('gt_frame_fname_1: {:s}'.format(gt_frame_fname_1))
+            print('gt_frame_fname_2: {:s}'.format(gt_frame_fname_2))
+            print('gt_frame_num: {:d}'.format(gt_frame_num))
             return None, None
         gt.append([float(gt_line[1]), float(gt_line[2]), float(gt_line[3]), float(gt_line[4]),
                    float(gt_line[5]), float(gt_line[6]), float(gt_line[7]), float(gt_line[8])])
@@ -1741,11 +1741,11 @@ def readReinitGT(gt_path, reinit_frame_id):
     except struct.error:
         gt_fid.close()
         raise StandardError("Reinit GT file is invalid")
-    print 'Reading reinit gt for frame {:d}'.format(reinit_frame_id + 1)
+    print('Reading reinit gt for frame {:d}'.format(reinit_frame_id + 1))
     start_pos = reinit_frame_id * (2 * n_gt_frames - reinit_frame_id + 1) * 4 * 8 + 4
     gt_fid.seek(start_pos)
     reinit_gt = []
-    for frame_id in xrange(reinit_frame_id, n_gt_frames):
+    for frame_id in range(reinit_frame_id, n_gt_frames):
         try:
             curr_gt = struct.unpack('dddddddd', gt_fid.read(64))
         except struct.error:
@@ -1764,7 +1764,7 @@ def readReinitGT(gt_path, reinit_frame_id):
 def getMeanCornerDistanceError(tracker_pos, gt_pos, _overflow_err=1e3):
     # mean corner distance error
     err = 0
-    for corner_id in xrange(4):
+    for corner_id in range(4):
         try:
             # err += math.sqrt(
             # (float(tracking_data_line[2 * corner_id + 1]) - float(gt_line[2 * corner_id + 1])) ** 2
@@ -1837,8 +1837,8 @@ def getJaccardError(tracker_pos, gt_pos, show_img=0, border_size=100, min_thresh
         max_y = max_thresh
 
     if min_x > max_x or min_y > max_y:
-        print 'tracker_pos: ', tracker_pos
-        print 'gt_pos: ', gt_pos
+        print('tracker_pos: ', tracker_pos)
+        print('gt_pos: ', gt_pos)
         raise StandardError('Invalid Tracker and/or GT position')
 
     img_size = (max_y - min_y + 2 * border_size + 1, max_x - min_x + 2 * border_size + 1)
@@ -1891,14 +1891,14 @@ def getJaccardError(tracker_pos, gt_pos, show_img=0, border_size=100, min_thresh
 def getTrackingErrors(tracker_path_orig, gt_path, _arch_fid=None, _reinit_from_gt=0,
                       _reinit_frame_skip=5, _use_reinit_gt=0, start_ids=None, _err_type=0,
                       _overflow_err=1e3, _show_jaccard_img=0):
-    print 'Reading ground truth from: {:s}...'.format(gt_path)
+    print('Reading ground truth from: {:s}...'.format(gt_path))
     if _use_reinit_gt:
         n_gt_frames, gt_data = readReinitGT(gt_path, 0)
     else:
         n_gt_frames, gt_data = readGT(gt_path)
 
     if n_gt_frames is None or gt_data is None:
-        print "Ground truth could not be read successfully"
+        print("Ground truth could not be read successfully")
         return None, None
 
     if start_ids is None:
@@ -1911,21 +1911,21 @@ def getTrackingErrors(tracker_path_orig, gt_path, _arch_fid=None, _reinit_from_g
             tracker_path = tracker_path_orig
         else:
             tracker_path = tracker_path_orig.replace('.txt', '_init_{:d}.txt'.format(start_id))
-        print 'Reading tracking data for start_id {:d} from: {:s}...'.format(start_id, tracker_path)
+        print('Reading tracking data for start_id {:d} from: {:s}...'.format(start_id, tracker_path))
         if _arch_fid is not None:
             tracking_data = _arch_fid.open(tracker_path, 'r').readlines()
         else:
             tracking_data = open(tracker_path, 'r').readlines()
         if len(tracking_data) < 2:
-            print 'Tracking data file is invalid.'
+            print('Tracking data file is invalid.')
             return None, None
         # remove header
         del (tracking_data[0])
         n_lines = len(tracking_data)
 
         if not _reinit_from_gt and n_lines != n_gt_frames - start_id:
-            print "No. of frames in tracking result ({:d}) and the ground truth ({:d}) do not match".format(
-                n_lines, n_gt_frames)
+            print("No. of frames in tracking result ({:d}) and the ground truth ({:d}) do not match".format(
+                n_lines, n_gt_frames))
             return None, None
 
         reinit_gt_id = 0
@@ -1944,31 +1944,33 @@ def getTrackingErrors(tracker_path_orig, gt_path, _arch_fid=None, _reinit_from_g
             frame_fname_1 = frame_fname[0:5]
             frame_fname_2 = frame_fname[- 4:]
             if frame_fname_1 != 'frame' or frame_fname_2 != '.jpg':
-                print 'Invaid formatting on tracking data line {:d}: {:s}'.format(line_id + 1, tracking_data_line)
-                print 'frame_fname: {:s} fname_len: {:d} frame_fname_1: {:s} frame_fname_2: {:s}'.format(
-                    frame_fname, fname_len, frame_fname_1, frame_fname_2)
+                print('Invaid formatting on tracking data line {:d}: {:s}'.format(line_id + 1, tracking_data_line))
+                print('frame_fname: {:s} fname_len: {:d} frame_fname_1: {:s} frame_fname_2: {:s}'.format(
+                frame_fname, fname_len, frame_fname_1, frame_fname_2))
                 return None, None
             frame_id_str = frame_fname[5:-4]
             frame_num = int(frame_id_str)
             if not _reinit_from_gt and frame_num != start_id + line_id + 1:
-                print "Unexpected frame number {:d} found in line {:d} of tracking result for start_id {:d}: {:s}".format(
-                    frame_num, line_id + 1, start_id, tracking_data_line)
+                print(
+                    "Unexpected frame number {:d} found in line {:d} of tracking result for start_id {:d}: {:s}".format(
+                        frame_num, line_id + 1, start_id, tracking_data_line))
                 return None, None
             if is_initialized:
                 # id of the frame in which the tracker is reinitialized
                 reinit_start_id = frame_num - 2
                 if failure_frame_id >= 0 and reinit_start_id != failure_frame_id + _reinit_frame_skip:
-                    print 'Tracker was reinitialized in frame {:d} rather than {:d} where it should have been with {:d} frames being skipped'.format(
-                        reinit_start_id + 1, failure_frame_id + _reinit_frame_skip + 1, _reinit_frame_skip
-                    )
+                    print(
+                        'Tracker was reinitialized in frame {:d} rather than {:d} where it should have been with {:d} frames being skipped'.format(
+                            reinit_start_id + 1, failure_frame_id + _reinit_frame_skip + 1, _reinit_frame_skip
+                        ))
                     return None, None
                 is_initialized = False
 
-            # print 'line_id: {:d} frame_id_str: {:s} frame_num: {:d}'.format(
+            # print('line_id: {:d} frame_id_str: {:s} frame_num: {:d}'.format(
             # line_id, frame_id_str, frame_num)
             if len(tracking_data_line) != 9:
                 if _reinit_from_gt and len(tracking_data_line) == 2 and tracking_data_line[1] == 'tracker_failed':
-                    print 'tracking failure detected in frame: {:d} at line {:d}'.format(frame_num, line_id + 1)
+                    print('tracking failure detected in frame: {:d} at line {:d}'.format(frame_num, line_id + 1))
                     failure_count += 1
                     failure_frame_id = frame_num - 1
                     # skip the frame where the tracker failed as well as the one where it was reinitialized
@@ -1978,20 +1980,19 @@ def getTrackingErrors(tracker_path_orig, gt_path, _arch_fid=None, _reinit_from_g
                     continue
                 elif len(tracking_data_line) == 2 and tracking_data_line[1] == 'invalid_tracker_state':
                     if not invalid_tracker_state_found:
-                        print 'invalid tracker state detected in frame: {:d} at line {:d}'.format(frame_num,
-                                                                                                  line_id + 1)
+                        print('invalid tracker state detected in frame: {:d} at line {:d}'.format(
+                            frame_num, line_id + 1))
                         invalid_tracker_state_found = True
                     line_id += 1
                     tracking_errors.append(_overflow_err)
                     continue
                 else:
-                    print 'Invalid formatting on line {:d}: {:s}'.format(line_id, tracking_data[line_id])
+                    print('Invalid formatting on line {:d}: {:s}'.format(line_id, tracking_data[line_id]))
                     return None, None
             # if is_initialized:frame_num
             # is_initialized = False
             # line_id += 1
             # continue
-
 
             if _use_reinit_gt:
                 if reinit_gt_id != reinit_start_id:
@@ -2014,13 +2015,13 @@ def getTrackingErrors(tracker_path_orig, gt_path, _arch_fid=None, _reinit_from_g
             elif _err_type == 2:
                 err = getJaccardError(curr_tracking_data, curr_gt, _show_jaccard_img)
             else:
-                print 'Invalid error type provided: {:d}'.format(_err_type)
+                print('Invalid error type provided: {:d}'.format(_err_type))
                 return None, None
             tracking_errors.append(err)
             line_id += 1
         if _reinit_from_gt and n_lines < n_gt_frames - failure_count * (_reinit_frame_skip - 1):
-            print "Unexpected no. of frames in reinit tracking result ({:d}) which should be at least {:d}".format(
-                n_lines, n_gt_frames - failure_count * (_reinit_frame_skip - 1))
+            print("Unexpected no. of frames in reinit tracking result ({:d}) which should be at least {:d}".format(
+                n_lines, n_gt_frames - failure_count * (_reinit_frame_skip - 1)))
             return None, None
     return tracking_errors, failure_count
 
@@ -2061,13 +2062,13 @@ def parseValue(old_val, new_val, arg_name=None):
     elif type(old_val) is tuple or type(old_val) is list:
         arg_list = new_val.split(',')
         if len(arg_list) != len(old_val):
-            print 'arg_list: ', arg_list
+            print('arg_list: ', arg_list)
             if arg_name is not None:
                 raise SyntaxError('Invalid size for parameter {:s}: {:d}: '.format(
                     arg_name, len(arg_list)))
             else:
                 raise SyntaxError('Invalid size for parameter: {:s}: '.format(len(arg_list)))
-        for i in xrange(len(arg_list)):
+        for i in range(len(arg_list)):
             arg_list[i] = parseValue(old_val[i], arg_list[i])
         if type(old_val) is tuple:
             return tuple(arg_list)
@@ -2076,9 +2077,9 @@ def parseValue(old_val, new_val, arg_name=None):
 
 
 def parseArguments(args, params):
-    print 'args: \n', args
+    print('args: \n', args)
     if (len(args) - 1) % 2 != 0:
-        print 'args: \n', args
+        print('args: \n', args)
         raise SyntaxError('Command line arguments must be specified in pairs')
     arg_id = 1
     while arg_id < len(args):
@@ -2086,7 +2087,7 @@ def parseArguments(args, params):
         if not arg_name in params.keys():
             raise SyntaxError('Invalid command line argument: {:s}'.format(arg_name))
         params[arg_name] = parseValue(params[arg_name], args[arg_id + 1], arg_name)
-        print 'Setting ', arg_name, ' to ', params[arg_name]
+        print('Setting ', arg_name, ' to ', params[arg_name])
         arg_id += 2
     return params
 
@@ -2101,7 +2102,7 @@ def arrangeCornersWithIDs(orig_corners):
     rearrangement_ids = np.array([0, 1, 2, 3], dtype=np.uint32)
 
     # print 'new_corners.shape:\n', new_corners.shape
-    print 'sorted_x_id:\n', sorted_x_id
+    print('sorted_x_id:\n', sorted_x_id)
 
     if orig_corners[1, sorted_x_id[0]] < orig_corners[1, sorted_x_id[1]]:
         new_corners[:, 0] = orig_corners[:, sorted_x_id[0]]
@@ -2149,6 +2150,7 @@ def getSyntheticSeqName(source_name, syn_ssm, syn_ssm_sigma_id, syn_ilm='0',
 
     return '{:s}_{:d}_{:s}'.format(source_name, syn_frame_id, syn_out_suffix)
 
+
 def getDateTime():
     return time.strftime("%y%m%d_%H%M", time.localtime())
 
@@ -2161,7 +2163,7 @@ def getParamDict():
                      4: 'pf',
                      5: 'pw',
                      6: 'ppw'
-    }
+                     }
     grid_types = {0: 'trans',
                   1: 'rs',
                   2: 'shear',
@@ -2171,7 +2173,7 @@ def getParamDict():
                   6: 'stx',
                   7: 'sty',
                   8: 'trans2'
-    }
+                  }
     filter_types = {0: 'none',
                     1: 'gauss',
                     2: 'box',
@@ -2185,12 +2187,12 @@ def getParamDict():
                     10: 'DoG',
                     11: 'laplacian',
                     12: 'canny'
-    }
+                    }
     inc_types = {0: 'fc',
                  1: 'ic',
                  2: 'fa',
                  3: 'ia'
-    }
+                 }
     appearance_models = {0: 'ssd',
                          1: 'scv',
                          2: 'ncc',
@@ -2211,7 +2213,7 @@ def getParamDict():
                          17: 'mkld',
                          18: 'chis',
                          19: 'ssim'
-    }
+                         }
 
     sequences_tmt = {
         0: 'nl_bookI_s3',
@@ -3129,7 +3131,7 @@ def getParamDict():
         16: 'Synthetic',
         17: 'Live'
     }
-    sequences = dict(zip([actors[i] for i in xrange(len(actors))],
+    sequences = dict(zip([actors[i] for i in range(len(actors))],
                          [sequences_tmt,
                           sequences_ucsb,
                           sequences_lintrack,
@@ -3321,7 +3323,7 @@ def getParamDict():
         3: 'IDOT',
         4: 'DETRAC',
     }
-    mot_sequences = dict(zip([mot_actors[i] for i in xrange(len(mot_actors))],
+    mot_sequences = dict(zip([mot_actors[i] for i in range(len(mot_actors))],
                              [[sequences_mot2015_train, sequences_mot2015_test],
                               [sequences_kitti_train, sequences_kitti_test],
                               sequences_gram,
@@ -3334,11 +3336,11 @@ def getParamDict():
                   2: 'fast_far',
                   3: 'range',
                   4: 'illumination'
-    }
+                  }
     opt_types = {0: 'pre',
                  1: 'post',
                  2: 'ind'
-    }
+                 }
     mtf_sms = {0: 'esm',
                1: 'nesm',
                2: 'aesm',
@@ -3352,14 +3354,14 @@ def getParamDict():
                10: 'tld',
                11: 'kcf',
                12: 'pf'
-    }
+               }
     mtf_ams = {0: 'ssd',
                1: 'ncc',
                2: 'scv',
                3: 'rscv',
                4: 'nssd',
                5: 'mi'
-    }
+               }
     mtf_ssms = {0: '2',
                 1: '3',
                 2: '3s',
@@ -3368,7 +3370,7 @@ def getParamDict():
                 5: '8',
                 6: 'c8',
                 7: 'l8'
-    }
+                }
     opt_methods = {
         0: 'Newton-CG',
         1: 'CG',
@@ -3397,7 +3399,7 @@ def getParamDict():
                    'mtf_ams': mtf_ams,
                    'mtf_ssms': mtf_ssms,
                    'opt_methods': opt_methods
-    }
+                   }
     return params_dict
 
 
@@ -3411,10 +3413,10 @@ def stackImages(img_list, stack_order=0):
     stacked_img = None
     list_ended = False
     inner_axis = 1 - stack_order
-    for row_id in xrange(grid_size):
+    for row_id in range(grid_size):
         start_id = grid_size * row_id
         curr_row = None
-        for col_id in xrange(grid_size):
+        for col_id in range(grid_size):
             img_id = start_id + col_id
             if img_id >= n_images:
                 curr_img = np.zeros(img_size, dtype=np.uint8)
@@ -3434,7 +3436,3 @@ def stackImages(img_list, stack_order=0):
         if list_ended:
             break
     return stacked_img
-
-
-
-
