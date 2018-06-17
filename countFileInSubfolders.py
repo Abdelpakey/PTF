@@ -19,6 +19,12 @@ if len(sys.argv) > arg_id:
 print('Looking for files with extension {:s} in sub folders of {:s}'.format(file_ext, folder_name))
 
 subfolders = [name for name in os.listdir(folder_name) if os.path.isdir(os.path.join(folder_name, name))]
+try:
+    nums = int(os.path.splitext(img_fname)[0].split('_')[-1])
+    subfolders.sort(key=sortKey)
+except:
+    subfolders.sort()
+
 total_files = 0
 files = []
 out_fid = open(out_file, 'w')

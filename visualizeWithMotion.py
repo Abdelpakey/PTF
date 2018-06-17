@@ -73,7 +73,7 @@ if __name__ == '__main__':
         img_fname = src_file_list[img_id]
 
     try:
-        nums = int(os.path.splitext(img_fname)[0].split('_')[-1])
+        # nums = int(os.path.splitext(img_fname)[0].split('_')[-1])
         src_file_list.sort(key=sortKey)
     except:
         src_file_list.sort()
