@@ -1,22 +1,20 @@
 import os
 import sys
+from random import shuffle
 
-from Misc import sortKey
+from Misc import processArguments, sortKey
 
-file_ext = ''
-out_file = 'list.txt'
-folder_name = '.'
-
-arg_id = 1
-if len(sys.argv) > arg_id:
-    file_ext = sys.argv[arg_id]
-    arg_id += 1
-if len(sys.argv) > arg_id:
-    out_file = sys.argv[arg_id]
-    arg_id += 1
-if len(sys.argv) > arg_id:
-    folder_name = sys.argv[arg_id]
-    arg_id += 1
+params = {
+    'file_ext': '',
+    'out_file': 'list.txt',
+    'folder_name': '',
+    'shuffle_files': 1,
+}
+processArguments(sys.argv[1:], params)
+file_ext = params['file_ext']
+out_file = params['out_file']
+folder_name = params['folder_name']
+shuffle_files = params['shuffle_files']
 
 print('Looking for files with extension {:s} in sub folders of {:s}'.format(file_ext, folder_name))
 
@@ -28,20 +26,27 @@ except:
 
 total_files = 0
 files = []
-out_fid = open(out_file, 'w')
 for subfolder in subfolders:
     subfolders_path = os.path.join(folder_name, subfolder)
     src_files = [f for f in os.listdir(subfolders_path) if os.path.isfile(os.path.join(subfolders_path, f))]
     if file_ext:
         src_files = [f for f in src_files if f.endswith(file_ext)]
+
+    src_files.sort(key=sortKey)
     n_files = len(src_files)
     total_files += n_files
+    files +=  [os.path.join(subfolders_path, f) for f in src_files]
     print('{}:\t{}\t{}'.format(subfolder, n_files, total_files))
-    src_files.sort(key=sortKey)
-    for f in src_files:
-        out_fid.write(os.path.join(subfolders_path, f) + '\n')
-out_fid.close()
+
 print('total_files: {}'.format(total_files))
+
+if shuffle_files:
+    shuffle(files)
+
+out_fid = open(out_file, 'w')
+for f in files:
+    out_fid.write(f + '\n')
+out_fid.close()
 
 
 
