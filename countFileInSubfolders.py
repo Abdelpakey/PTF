@@ -1,13 +1,16 @@
 import os
 import sys
 
-folder_name = '.'
 file_ext = ''
 out_file = 'list.txt'
+folder_name = '.'
 
 arg_id = 1
 if len(sys.argv) > arg_id:
     file_ext = sys.argv[arg_id]
+    arg_id += 1
+if len(sys.argv) > arg_id:
+    out_file = sys.argv[arg_id]
     arg_id += 1
 if len(sys.argv) > arg_id:
     folder_name = sys.argv[arg_id]
