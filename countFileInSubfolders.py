@@ -37,6 +37,7 @@ for subfolder in subfolders:
     n_files = len(src_files)
     total_files += n_files
     print('{}:\t{}\t{}'.format(subfolder, n_files, total_files))
+    src_files.sort(key=sortKey)
     for f in src_files:
         out_fid.write(os.path.join(subfolders_path, f) + '\n')
 out_fid.close()
