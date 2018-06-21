@@ -19,7 +19,6 @@ params = {
 
 processArguments(sys.argv[1:], params)
 src_path = params['src_path']
-n_classes = params['n_classes']
 save_path = params['save_path']
 img_ext = params['img_ext']
 show_img = params['show_img']
@@ -40,7 +39,7 @@ print('total_frames: {}'.format(total_frames))
 src_file_list.sort(key=sortKey)
 
 save_dir = os.path.dirname(save_path)
-if not os.path.isdir(save_dir):
+if save_dir and not os.path.isdir(save_dir):
     os.makedirs(save_dir)
 
 if height <= 0 or width <= 0:
@@ -56,7 +55,7 @@ if video_out is None:
 print('Saving output video of size {}x{} to {}'.format(width, height, save_path))
 
 frame_id = start_id
-pause_after_frame = 1
+pause_after_frame = 0
 while True:
     filename = src_file_list[frame_id]
     file_path = os.path.join(src_path, filename)
@@ -82,6 +81,9 @@ while True:
     sys.stdout.flush()
 
     if n_frames > 0 and (frame_id - start_id) >= n_frames:
+        break
+
+    if frame_id >= total_frames:
         break
 
 sys.stdout.write('\n')
