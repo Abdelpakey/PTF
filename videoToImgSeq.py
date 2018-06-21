@@ -60,14 +60,14 @@ if __name__ == '__main__':
     print('seq_name: ', seq_name)
 
     src_fname = os.path.join(db_root_dir, actor, seq_name + '.' + vid_fmt)
+    print('Reading video file: {:s}'.format(src_fname))
 
     if not dst_dir:
         dst_dir = os.path.join(db_root_dir, actor,seq_name)
-
     if not os.path.isdir(dst_dir):
         os.makedirs(dst_dir)
+    print('Writing image sequence to: {:s}'.format(dst_dir))
 
-    print('Reading video file: {:s}'.format(src_fname))
     cap = cv2.VideoCapture()
     if not cap.open(src_fname):
         raise StandardError('The video file ' + src_fname + ' could not be opened')
