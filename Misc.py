@@ -251,6 +251,36 @@ def processArguments(args, params):
             print('Invalid argument value {} provided for {}'.format(arg[1], arg[0]))
             return
 
+def resizeAR(src_img, width, height, return_factors=False):
+    aspect_ratio = float(width) / float(height)
+
+    src_height, src_width, n_channels = src_img.shape
+    src_aspect_ratio = float(src_width) / float(src_height)
+
+    if src_aspect_ratio == aspect_ratio:
+        dst_width = src_width
+        dst_height = src_height
+        start_row = start_col = 0
+    elif src_aspect_ratio > aspect_ratio:
+        dst_width = src_width
+        dst_height = int(src_width / aspect_ratio)
+        start_row = int((dst_height - src_height) / 2.0)
+        start_col = 0
+    else:
+        dst_height = src_height
+        dst_width = int(src_height * aspect_ratio)
+        start_col = int((dst_width - src_width) / 2.0)
+        start_row = 0
+
+    dst_img = np.zeros((dst_height, dst_width, n_channels), dtype=np.uint8)
+
+    dst_img[start_row:start_row + src_height, start_col:start_col + src_width, :] = src_img
+    dst_img = cv2.resize(dst_img, (width, height))
+    if return_factors:
+        resize_factor = float(height) / float(dst_height)
+        return dst_img, resize_factor, start_row, start_col
+    else:
+        return dst_img
 
 def str2num(s):
     try:
