@@ -92,7 +92,7 @@ if __name__ == '__main__':
         if roi_enabled:
             frame = frame[roi[1]:roi[3], roi[0]:roi[2], :]
         if resize_factor != 1:
-            curr_img = cv2.resize(curr_img, (0, 0), fx=resize_factor, fy=resize_factor)
+            frame = cv2.resize(frame, (0, 0), fx=resize_factor, fy=resize_factor)
 
         curr_img = cv2.imwrite(dst_dir + '/image{:06d}.jpg'.format(frame_id + 1), frame)
         if show_img:
