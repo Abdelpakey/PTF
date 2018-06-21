@@ -1,6 +1,8 @@
 import os
 import cv2
 import sys
+
+
 # import numpy as np
 # from Misc import processArguments
 
@@ -20,14 +22,17 @@ def processArguments(args, params):
             print('Invalid argument value {} provided for {}'.format(arg[1], arg[0]))
             return
 
+
 params = {
     'db_root_dir': 'N:\Datasets',
     'actor': 'ISL',
     'seq_name': 'DJI_0002',
     'vid_fmt': 'mov',
+    'dst_dir': '',
     'show_img': 0,
     'n_frames': 0,
-    'roi': None
+    'roi': None,
+    'resize_factor': 1.0
 }
 
 if __name__ == '__main__':
@@ -40,6 +45,8 @@ if __name__ == '__main__':
     vid_fmt = params['vid_fmt']
     n_frames = params['n_frames']
     roi = params['roi']
+    resize_factor = params['resize_factor']
+    dst_dir = params['dst_dir']
 
     roi_enabled = False
 
@@ -52,9 +59,10 @@ if __name__ == '__main__':
     print('actor: ', actor)
     print('seq_name: ', seq_name)
 
-    src_fname = db_root_dir + '/' + actor + '/' + seq_name + '.' + vid_fmt
+    src_fname = os.path.join(db_root_dir, actor, seq_name + '.' + vid_fmt)
 
-    dst_dir = db_root_dir + '/' + actor + '/' + seq_name
+    if not dst_dir:
+        dst_dir = os.path.join(db_root_dir, actor,seq_name)
 
     if not os.path.isdir(dst_dir):
         os.makedirs(dst_dir)
@@ -83,6 +91,9 @@ if __name__ == '__main__':
             break
         if roi_enabled:
             frame = frame[roi[1]:roi[3], roi[0]:roi[2], :]
+        if resize_factor != 1:
+            curr_img = cv2.resize(curr_img, (0, 0), fx=resize_factor, fy=resize_factor)
+
         curr_img = cv2.imwrite(dst_dir + '/image{:06d}.jpg'.format(frame_id + 1), frame)
         if show_img:
             cv2.imshow('Frame', frame)

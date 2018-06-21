@@ -25,6 +25,7 @@ except:
     subfolders.sort()
 
 total_files = 0
+counts_file = open('file_counts.txt', 'w')
 files = []
 for subfolder in subfolders:
     subfolders_path = os.path.join(folder_name, subfolder)
@@ -36,9 +37,12 @@ for subfolder in subfolders:
     n_files = len(src_files)
     total_files += n_files
     files +=  [os.path.join(subfolders_path, f) for f in src_files]
-    print('{}:\t{}\t{}'.format(subfolder, n_files, total_files))
+    text = '{}:\t{}\t{}'.format(subfolder, n_files, total_files)
+    print(text)
+    counts_file.write(text + '\n')
 
 print('total_files: {}'.format(total_files))
+counts_file.close()
 
 if shuffle_files:
     shuffle(files)
