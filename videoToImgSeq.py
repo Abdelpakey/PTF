@@ -105,10 +105,10 @@ if __name__ == '__main__':
             cv2.imshow('Frame', frame)
             if cv2.waitKey(1) == 27:
                 break
-        if n_frames > 0 and frame_id >= n_frames:
+        if n_frames > 0 and (frame_id-start_id) >= n_frames:
             break
         sys.stdout.write('\rDone {:d}/{:d} frames'.format(
-            frame_id, n_frames))
+            (frame_id - start_id), n_frames))
         sys.stdout.flush()
     sys.stdout.write('\n')
     sys.stdout.flush()
