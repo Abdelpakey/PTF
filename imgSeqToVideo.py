@@ -2,37 +2,12 @@ import cv2
 import numpy as np
 import time
 import sys
-import pandas as pd
-
-try:
-    sys.path.remove('/home/abhineet/labelling_tool/object_detection_module')
-    sys.path.remove('/home/abhineet/labelling_tool/object_detection_module/object_detection')
-except:
-    pass
-
-try:
-    sys.path.remove('/home/abhineet/617_w18/Assignment2/models/research/object_detection')
-except:
-    pass
-    # print('could not remove /home/abhineet/617_w18/Assignment2/models/research/object_detection')
-
-try:
-    sys.path.remove('/home/abhineet/617_w18/Assignment2/models/research')
-except:
-    pass
-    # print('could not remove /home/abhineet/617_w18/Assignment2/models/research')
-sys.path.append("..")
-
-import tensorflow as tf
-
 # This is needed since the notebook is stored in the object_detection folder.
 
 # ## Object detection imports
 # Here are the imports from the object detection module.
 
-from utils import label_map_util
-from utils import visualization_utils as vis_util
-from utilities import processArguments, sortKey
+from Misc import processArguments, sortKey
 import os
 
 params = {

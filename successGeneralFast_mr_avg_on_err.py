@@ -5,7 +5,7 @@ from Misc import readGT
 from Misc import getSyntheticSeqName
 from Misc import getSyntheticSeqSuffix
 
-from DecompUtils import getBinaryPtsImage2
+from Misc import getBinaryPtsImage2
 import itertools as it
 
 import numpy as np

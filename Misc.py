@@ -12,7 +12,7 @@ from matplotlib import animation
 import copy
 import struct
 import time
-from DecompUtils import getBinaryPtsImage2
+# from DecompUtils import getBinaryPtsImage2
 
 from mpl_toolkits.mplot3d import Axes3D
 from Homography import *
@@ -174,6 +174,38 @@ col_rgb = {
     'magenta': (255, 0, 255)
 }
 
+
+def getBinaryPtsImage2(img_shape, corners):
+    img_shape = img_shape[0:2]
+    corners = corners.transpose().astype(np.int32)
+    # print 'corners:\n ', corners
+    bin_img = np.zeros(img_shape, dtype=np.uint8)
+    cv2.fillConvexPoly(bin_img, corners, (255, 255, 255))
+
+    # drawRegion(bin_img, corners, (255, 255, 255), thickness=1)
+    # # print 'img_shape: ', img_shape
+    # min_row = max(0, int(np.amin(corners[1, :])))
+    # max_row = min(img_shape[0], int(np.amax(corners[1, :])))
+    # for row in xrange(min_row, max_row):
+    # non_zero_idx = np.transpose(np.nonzero(bin_img[row, :]))
+    # # print 'curr_row: ', curr_row
+    # # print 'non_zero_idx: ', non_zero_idx
+    # bin_img[row, non_zero_idx[0]:non_zero_idx[-1]] = 255
+    return bin_img
+
+
+# def getBinaryPtsImage2(img_shape, corners):
+# img_shape = img_shape[0:2]
+# bin_img = np.zeros(img_shape, dtype=np.uint8)
+# drawRegion(bin_img, corners, (255, 255, 255), thickness=1)
+# # print 'img_shape: ', img_shape
+# for row in xrange(img_shape[0]):
+# non_zero_idx = np.transpose(np.nonzero(bin_img[row, :]))
+# # print 'curr_row: ', curr_row
+# # print 'non_zero_idx: ', non_zero_idx
+# if non_zero_idx.shape[0]>1:
+# bin_img[row, non_zero_idx[0]:non_zero_idx[-1]] = 255
+# return bin_img
 
 def sortKey(fname):
     fname = os.path.splitext(fname)[0]

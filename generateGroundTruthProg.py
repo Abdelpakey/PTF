@@ -1,4 +1,6 @@
 from decomposition import *
+from Misc import getBinaryPtsImage2
+
 import time
 
 if __name__ == '__main__':
