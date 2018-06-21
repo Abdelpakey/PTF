@@ -32,7 +32,8 @@ params = {
     'show_img': 0,
     'n_frames': 0,
     'roi': None,
-    'resize_factor': 1.0
+    'resize_factor': 1.0,
+    'start_id': 0
 }
 
 if __name__ == '__main__':
@@ -47,6 +48,7 @@ if __name__ == '__main__':
     roi = params['roi']
     resize_factor = params['resize_factor']
     dst_dir = params['dst_dir']
+    start_id = params['start_id']
 
     roi_enabled = False
 
@@ -58,12 +60,13 @@ if __name__ == '__main__':
 
     print('actor: ', actor)
     print('seq_name: ', seq_name)
+    print('start_id: ', start_id)
 
     src_fname = os.path.join(db_root_dir, actor, seq_name + '.' + vid_fmt)
     print('Reading video file: {:s}'.format(src_fname))
 
     if not dst_dir:
-        dst_dir = os.path.join(db_root_dir, actor,seq_name)
+        dst_dir = os.path.join(db_root_dir, actor, seq_name)
     if not os.path.isdir(dst_dir):
         os.makedirs(dst_dir)
     print('Writing image sequence to: {:s}'.format(dst_dir))
@@ -89,21 +92,23 @@ if __name__ == '__main__':
         if not ret:
             print('\nFrame {:d} could not be read'.format(frame_id + 1))
             break
+        frame_id += 1
+        if frame_id <= start_id:
+            continue
         if roi_enabled:
             frame = frame[roi[1]:roi[3], roi[0]:roi[2], :]
         if resize_factor != 1:
             frame = cv2.resize(frame, (0, 0), fx=resize_factor, fy=resize_factor)
 
-        curr_img = cv2.imwrite(dst_dir + '/image{:06d}.jpg'.format(frame_id + 1), frame)
+        curr_img = cv2.imwrite(dst_dir + '/image{:06d}.jpg'.format(frame_id - start_id), frame)
         if show_img:
             cv2.imshow('Frame', frame)
             if cv2.waitKey(1) == 27:
                 break
-        frame_id += 1
         if n_frames > 0 and frame_id >= n_frames:
             break
         sys.stdout.write('\rDone {:d}/{:d} frames'.format(
-            frame_id + 1, n_frames))
+            frame_id, n_frames))
         sys.stdout.flush()
     sys.stdout.write('\n')
     sys.stdout.flush()
