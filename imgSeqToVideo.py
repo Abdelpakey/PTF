@@ -1,6 +1,6 @@
 import cv2
 import sys
-import os
+import os, shutil
 
 from Misc import processArguments, sortKey, resizeAR
 
@@ -9,6 +9,7 @@ params = {
     'save_path': 'example.mkv',
     'img_ext': 'jpg',
     'show_img': 1,
+    'del_src': 0,
     'start_id': 0,
     'n_frames': 0,
     'width': 0,
@@ -22,6 +23,7 @@ src_path = params['src_path']
 save_path = params['save_path']
 img_ext = params['img_ext']
 show_img = params['show_img']
+del_src = params['del_src']
 start_id = params['start_id']
 n_frames = params['n_frames']
 width = params['width']
@@ -93,3 +95,6 @@ video_out.release()
 
 if show_img:
     cv2.destroyAllWindows()
+if del_src:
+    print('Removing source folder {}'.format(src_path))
+    shutil.rmtree(src_path)
