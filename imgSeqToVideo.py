@@ -54,7 +54,7 @@ video_out = cv2.VideoWriter(save_path, fourcc, fps, (width, height))
 if video_out is None:
     raise IOError('Output video file could not be opened: {}'.format(save_path))
 
-print('Saving output video of size {}x{} to {}'.format(width, height, save_path))
+print('Saving {}x{} output video to {}'.format(width, height, save_path))
 
 frame_id = start_id
 pause_after_frame = 0

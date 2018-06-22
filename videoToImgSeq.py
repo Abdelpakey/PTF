@@ -57,32 +57,31 @@ if __name__ == '__main__':
         if xmax > xmin and ymax > ymin:
             print('Using roi: ', roi)
             roi_enabled = True
-
-
-    src_fname = seq_name
+    src_path = seq_name
     if vid_fmt:
-        src_fname = src_fname +  '.' + vid_fmt
+        src_path = src_path + '.' + vid_fmt
     if actor:
         print('actor: ', actor)
-        src_fname = os.path.join(actor, src_fname)
+        src_path = os.path.join(actor, src_path)
     if db_root_dir:
         print('db_root_dir: ', db_root_dir)
-        src_fname = os.path.join(db_root_dir, src_fname)
+        src_path = os.path.join(db_root_dir, src_path)
 
     print('seq_name: ', seq_name)
     print('start_id: ', start_id)
-    
-    print('Reading video file: {:s}'.format(src_fname))
+
+    print('Reading video file: {:s}'.format(src_path))
 
     if not dst_dir:
-        dst_dir = os.path.join(db_root_dir, actor, seq_name)
-    if not os.path.isdir(dst_dir):
+        seq_name = os.path.splitext(os.path.basename(src_path))[0]
+        dst_dir = os.path.join(os.path.dirname(src_path), seq_name)
+    if dst_dir and not os.path.isdir(dst_dir):
         os.makedirs(dst_dir)
     print('Writing image sequence to: {:s}'.format(dst_dir))
 
     cap = cv2.VideoCapture()
-    if not cap.open(src_fname):
-        raise StandardError('The video file ' + src_fname + ' could not be opened')
+    if not cap.open(src_path):
+        raise StandardError('The video file ' + src_path + ' could not be opened')
 
     if cv2.__version__.startswith('3'):
         cv_prop = cv2.CAP_PROP_FRAME_COUNT
