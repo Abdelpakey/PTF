@@ -24,10 +24,10 @@ def processArguments(args, params):
 
 
 params = {
-    'db_root_dir': 'N:\Datasets',
-    'actor': 'ISL',
-    'seq_name': 'DJI_0002',
-    'vid_fmt': 'mov',
+    'db_root_dir': '',
+    'actor': '',
+    'seq_name': '',
+    'vid_fmt': '',
     'dst_dir': '',
     'show_img': 0,
     'n_frames': 0,
@@ -58,11 +58,20 @@ if __name__ == '__main__':
             print('Using roi: ', roi)
             roi_enabled = True
 
-    print('actor: ', actor)
+
+    src_fname = seq_name
+    if vid_fmt:
+        src_fname = src_fname +  '.' + vid_fmt
+    if actor:
+        print('actor: ', actor)
+        src_fname = os.path.join(actor, src_fname)
+    if db_root_dir:
+        print('db_root_dir: ', db_root_dir)
+        src_fname = os.path.join(db_root_dir, src_fname)
+
     print('seq_name: ', seq_name)
     print('start_id: ', start_id)
-
-    src_fname = os.path.join(db_root_dir, actor, seq_name + '.' + vid_fmt)
+    
     print('Reading video file: {:s}'.format(src_fname))
 
     if not dst_dir:
