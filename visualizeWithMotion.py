@@ -17,7 +17,7 @@ params = {
     'auto_progress': 0,
     'max_switches': 1,
     'max_duration': 5,
-    'random_mode': 1,
+    'random_mode': 0,
 }
 
 if __name__ == '__main__':

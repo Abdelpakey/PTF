@@ -35,7 +35,11 @@ ext = params['ext']
 
 print('Reading source images from: {}'.format(src_path))
 
-src_file_list = [k for k in os.listdir(src_path) if k.endswith('.{:s}'.format(img_ext))]
+img_exts = ['.jpg', '.jpeg', '.png', '.bmp', '.tif']
+
+src_path = os.path.abspath(src_path)
+
+src_file_list = [k for k in os.listdir(src_path) for _ext in img_exts if k.endswith(_ext)]
 total_frames = len(src_file_list)
 if total_frames <= 0:
     raise SystemError('No input frames found')
@@ -43,7 +47,7 @@ print('total_frames: {}'.format(total_frames))
 src_file_list.sort(key=sortKey)
 
 if not save_path:
-    save_path = src_path + '.' + ext
+    save_path = os.path.join(os.path.dirname(src_path), os.path.basename(src_path) + '.' + ext)
 
 save_dir = os.path.dirname(save_path)
 if save_dir and not os.path.isdir(save_dir):
