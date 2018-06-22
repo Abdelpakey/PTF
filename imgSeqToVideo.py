@@ -6,7 +6,7 @@ from Misc import processArguments, sortKey, resizeAR
 
 params = {
     'src_path': '.',
-    'save_path': 'example.mkv',
+    'save_path': '',
     'img_ext': 'jpg',
     'show_img': 1,
     'del_src': 0,
@@ -16,6 +16,7 @@ params = {
     'height': 0,
     'fps': 30,
     'codec': 'H264',
+    'ext': 'mkv',
 }
 
 processArguments(sys.argv[1:], params)
@@ -30,6 +31,7 @@ width = params['width']
 height = params['height']
 fps = params['fps']
 codec = params['codec']
+ext = params['ext']
 
 print('Reading source images from: {}'.format(src_path))
 
@@ -39,6 +41,9 @@ if total_frames <= 0:
     raise SystemError('No input frames found')
 print('total_frames: {}'.format(total_frames))
 src_file_list.sort(key=sortKey)
+
+if not save_path:
+    save_path = src_path + '.' + ext
 
 save_dir = os.path.dirname(save_path)
 if save_dir and not os.path.isdir(save_dir):
