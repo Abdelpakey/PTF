@@ -5,9 +5,9 @@ from random import shuffle
 from Misc import processArguments, sortKey
 
 params = {
-    'file_ext': '',
+    'file_ext': 'jpg',
     'out_file': 'list.txt',
-    'folder_name': '',
+    'folder_name': '.',
     'shuffle_files': 1,
 }
 processArguments(sys.argv[1:], params)
@@ -15,6 +15,8 @@ file_ext = params['file_ext']
 out_file = params['out_file']
 folder_name = params['folder_name']
 shuffle_files = params['shuffle_files']
+
+folder_name = os.path.abspath(folder_name)
 
 print('Looking for files with extension {:s} in sub folders of {:s}'.format(file_ext, folder_name))
 
