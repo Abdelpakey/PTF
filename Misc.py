@@ -243,7 +243,7 @@ def processArguments(args, params):
         if len(arg) != 2 or not arg[0] in params.keys():
             print('Invalid argument provided: {:s}'.format(args[arg_id]))
             return
-        if not arg[1] or not arg[0]:
+        if not arg[1] or not arg[0] or arg[1]=='#':
             continue
         try:
             params[arg[0]] = type(params[arg[0]])(arg[1])
