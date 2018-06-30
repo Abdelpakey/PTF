@@ -14,7 +14,7 @@ dst_dir = params['dst_dir']
 if not dst_dir:
     dst_dir = src_dir
 
-subfolders = [f for f in glob.iglob(src_dir + '**/*', recursive=True) if os.path.isdir(f) and not 'annotations' in f]
+subfolders = [f for f in glob.iglob(src_dir + '/*', recursive=True) if os.path.isdir(f) and not 'annotations' in f]
 
 
 for src in subfolders:
