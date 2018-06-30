@@ -1,0 +1,21 @@
+import glob
+from Misc import processArguments
+import sys, os, shutil
+
+params = {
+    'src_dir': '',
+    'dst_dir': '',
+}
+
+processArguments(sys.argv[1:], params)
+src_dir = params['src_dir']
+dst_dir = params['dst_dir']
+ann_path = params['ann_path']
+list_file_name = params['list_file_name']
+img_ext = params['img_ext']
+
+subfolders = [f for f in glob.iglob(src_dir + '**/*', recursive=True) if os.path.isdir(f) and not 'annotations' in f]
+
+
+for src in subfolders:
+    shutil.move(src, dst_dir)
