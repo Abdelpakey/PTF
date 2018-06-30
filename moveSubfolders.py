@@ -10,9 +10,6 @@ params = {
 processArguments(sys.argv[1:], params)
 src_dir = params['src_dir']
 dst_dir = params['dst_dir']
-ann_path = params['ann_path']
-list_file_name = params['list_file_name']
-img_ext = params['img_ext']
 
 if not dst_dir:
     dst_dir = src_dir
