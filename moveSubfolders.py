@@ -3,7 +3,7 @@ from Misc import processArguments
 import sys, os, shutil
 
 params = {
-    'src_dir': '',
+    'src_dir': '.',
     'dst_dir': '',
 }
 
@@ -13,6 +13,9 @@ dst_dir = params['dst_dir']
 ann_path = params['ann_path']
 list_file_name = params['list_file_name']
 img_ext = params['img_ext']
+
+if not dst_dir:
+    dst_dir = src_dir
 
 subfolders = [f for f in glob.iglob(src_dir + '**/*', recursive=True) if os.path.isdir(f) and not 'annotations' in f]
 
