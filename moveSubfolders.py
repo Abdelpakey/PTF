@@ -18,4 +18,8 @@ subfolders = [f for f in glob.iglob(src_dir + '**/*', recursive=True) if os.path
 
 
 for src in subfolders:
-    shutil.move(src, dst_dir)
+    print('Moving {}'.format(src))
+    try:
+        shutil.move(src, dst_dir)
+    except shutil.Error:
+        continue
