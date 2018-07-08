@@ -2,7 +2,9 @@ import os
 import cv2
 import sys, time, random, glob
 import numpy as np
+# from multiprocessing import Pool, Process
 from Misc import processArguments, sortKey
+import psutil
 
 params = {
     'src_path': '.',
@@ -21,7 +23,11 @@ params = {
     'recursive': 1,
 }
 
+
 if __name__ == '__main__':
+    p = psutil.Process(os.getpid())
+    p.nice(psutil.BELOW_NORMAL_PRIORITY_CLASS)
+
     processArguments(sys.argv[1:], params)
     src_path = params['src_path']
     width = params['width']
@@ -67,7 +73,7 @@ if __name__ == '__main__':
     if recursive:
         src_file_gen = [[os.path.join(dirpath, f) for f in filenames if
                          os.path.splitext(f.lower())[1] in img_exts]
-                         for (dirpath, dirnames, filenames) in os.walk(src_dir)]
+                        for (dirpath, dirnames, filenames) in os.walk(src_dir)]
         src_file_list = [item for sublist in src_file_gen for item in sublist]
 
         # _src_file_list = list(src_file_gen)
@@ -111,7 +117,6 @@ if __name__ == '__main__':
     src_img_ar, start_row, end_row, start_col, end_col, dst_height, dst_width = [None] * 7
     target_height, target_width, min_height, start_col, end_col, height_ratio = [None] * 6
 
-
     def createWindow():
         global mode
 
@@ -126,7 +131,6 @@ if __name__ == '__main__':
 
         cv2.setMouseCallback(win_name, mouseHandler)
 
-
     def changeMode():
         global mode, height, aspect_ratio
         mode = 1 - mode
@@ -140,7 +144,6 @@ if __name__ == '__main__':
         aspect_ratio = float(width) / float(height)
         createWindow()
         loadImage()
-
 
     def loadImage(_type=0):
         global src_img_ar, start_row, end_row, start_col, end_col, dst_height, dst_width, n_switches, img_id, direction
@@ -230,7 +233,6 @@ if __name__ == '__main__':
         # print('dst_height: ', dst_height)
         # print('dst_width: ', dst_width)
 
-
     # def motionStep(_direction):
     #     global target_height, direction, end_row, start_col, end_col
     #
@@ -264,14 +266,12 @@ if __name__ == '__main__':
         speed += 0.01
         print('speed: ', speed)
 
-
     def decreaseSpeed():
         global speed
         speed -= 0.01
         if speed < 0:
             speed = 0
         print('speed: ', speed)
-
 
     def mouseHandler(event, x, y, flags=None, param=None):
         global img_id, _pause, start_row
@@ -296,7 +296,6 @@ if __name__ == '__main__':
             else:
                 decreaseSpeed()
                 # motionStep(-1)
-
 
     win_name = 'VWM'
     createWindow()
@@ -356,6 +355,8 @@ if __name__ == '__main__':
             decreaseSpeed()
         elif k == ord('i'):
             direction = -direction
+        elif k == ord('l') or k == ord('R'):
+            loadImage()
         elif k == 39 or k == ord('d'):
             loadImage(1)
         elif k == 40 or k == ord('a'):
@@ -395,8 +396,7 @@ if __name__ == '__main__':
         if speed == 0:
             end_time = time.time()
             if end_time - start_time >= max_duration:
-                img_id += 1
-                loadImage()
+                loadImage(1)
 
         # print('end_row: ', end_row)
         # print('start_col: ', start_col)
@@ -405,3 +405,6 @@ if __name__ == '__main__':
         # print('\n')
 
     cv2.destroyWindow(win_name)
+
+
+

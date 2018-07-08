@@ -21,18 +21,22 @@ subfolders = [os.path.abspath(f) for f in glob.iglob(src_dir + '/**/', recursive
               not 'annotations' in f and f != 'bin']
 
 for src in subfolders:
-    if src_dir == src or dst_dir == src:
+    if src == src_dir or src == dst_dir:
+        continue
+
+    curr_subfolders = [f for f in os.listdir(src) if os.path.isdir(f)]
+    if curr_subfolders:
         continue
 
     print('moving {}'.format(src))
     try:
         shutil.move(src, dst_dir)
-    except shutil.Error:
-        print('Failure')
+    except shutil.Error as e:
+        print('Failure: {}'.format(e))
         continue
-    except FileNotFoundError:
-        print('Failure')
+    except FileNotFoundError as e:
+        print('Failure: {}'.format(e))
         continue
-    except OSError:
-        print('Failure')
+    except OSError as e:
+        print('Failure: {}'.format(e))
         continue
