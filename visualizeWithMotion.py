@@ -1,11 +1,11 @@
 import os
 import cv2
-import sys, time, random
+import sys, time, random, glob
 import numpy as np
 from Misc import processArguments, sortKey
 
 params = {
-    'src_path': './sample.jpg',
+    'src_path': '.',
     'width': 1920,
     'height': 1080,
     'min_height_ratio': 0.40,
@@ -18,6 +18,7 @@ params = {
     'max_switches': 1,
     'max_duration': 5,
     'random_mode': 0,
+    'recursive': 1,
 }
 
 if __name__ == '__main__':
@@ -35,6 +36,7 @@ if __name__ == '__main__':
     max_switches = params['max_switches']
     max_duration = params['max_duration']
     random_mode = params['random_mode']
+    recursive = params['recursive']
 
     monitors = [
         [0, 0],
@@ -54,14 +56,40 @@ if __name__ == '__main__':
         img_fname = None
     elif os.path.isfile(src_path):
         src_dir = os.path.dirname(src_path)
-        img_fname = os.path.basename(src_path)
+        img_fname = src_path
     else:
         raise IOError('Invalid source path: {}'.format(src_path))
 
     print('Reading source images from: {}'.format(src_dir))
 
     img_exts = ('.jpg', '.bmp', '.jpeg', '.png', '.tif', '.tiff', '.gif')
-    src_file_list = [k for k in os.listdir(src_dir) if os.path.splitext(k.lower())[1] in img_exts]
+
+    if recursive:
+        src_file_gen = [[os.path.join(dirpath, f) for f in filenames if
+                         os.path.splitext(f.lower())[1] in img_exts]
+                         for (dirpath, dirnames, filenames) in os.walk(src_dir)]
+        src_file_list = [item for sublist in src_file_gen for item in sublist]
+
+        # _src_file_list = list(src_file_gen)
+        # src_file_list = []
+        # for x in _src_file_list:
+        #     src_file_list += x
+    else:
+        src_file_list = [os.path.join(src_dir, k) for k in os.listdir(src_dir) if
+                         os.path.splitext(k.lower())[1] in img_exts]
+
+    # src_file_list = [list(x) for x in src_file_list]
+    # src_file_list = [x for x in src_file_list]
+
+    # print('src_file_list: ', src_file_list)
+
+    # for (dirpath, dirnames, filenames) in os.walk(src_dir):
+    #     print()
+    #     print('dirpath', dirpath)
+    #     print('filenames', filenames)
+    #     print('dirnames', dirnames)
+    #     print()
+
     total_frames = len(src_file_list)
     if total_frames <= 0:
         raise SystemError('No input frames found')
@@ -136,7 +164,8 @@ if __name__ == '__main__':
 
         img_fname = src_file_list[img_id]
 
-        src_img_fname = os.path.join(src_dir, img_fname)
+        # src_img_fname = os.path.join(src_dir, img_fname)
+        src_img_fname = img_fname
         src_img = cv2.imread(src_img_fname)
 
         if src_img is None:
