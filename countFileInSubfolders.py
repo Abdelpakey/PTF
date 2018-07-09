@@ -20,12 +20,16 @@ shuffle_files = params['shuffle_files']
 del_empty = params['del_empty']
 prefix = params['prefix']
 
-folder_name = os.path.abspath(folder_name)
-
-print('Looking for files with extension {:s} in sub folders of {:s}'.format(file_ext, folder_name))
-
-subfolders = [name for name in os.listdir(folder_name) if os.path.isdir(os.path.join(folder_name, name))]
-
+if os.path.isfile(folder_name):
+    root_dir = os.path.abspath(os.getcwd())
+    subfolders = [x.strip() for x in open(folder_name).readlines()]
+    print('Looking for files with extension {:s} in sub folders of {:s} listed in {}'.format(
+        file_ext, root_dir, folder_name))
+    folder_name = root_dir
+else:
+    folder_name = os.path.abspath(folder_name)
+    print('Looking for files with extension {:s} in sub folders of {:s}'.format(file_ext, folder_name))
+    subfolders = [name for name in os.listdir(folder_name) if os.path.isdir(os.path.join(folder_name, name))]
 if prefix:
     print('Limiting search to only sub folders starting with {}'.format(prefix))
     subfolders = [x for x in subfolders if x.startswith(prefix)]
