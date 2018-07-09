@@ -24,7 +24,7 @@ for src in subfolders:
     if src == src_dir or src == dst_dir:
         continue
 
-    curr_subfolders = [f for f in os.listdir(src) if os.path.isdir(f) and 'annotations' not in f]
+    curr_subfolders = [f for f in os.listdir(src) if os.path.isdir(os.path.join(src, f)) and 'annotations' not in f]
     if curr_subfolders:
         continue
 
