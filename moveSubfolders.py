@@ -24,9 +24,9 @@ for src in subfolders:
     if src == src_dir or src == dst_dir:
         continue
 
-    curr_subfolders = [f for f in os.listdir(src) if os.path.isdir(f)]
-    if curr_subfolders:
-        continue
+    # curr_subfolders = [f for f in os.listdir(src) if os.path.isdir(f)]
+    # if curr_subfolders:
+    #     continue
 
     print('moving {}'.format(src))
     try:

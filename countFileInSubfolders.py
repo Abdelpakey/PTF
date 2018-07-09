@@ -8,6 +8,7 @@ params = {
     'file_ext': 'jpg',
     'out_file': 'list.txt',
     'folder_name': '.',
+    'prefix': '',
     'shuffle_files': 1,
     'del_empty': 0,
 }
@@ -17,12 +18,17 @@ out_file = params['out_file']
 folder_name = params['folder_name']
 shuffle_files = params['shuffle_files']
 del_empty = params['del_empty']
+prefix = params['prefix']
 
 folder_name = os.path.abspath(folder_name)
 
 print('Looking for files with extension {:s} in sub folders of {:s}'.format(file_ext, folder_name))
 
 subfolders = [name for name in os.listdir(folder_name) if os.path.isdir(os.path.join(folder_name, name))]
+
+if prefix:
+    print('Limiting search to only sub folders starting with {}'.format(prefix))
+    subfolders = [x for x in subfolders if x.startswith(prefix)]
 try:
     subfolders.sort(key=sortKey)
 except:
