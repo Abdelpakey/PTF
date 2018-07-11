@@ -34,7 +34,8 @@ if __name__ == '__main__':
 
 
     print('\nrunning: {}\n'.format(zip_cmd))
-    subprocess.call(zip_cmd)
+    # subprocess.call(zip_cmd)
+    os.system(zip_cmd)
 
 
 
