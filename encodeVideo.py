@@ -46,10 +46,20 @@ if os.path.isdir(_src_path):
 else:
     src_file_list = [_src_path]
 
-
 for src_path in src_file_list:
     src_path = os.path.abspath(src_path)
     seq_name = os.path.splitext(os.path.basename(src_path))[0]
+
+    if not save_path:
+        save_path = os.path.join(os.path.dirname(src_path), seq_name + '.' + ext)
+
+    if save_path == src_path:
+        print('Skipping {:s} as having the save name as its target'.format(src_path))
+
+    save_dir = os.path.dirname(save_path)
+    if save_dir and not os.path.isdir(save_dir):
+        os.makedirs(save_dir)
+
     cap = cv2.VideoCapture()
     if not cap.open(src_path):
         raise StandardError('The video file ' + src_path + ' could not be opened')
@@ -71,13 +81,6 @@ for src_path in src_file_list:
         n_frames = total_frames
     elif total_frames > 0 and n_frames > total_frames:
         raise AssertionError('Invalid n_frames {} for video with {} frames'.format(n_frames, total_frames))
-
-    if not save_path:
-        save_path = os.path.join(os.path.dirname(src_path), seq_name + '.' + ext)
-
-    save_dir = os.path.dirname(save_path)
-    if save_dir and not os.path.isdir(save_dir):
-        os.makedirs(save_dir)
 
     if height <= 0 or width <= 0:
         height, width = _height, _width
