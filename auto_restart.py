@@ -1,5 +1,5 @@
 import subprocess
-import re, time, os, sys
+import re, time, os, sys, msvcrt
 import bencode
 import codecs
 import psutil
@@ -116,9 +116,14 @@ if __name__ == '__main__':
 
         os.startfile(tor_path)
 
-        print 'waiting for {} seconds'.format(wait_time)
+        print 'Waiting for {} seconds. Press any key to continue'.format(wait_time)
 
         for i in xrange(wait_time):
+            if msvcrt.kbhit():
+                inp = msvcrt.getch()
+                print '\ncontinuing'
+                break
+
             time.sleep(1)
             sys.stdout.write('\r{}'.format(i+1))
             sys.stdout.flush()
@@ -126,10 +131,11 @@ if __name__ == '__main__':
         sys.stdout.write('\n')
         sys.stdout.flush()
 
+
         tor_killed = 0
         for proc in psutil.process_iter():
             if proc.name() == tor_proc:
-                proc.kill()
+                proc.terminate()
                 tor_killed = 1
                 break
 
@@ -146,12 +152,21 @@ if __name__ == '__main__':
         if not vpn_killed:
             raise IOError('VPN process {} not found'.format(vpn_proc))
 
-        print 'waiting for {} seconds'.format(post_wait_time)
+        print 'Waiting for {} seconds. Press any key to continue'.format(post_wait_time)
+        try:
+            for i in xrange(post_wait_time):
+                if msvcrt.kbhit():
+                    inp = msvcrt.getch()
+                    print '\ncontinuing'
+                    break
 
-        for i in xrange(post_wait_time):
-            time.sleep(1)
-            sys.stdout.write('\r{}'.format(i+1))
-            sys.stdout.flush()
+                time.sleep(1)
+                sys.stdout.write('\r{}'.format(i+1))
+                sys.stdout.flush()
+        except KeyboardInterrupt:
+            print '\ninterrupted by user'
+            pass
+
 
         sys.stdout.write('\n')
         sys.stdout.flush()
