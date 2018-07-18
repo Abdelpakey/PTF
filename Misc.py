@@ -243,13 +243,30 @@ def processArguments(args, params):
         if len(arg) != 2 or not arg[0] in params.keys():
             print('Invalid argument provided: {:s}'.format(args[arg_id]))
             return
-        if not arg[1] or not arg[0] or arg[1]=='#':
+
+        if not arg[1] or not arg[0] or arg[1] == '#':
             continue
-        try:
+
+        if isinstance(params[arg[0]], (list, tuple)):
+            if not ',' in arg[1]:
+                print('Invalid argument provided for list: {:s}'.format(arg[1]))
+                return
+
+            arg_vals = arg[1].split(',')
+            arg_vals_parsed = []
+            for _val in arg_vals:
+                try:
+                    _val_parsed = int(_val)
+                except ValueError:
+                    try:
+                        _val_parsed = float(_val)
+                    except ValueError:
+                        _val_parsed = _val
+                arg_vals_parsed.append(_val_parsed)
+            params[arg[0]] = arg_vals_parsed
+        else:
             params[arg[0]] = type(params[arg[0]])(arg[1])
-        except ValueError:
-            print('Invalid argument value {} provided for {}'.format(arg[1], arg[0]))
-            return
+
 
 def resizeAR(src_img, width, height, return_factors=False):
     aspect_ratio = float(width) / float(height)
@@ -281,6 +298,7 @@ def resizeAR(src_img, width, height, return_factors=False):
         return dst_img, resize_factor, start_row, start_col
     else:
         return dst_img
+
 
 def str2num(s):
     try:
@@ -2008,7 +2026,7 @@ def getTrackingErrors(tracker_path_orig, gt_path, _arch_fid=None, _reinit_from_g
             if frame_fname_1 != 'frame' or frame_fname_2 != '.jpg':
                 print('Invaid formatting on tracking data line {:d}: {:s}'.format(line_id + 1, tracking_data_line))
                 print('frame_fname: {:s} fname_len: {:d} frame_fname_1: {:s} frame_fname_2: {:s}'.format(
-                frame_fname, fname_len, frame_fname_1, frame_fname_2))
+                    frame_fname, fname_len, frame_fname_1, frame_fname_2))
                 return None, None
             frame_id_str = frame_fname[5:-4]
             frame_num = int(frame_id_str)
