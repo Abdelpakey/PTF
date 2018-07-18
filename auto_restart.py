@@ -83,7 +83,7 @@ if __name__ == '__main__':
 
     interface_name = 'PPP adapter PureVPN'
 
-    wait_time = 300
+    wait_time = 14400
     post_wait_time = 10
 
     vpn_path = "C:\Users\Tommy\Desktop\purevpn.lnk"
