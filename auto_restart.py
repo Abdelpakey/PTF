@@ -153,20 +153,15 @@ if __name__ == '__main__':
             raise IOError('VPN process {} not found'.format(vpn_proc))
 
         print 'Waiting for {} seconds. Press any key to continue'.format(post_wait_time)
-        try:
-            for i in xrange(post_wait_time):
-                if msvcrt.kbhit():
-                    inp = msvcrt.getch()
-                    print '\ncontinuing'
-                    break
+        for i in xrange(post_wait_time):
+            if msvcrt.kbhit():
+                inp = msvcrt.getch()
+                print '\ncontinuing'
+                break
 
-                time.sleep(1)
-                sys.stdout.write('\r{}'.format(i+1))
-                sys.stdout.flush()
-        except KeyboardInterrupt:
-            print '\ninterrupted by user'
-            pass
-
+            time.sleep(1)
+            sys.stdout.write('\r{}'.format(i+1))
+            sys.stdout.flush()
 
         sys.stdout.write('\n')
         sys.stdout.flush()
