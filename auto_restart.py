@@ -83,8 +83,9 @@ if __name__ == '__main__':
 
     interface_name = 'PPP adapter PureVPN'
 
-    wait_time = 14400
+    wait_time = 43200
     post_wait_time = 10
+    check_vpn_gap = 30
 
     vpn_path = "C:\Users\Tommy\Desktop\purevpn.lnk"
     tor_path = "C:\Users\Tommy\Desktop\uTorrent.lnk"
@@ -119,6 +120,12 @@ if __name__ == '__main__':
         print 'Waiting for {} seconds. Press any key to continue'.format(wait_time)
 
         for i in xrange(wait_time):
+            if (i + 1) % check_vpn_gap == 0:
+                ip_address = check_interface(interface_name)
+                if ip_address is None:
+                    print '\nvpn disconnection detected'
+                    break
+
             if msvcrt.kbhit():
                 inp = msvcrt.getch()
                 print '\ncontinuing'

@@ -1,7 +1,10 @@
 __author__ = 'Tommy'
 import os
 import sys
-import cv2
+try:
+    import cv2
+except ImportError:
+
 import numpy as np
 import math
 import matplotlib
