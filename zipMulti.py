@@ -11,14 +11,16 @@ if __name__ == '__main__':
     dir_names = params['dir_names']
     out_name = params['out_name']
 
-    zip_path = os.path.join(dir_names)
-
     print('dir_names: ', dir_names)
+
+    zip_path = ''
+    for _dir in dir_names:
+        zip_path = os.path.join(zip_path, _dir) if zip_path else _dir
+
     print('zip_path: ', zip_path)
 
     if not out_name:
-
-        for _dir in dir_names[1:]:
+        for _dir in dir_names:
             out_name = '{}_{}'.format(out_name, _dir) if out_name else _dir
 
     print('out_name: ', out_name)
