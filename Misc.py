@@ -3,7 +3,9 @@ import os
 import sys
 try:
     import cv2
-except ImportError:
+except ImportError as e:
+    print('OpenCV import failed: {}'.format(e))
+
 
 import numpy as np
 import math
