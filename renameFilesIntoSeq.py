@@ -55,15 +55,14 @@ for src_fname in src_file_names:
         dst_path = os.path.join(seq_root_dir, '{:s}_{:d}{:s}'.format(seq_prefix, seq_id, file_extension))
     else:
         dst_path = os.path.join(seq_root_dir, '{:s}{:06d}{:s}'.format(seq_prefix, seq_id, file_extension))
-    if src_path == dst_path:
-        continue
-    while os.path.exists(dst_path):
-        seq_id += 1
-        if filename_fmt == 0:
-            dst_path = os.path.join(seq_root_dir, '{:s}_{:d}{:s}'.format(seq_prefix, seq_id, file_extension))
-        else:
-            dst_path = os.path.join(seq_root_dir, '{:s}{:06d}{:s}'.format(seq_prefix, seq_id, file_extension))
-    os.rename(src_path, dst_path)
+    if src_path != dst_path:
+        while os.path.exists(dst_path):
+            seq_id += 1
+            if filename_fmt == 0:
+                dst_path = os.path.join(seq_root_dir, '{:s}_{:d}{:s}'.format(seq_prefix, seq_id, file_extension))
+            else:
+                dst_path = os.path.join(seq_root_dir, '{:s}{:06d}{:s}'.format(seq_prefix, seq_id, file_extension))
+        os.rename(src_path, dst_path)
     seq_id += 1
     if file_count % 10 == 0 or file_count == n_files:
         print 'Done {:d}/{:d}'.format(file_count, n_files)
