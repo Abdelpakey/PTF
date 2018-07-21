@@ -33,7 +33,6 @@ if len(sys.argv) < 3:
     for _str in split_str[1:-1]:
         seq_prefix = '{}_{}'.format(seq_prefix, _str)
 
-
 print 'seq_prefix: {:s}'.format(seq_prefix)
 print 'seq_start_id: {:d}'.format(seq_start_id)
 print 'shuffle_files: {:d}'.format(shuffle_files)
@@ -56,6 +55,8 @@ for src_fname in src_file_names:
         dst_path = os.path.join(seq_root_dir, '{:s}_{:d}{:s}'.format(seq_prefix, seq_id, file_extension))
     else:
         dst_path = os.path.join(seq_root_dir, '{:s}{:06d}{:s}'.format(seq_prefix, seq_id, file_extension))
+    if src_path == dst_path:
+        continue
     while os.path.exists(dst_path):
         seq_id += 1
         if filename_fmt == 0:
