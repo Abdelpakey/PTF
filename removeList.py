@@ -26,6 +26,6 @@ if __name__ == '__main__':
         rm_paths = [file_name]
 
     for zip_path in rm_paths:
-        print('\nremoving: {}\n'.format(zip_path))
+        print('removing: {}'.format(zip_path))
         zip_cmd = 'rm -rf {:s}'.format(zip_path)
         os.system(zip_cmd)
