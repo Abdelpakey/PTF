@@ -6,7 +6,7 @@ if __name__ == '__main__':
     params = {
         'list_file': '',
         'file_name': '',
-        'root_dir': '',
+        'root_dir': '.',
     }
     processArguments(sys.argv[1:], params)
     list_file = params['list_file']
@@ -29,4 +29,3 @@ if __name__ == '__main__':
         print('\nremoving: {}\n'.format(zip_path))
         zip_cmd = 'rm -rf {:s}'.format(zip_path)
         os.system(zip_cmd)
-        
