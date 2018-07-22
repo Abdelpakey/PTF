@@ -125,6 +125,7 @@ if __name__ == '__main__':
         cv2.destroyWindow(win_name)
 
         if mode == 0:
+            # cv2.namedWindow(win_name)
             cv2.namedWindow(win_name, cv2.WND_PROP_FULLSCREEN)
             cv2.setWindowProperty(win_name, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
             cv2.moveWindow(win_name, monitors[curr_monitor][0], monitors[curr_monitor][1])
