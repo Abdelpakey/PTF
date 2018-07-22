@@ -23,7 +23,6 @@ params = {
     'recursive': 1,
 }
 
-
 if __name__ == '__main__':
     p = psutil.Process(os.getpid())
     p.nice(psutil.BELOW_NORMAL_PRIORITY_CLASS)
@@ -119,6 +118,7 @@ if __name__ == '__main__':
     src_img_ar, start_row, end_row, start_col, end_col, dst_height, dst_width = [None] * 7
     target_height, target_width, min_height, start_col, end_col, height_ratio = [None] * 6
 
+
     def createWindow():
         global mode
 
@@ -134,6 +134,7 @@ if __name__ == '__main__':
 
         cv2.setMouseCallback(win_name, mouseHandler)
 
+
     def changeMode():
         global mode, height, aspect_ratio
         mode = 1 - mode
@@ -147,6 +148,7 @@ if __name__ == '__main__':
         aspect_ratio = float(width) / float(height)
         createWindow()
         loadImage()
+
 
     def loadImage(_type=0):
         global src_img_ar, start_row, end_row, start_col, end_col, dst_height, dst_width, n_switches, img_id, direction
@@ -236,6 +238,7 @@ if __name__ == '__main__':
         # print('dst_height: ', dst_height)
         # print('dst_width: ', dst_width)
 
+
     # def motionStep(_direction):
     #     global target_height, direction, end_row, start_col, end_col
     #
@@ -269,12 +272,14 @@ if __name__ == '__main__':
         speed += 0.01
         print('speed: ', speed)
 
+
     def decreaseSpeed():
         global speed
         speed -= 0.01
         if speed < 0:
             speed = 0
         print('speed: ', speed)
+
 
     def mouseHandler(event, x, y, flags=None, param=None):
         global img_id, start_row
@@ -299,6 +304,7 @@ if __name__ == '__main__':
             else:
                 decreaseSpeed()
                 # motionStep(-1)
+
 
     win_name = 'VWM'
     createWindow()
@@ -375,7 +381,8 @@ if __name__ == '__main__':
 
         # direction = motionStep(direction)
 
-        target_height = target_height + direction * speed * height_ratio
+        _speed = speed if mode == 0 else 2 * speed
+        target_height = target_height + direction * _speed * height_ratio
 
         if target_height < min_height:
             target_height = min_height
@@ -414,6 +421,3 @@ if __name__ == '__main__':
         # print('\n')
 
     cv2.destroyWindow(win_name)
-
-
-
