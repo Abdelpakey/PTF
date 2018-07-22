@@ -292,7 +292,7 @@ if __name__ == '__main__':
         elif event == cv2.EVENT_RBUTTONUP:
             pass
         elif event == cv2.EVENT_MBUTTONDOWN:
-            start_row = y
+            loadImage()
         elif event == cv2.EVENT_MOUSEMOVE:
             pass
         elif event == cv2.EVENT_MOUSEWHEEL:
