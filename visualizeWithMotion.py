@@ -44,6 +44,9 @@ if __name__ == '__main__':
     random_mode = params['random_mode']
     recursive = params['recursive']
 
+    old_speed = speed
+    curr_monitor = 0
+
     monitors = [
         [0, 0],
         [-1920, 0],
@@ -51,7 +54,6 @@ if __name__ == '__main__':
         [1920, 0],
     ]
     aspect_ratio = float(width) / float(height)
-    _pause = 0
     direction = -1
     n_switches = 0
     start_time = end_time = 0
@@ -125,6 +127,7 @@ if __name__ == '__main__':
         if mode == 0:
             cv2.namedWindow(win_name, cv2.WND_PROP_FULLSCREEN)
             cv2.setWindowProperty(win_name, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
+            cv2.moveWindow(win_name, monitors[curr_monitor][0], monitors[curr_monitor][1])
         else:
             cv2.namedWindow(win_name)
             cv2.moveWindow(win_name, monitors[2][0], monitors[2][1])
@@ -274,7 +277,7 @@ if __name__ == '__main__':
         print('speed: ', speed)
 
     def mouseHandler(event, x, y, flags=None, param=None):
-        global img_id, _pause, start_row
+        global img_id, start_row
         if event == cv2.EVENT_LBUTTONDOWN:
             loadImage(-1)
         elif event == cv2.EVENT_LBUTTONUP:
@@ -313,7 +316,7 @@ if __name__ == '__main__':
         dst_img = cv2.resize(temp, (width, height))
 
         cv2.imshow(win_name, dst_img)
-        k = cv2.waitKey(1 - _pause)
+        k = cv2.waitKey(1)
 
         if k == 27:
             break
@@ -338,24 +341,30 @@ if __name__ == '__main__':
         elif k == ord('n'):
             max_switches += 1
         elif k == ord('1'):
+            curr_monitor = 0
             cv2.moveWindow(win_name, monitors[0][0], monitors[0][1])
         elif k == ord('2'):
+            curr_monitor = 1
             cv2.moveWindow(win_name, monitors[1][0], monitors[1][1])
         elif k == ord('3'):
+            curr_monitor = 2
             cv2.moveWindow(win_name, monitors[2][0], monitors[2][1])
         elif k == ord('4'):
+            curr_monitor = 3
             cv2.moveWindow(win_name, monitors[3][0], monitors[3][1])
-        elif k == 32:
-            _pause = 1 - _pause
         elif k == ord('+'):
             increaseSpeed()
-        elif k == ord('p'):
-            speed = 0
+        elif k == ord('p') or k == 32:
+            if speed == 0:
+                speed = old_speed
+            else:
+                old_speed = speed
+                speed = 0
         elif k == ord('-'):
             decreaseSpeed()
         elif k == ord('i'):
             direction = -direction
-        elif k == ord('l') or k == ord('R'):
+        elif k == ord('s') or k == ord('l') or k == ord('R') or k == ord('/') or k == ord('?'):
             loadImage()
         elif k == 39 or k == ord('d'):
             loadImage(1)
@@ -393,7 +402,7 @@ if __name__ == '__main__':
         start_col = col_diff
         end_col = dst_width - col_diff
 
-        if speed == 0:
+        if speed == 0 and auto_progress:
             end_time = time.time()
             if end_time - start_time >= max_duration:
                 loadImage(1)
