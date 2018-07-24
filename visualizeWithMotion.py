@@ -5,6 +5,12 @@ import numpy as np
 # from multiprocessing import Pool, Process
 from Misc import processArguments, sortKey
 import psutil
+win_utils_available = 1
+try:
+    import winUtils
+except ImportError as e:
+    win_utils_available = 0
+    print('Failed to import winUtils: {}'.format(e))
 
 params = {
     'src_path': '.',
@@ -21,6 +27,7 @@ params = {
     'max_duration': 5,
     'random_mode': 0,
     'recursive': 1,
+    'fullscreen': 1,
 }
 
 if __name__ == '__main__':
@@ -42,6 +49,7 @@ if __name__ == '__main__':
     max_duration = params['max_duration']
     random_mode = params['random_mode']
     recursive = params['recursive']
+    fullscreen = params['recursive']
 
     old_speed = speed
     curr_monitor = 0
@@ -56,6 +64,7 @@ if __name__ == '__main__':
     direction = -1
     n_switches = 0
     start_time = end_time = 0
+    src_start_row = src_start_col = src_end_row = src_end_col = 0
 
     img_id = 0
     if os.path.isdir(src_path):
@@ -125,12 +134,21 @@ if __name__ == '__main__':
         cv2.destroyWindow(win_name)
 
         if mode == 0:
-            # cv2.namedWindow(win_name)
-            cv2.namedWindow(win_name, cv2.WND_PROP_FULLSCREEN)
-            cv2.setWindowProperty(win_name, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
+            if fullscreen:
+                # cv2.namedWindow(win_name)
+                cv2.namedWindow(win_name, cv2.WND_PROP_FULLSCREEN)
+                cv2.setWindowProperty(win_name, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
+            else:
+                cv2.namedWindow(win_name, cv2.WINDOW_AUTOSIZE)
+                if win_utils_available:
+                    winUtils.hideBorder(0, 0, width, height, win_name)
             cv2.moveWindow(win_name, monitors[curr_monitor][0], monitors[curr_monitor][1])
         else:
             cv2.namedWindow(win_name)
+            # _x = monitors[2][0]
+            # _y = monitors[2][1]
+            if win_utils_available:
+                winUtils.hideBorder(0, 0, width, height, win_name)
             cv2.moveWindow(win_name, monitors[2][0], monitors[2][1])
 
         cv2.setMouseCallback(win_name, mouseHandler)
@@ -154,6 +172,7 @@ if __name__ == '__main__':
     def loadImage(_type=0):
         global src_img_ar, start_row, end_row, start_col, end_col, dst_height, dst_width, n_switches, img_id, direction
         global target_height, target_width, min_height, start_col, end_col, height_ratio, img_fname, start_time
+        global src_start_row, src_start_col, src_end_row, src_end_col
 
         if _type == 1:
             if random_mode:
@@ -217,8 +236,14 @@ if __name__ == '__main__':
         #         dst_height = int(width / aspect_ratio)
 
         # src_img = np.zeros((height, width, n_channels), dtype=np.uint8)
+
+        src_start_row = start_row
+        src_start_col = start_col
+        src_end_row = start_row + src_height
+        src_end_col = start_col + src_width
+
         src_img_ar = np.zeros((dst_height, dst_width, n_channels), dtype=np.uint8)
-        src_img_ar[int(start_row):int(start_row + src_height), int(start_col):int(start_col + src_width), :] = src_img
+        src_img_ar[int(src_start_row):int(src_end_row), int(src_start_col):int(src_end_col), :] = src_img
 
         target_width = dst_width
         target_height = dst_height
@@ -322,6 +347,21 @@ if __name__ == '__main__':
 
         dst_img = cv2.resize(temp, (width, height))
 
+        if not fullscreen:
+            temp_height, temp_width, _ = temp.shape
+            temp_height_ratio = float(temp_height) / float(height)
+
+            win_start_row = int(max(0, src_start_row - start_row) / temp_height_ratio)
+            win_end_row = height - int(max(0, end_row - src_end_row) / temp_height_ratio)
+
+            win_start_col = int(max(0, src_start_col - start_col) / temp_height_ratio)
+            win_end_col = width - int(max(0, end_col - src_end_col) / temp_height_ratio)
+
+            dst_img = dst_img[win_start_row:win_end_row, win_start_col:win_end_col, :]
+
+            # if win_utils_available:
+            #     winUtils.hideBorder2(win_name)
+
         cv2.imshow(win_name, dst_img)
         k = cv2.waitKey(1)
 
@@ -379,6 +419,13 @@ if __name__ == '__main__':
             loadImage(-1)
         elif k == ord('f'):
             print(img_fname)
+        elif k == ord('F'):
+            fullscreen = 1- fullscreen
+            createWindow()
+            if fullscreen:
+                print('fullscreen mode enabled')
+            else:
+                print('fullscreen mode disabled')
 
         # direction = motionStep(direction)
 
