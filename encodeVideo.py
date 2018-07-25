@@ -51,12 +51,14 @@ for src_path in src_file_list:
     seq_name = os.path.splitext(os.path.basename(src_path))[0]
 
     if not save_path:
-        save_path = os.path.join(os.path.dirname(src_path), seq_name + '.' + ext)
+        dst_path = os.path.join(os.path.dirname(src_path), seq_name + '.' + ext)
+    else:
+        dst_path = save_path
 
-    if save_path == src_path:
+    if dst_path == src_path:
         print('Skipping {:s} as having the save name as its target'.format(src_path))
 
-    save_dir = os.path.dirname(save_path)
+    save_dir = os.path.dirname(dst_path)
     if save_dir and not os.path.isdir(save_dir):
         os.makedirs(save_dir)
 
@@ -78,23 +80,25 @@ for src_path in src_file_list:
     _width = int(cap.get(w_prop))
 
     if n_frames <= 0:
-        n_frames = total_frames
-    elif total_frames > 0 and n_frames > total_frames:
-        raise AssertionError('Invalid n_frames {} for video with {} frames'.format(n_frames, total_frames))
+        dst_n_frames = total_frames
+    else:
+        if total_frames > 0 and n_frames > total_frames:
+            raise AssertionError('Invalid n_frames {} for video with {} frames'.format(n_frames, total_frames))
+        dst_n_frames = n_frames
+
 
     if height <= 0 or width <= 0:
-        dst_height, dst_hwidth = _height, _width
+        dst_height, dst_width = _height, _width
     else:
-        dst_height, dst_hwidth = height, width
-
+        dst_height, dst_width = height, width
 
     fourcc = cv2.VideoWriter_fourcc(*codec)
-    video_out = cv2.VideoWriter(save_path, fourcc, fps, (width, height))
+    video_out = cv2.VideoWriter(dst_path, fourcc, fps, (dst_width, dst_height))
 
     if video_out is None:
-        raise IOError('Output video file could not be opened: {}'.format(save_path))
+        raise IOError('Output video file could not be opened: {}'.format(dst_path))
 
-    print('Saving {}x{} output video to {}'.format(width, height, save_path))
+    print('Saving {}x{} output video to {}'.format(dst_width, dst_height, dst_path))
 
     frame_id = start_id
     pause_after_frame = 0
@@ -105,7 +109,7 @@ for src_path in src_file_list:
             print('\nFrame {:d} could not be read'.format(frame_id + 1))
             break
 
-        image = resizeAR(image, width, height)
+        image = resizeAR(image, dst_width, dst_height)
 
         if show_img:
             cv2.imshow(seq_name, image)
@@ -121,7 +125,7 @@ for src_path in src_file_list:
         sys.stdout.write('\rDone {:d} frames '.format(frame_id - start_id))
         sys.stdout.flush()
 
-        if n_frames > 0 and (frame_id - start_id) >= n_frames:
+        if dst_n_frames > 0 and (frame_id - start_id) >= dst_n_frames:
             break
 
         if frame_id >= total_frames:
@@ -132,12 +136,8 @@ for src_path in src_file_list:
 
     video_out.release()
 
-    save_path = ''
-    n_frames = 0
-
     if show_img:
         cv2.destroyWindow(seq_name)
     if del_src:
         print('Removing source video {}'.format(src_path))
         shutil.rmtree(src_path)
-
