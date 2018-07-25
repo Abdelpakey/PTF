@@ -52,11 +52,11 @@ elif os.path.isfile(_seq_root_dir):
 else:
     raise IOError('Invalid seq_root_dir: {}'.format(_seq_root_dir))
 
-if write_log:
-    log_dir = 'rseq_log'
-    if not os.path.isdir(log_dir):
-        os.makedirs(log_dir)
-    print('Saving log to {}'.format(log_dir))
+# if write_log:
+#     log_dir = 'rseq_log'
+#     if not os.path.isdir(log_dir):
+#         os.makedirs(log_dir)
+#     print('Saving log to {}'.format(log_dir))
 
 for seq_root_dir in seq_root_dirs:
     print 'Processing: {}'.format(seq_root_dir)
@@ -72,7 +72,8 @@ for seq_root_dir in seq_root_dirs:
     n_files = len(src_file_names)
 
     if write_log:
-        log_file = os.path.join(log_dir, '{}.txt'.format(os.path.basename(seq_root_dir)))
+        log_file = os.path.join(seq_root_dir, 'rseq_log.txt')
+        print('Saving log to {}'.format(log_file))
         log_fid = open(log_file, 'w')
 
     for src_fname in src_file_names:

@@ -2,9 +2,7 @@ import os
 import cv2
 import sys
 
-
-# import numpy as np
-# from Misc import processArguments
+from Misc import sortKey
 
 def processArguments(args, params):
     # arguments specified as 'arg_name=argv_val'
@@ -41,7 +39,7 @@ if __name__ == '__main__':
 
     db_root_dir = params['db_root_dir']
     actor = params['actor']
-    seq_name = params['seq_name']
+    _seq_name = params['seq_name']
     show_img = params['show_img']
     vid_fmt = params['vid_fmt']
     n_frames = params['n_frames']
@@ -50,73 +48,92 @@ if __name__ == '__main__':
     dst_dir = params['dst_dir']
     start_id = params['start_id']
 
-    roi_enabled = False
+    vid_exts = ['.mkv', '.mp4', '.avi', '.mjpg', '.wmv']
 
+    roi_enabled = False
     if roi is not None and isinstance(roi, (list, tuple)) and len(roi) == 4:
         xmin, ymin, xmax, ymax = roi
         if xmax > xmin and ymax > ymin:
             print('Using roi: ', roi)
             roi_enabled = True
-    src_path = seq_name
-    if vid_fmt:
-        src_path = src_path + '.' + vid_fmt
-    if actor:
-        print('actor: ', actor)
-        src_path = os.path.join(actor, src_path)
-    if db_root_dir:
-        print('db_root_dir: ', db_root_dir)
-        src_path = os.path.join(db_root_dir, src_path)
 
-    print('seq_name: ', seq_name)
-    print('start_id: ', start_id)
+    _seq_name = os.path.abspath(_seq_name)
 
-    print('Reading video file: {:s}'.format(src_path))
-
-    if not dst_dir:
-        seq_name = os.path.splitext(os.path.basename(src_path))[0]
-        dst_dir = os.path.join(os.path.dirname(src_path), seq_name)
-    if dst_dir and not os.path.isdir(dst_dir):
-        os.makedirs(dst_dir)
-    print('Writing image sequence to: {:s}'.format(dst_dir))
-
-    cap = cv2.VideoCapture()
-    if not cap.open(src_path):
-        raise StandardError('The video file ' + src_path + ' could not be opened')
-
-    if cv2.__version__.startswith('3'):
-        cv_prop = cv2.CAP_PROP_FRAME_COUNT
+    if os.path.isdir(_seq_name):
+        print('Reading source videos from: {}'.format(_seq_name))
+        seq_names = [k for k in os.listdir(_seq_name) for _ext in vid_exts if k.endswith(_ext)]
+        n_videos = len(seq_names)
+        if n_videos <= 0:
+            raise SystemError('No input videos found')
+        print('n_videos: {}'.format(n_videos))
+        seq_names.sort(key=sortKey)
+    elif os.path.isfile(_seq_name):
+        seq_names = [_seq_name]
     else:
-        cv_prop = cv2.cv.CAP_PROP_FRAME_COUNT
-    total_frames = int(cap.get(cv_prop))
+        raise IOError('Invalid seq_name: {}'.format(_seq_name))
 
-    if n_frames <= 0:
-        n_frames = total_frames
-    elif total_frames > 0 and n_frames > total_frames:
-        raise AssertionError('Invalid n_frames {} for video with {} frames'.format(n_frames, total_frames))
+    for seq_name in seq_names:
+        src_path = seq_name
+        if vid_fmt:
+            src_path = src_path + '.' + vid_fmt
+        if actor:
+            print('actor: ', actor)
+            src_path = os.path.join(actor, src_path)
+        if db_root_dir:
+            print('db_root_dir: ', db_root_dir)
+            src_path = os.path.join(db_root_dir, src_path)
 
-    frame_id = 0
-    while True:
-        ret, frame = cap.read()
-        if not ret:
-            print('\nFrame {:d} could not be read'.format(frame_id + 1))
-            break
-        frame_id += 1
-        if frame_id <= start_id:
-            continue
-        if roi_enabled:
-            frame = frame[roi[1]:roi[3], roi[0]:roi[2], :]
-        if resize_factor != 1:
-            frame = cv2.resize(frame, (0, 0), fx=resize_factor, fy=resize_factor)
+        print('seq_name: ', seq_name)
+        print('start_id: ', start_id)
+        print('Reading video file: {:s}'.format(src_path))
 
-        curr_img = cv2.imwrite(dst_dir + '/image{:06d}.jpg'.format(frame_id - start_id), frame)
-        if show_img:
-            cv2.imshow('Frame', frame)
-            if cv2.waitKey(1) == 27:
+        if not dst_dir:
+            seq_name = os.path.splitext(os.path.basename(src_path))[0]
+            dst_dir = os.path.join(os.path.dirname(src_path), seq_name)
+        if dst_dir and not os.path.isdir(dst_dir):
+            os.makedirs(dst_dir)
+        print('Writing image sequence to: {:s}'.format(dst_dir))
+
+        cap = cv2.VideoCapture()
+        if not cap.open(src_path):
+            raise StandardError('The video file ' + src_path + ' could not be opened')
+
+        if cv2.__version__.startswith('3'):
+            cv_prop = cv2.CAP_PROP_FRAME_COUNT
+        else:
+            cv_prop = cv2.cv.CAP_PROP_FRAME_COUNT
+        total_frames = int(cap.get(cv_prop))
+
+        if n_frames <= 0:
+            n_frames = total_frames
+        elif total_frames > 0 and n_frames > total_frames:
+            raise AssertionError('Invalid n_frames {} for video with {} frames'.format(n_frames, total_frames))
+
+        frame_id = 0
+        while True:
+            ret, frame = cap.read()
+            if not ret:
+                print('\nFrame {:d} could not be read'.format(frame_id + 1))
                 break
-        if n_frames > 0 and (frame_id-start_id) >= n_frames:
-            break
-        sys.stdout.write('\rDone {:d}/{:d} frames'.format(
-            (frame_id - start_id), n_frames))
+            frame_id += 1
+            if frame_id <= start_id:
+                continue
+            if roi_enabled:
+                frame = frame[roi[1]:roi[3], roi[0]:roi[2], :]
+            if resize_factor != 1:
+                frame = cv2.resize(frame, (0, 0), fx=resize_factor, fy=resize_factor)
+
+            curr_img = cv2.imwrite(dst_dir + '/image{:06d}.jpg'.format(frame_id - start_id), frame)
+            if show_img:
+                cv2.imshow('Frame', frame)
+                if cv2.waitKey(1) == 27:
+                    break
+            if n_frames > 0 and (frame_id - start_id) >= n_frames:
+                break
+            sys.stdout.write('\rDone {:d}/{:d} frames'.format(
+                (frame_id - start_id), n_frames))
+            sys.stdout.flush()
+        sys.stdout.write('\n\n')
         sys.stdout.flush()
-    sys.stdout.write('\n')
-    sys.stdout.flush()
+        dst_dir = ''
+        n_frames = 0
