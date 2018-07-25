@@ -83,7 +83,10 @@ for src_path in src_file_list:
         raise AssertionError('Invalid n_frames {} for video with {} frames'.format(n_frames, total_frames))
 
     if height <= 0 or width <= 0:
-        height, width = _height, _width
+        dst_height, dst_hwidth = _height, _width
+    else:
+        dst_height, dst_hwidth = height, width
+
 
     fourcc = cv2.VideoWriter_fourcc(*codec)
     video_out = cv2.VideoWriter(save_path, fourcc, fps, (width, height))
@@ -130,9 +133,11 @@ for src_path in src_file_list:
     video_out.release()
 
     save_path = ''
+    n_frames = 0
 
     if show_img:
         cv2.destroyWindow(seq_name)
     if del_src:
         print('Removing source video {}'.format(src_path))
         shutil.rmtree(src_path)
+
