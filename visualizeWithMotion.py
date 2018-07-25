@@ -138,21 +138,21 @@ if __name__ == '__main__':
 
         if mode == 0:
             if fullscreen:
-                # cv2.namedWindow(win_name)
                 cv2.namedWindow(win_name, cv2.WND_PROP_FULLSCREEN)
                 cv2.setWindowProperty(win_name, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
             else:
                 cv2.namedWindow(win_name, cv2.WINDOW_AUTOSIZE)
                 if win_utils_available:
-                    winUtils.hideBorder(0, 0, width, height, win_name)
+                    # winUtils.hideBorder(monitors[curr_monitor][0], monitors[curr_monitor][1],
+                    #                     width, height, win_name)
+                    winUtils.hideBorder2(win_name)
             cv2.moveWindow(win_name, monitors[curr_monitor][0], monitors[curr_monitor][1])
         else:
             cv2.namedWindow(win_name)
-            # _x = monitors[2][0]
-            # _y = monitors[2][1]
             if win_utils_available:
-                winUtils.hideBorder(0, 0, width, height, win_name)
-            cv2.moveWindow(win_name, monitors[2][0], monitors[2][1])
+                winUtils.hideBorder(monitors[2][0],  monitors[2][1], width, height, win_name)
+            else:
+                cv2.moveWindow(win_name, monitors[2][0], monitors[2][1])
 
         cv2.setMouseCallback(win_name, mouseHandler)
 

@@ -56,7 +56,7 @@ static PyObject* hideBorder(PyObject* self, PyObject* args) {
 	printf("h: %d\n", h);
 
 	// Resize
-	unsigned int flags = (SWP_SHOWWINDOW | SWP_NOSIZE | SWP_NOMOVE | SWP_NOZORDER);
+	unsigned int flags = (SWP_SHOWWINDOW | SWP_NOSIZE | SWP_NOZORDER);
 	flags &= ~SWP_NOSIZE;
 	SetWindowPos(win_handle, HWND_TOPMOST, x, y, w, h, flags);
 
@@ -71,7 +71,7 @@ static PyObject* hideBorder(PyObject* self, PyObject* args) {
 static PyObject* hideBorder2(PyObject* self, PyObject* args) {
 	char* win_name;
 	if(!PyArg_ParseTuple(args, "z", &win_name)) {
-		PySys_WriteStdout("\n----winUtils::create: Input arguments could not be parsed----\n\n");
+		PySys_WriteStdout("\n----winUtils::hideBorder2: Input arguments could not be parsed----\n\n");
 		return Py_BuildValue("i", 0);
 	}
 	HWND win_handle = FindWindow(0, win_name);

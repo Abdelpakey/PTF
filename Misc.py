@@ -213,6 +213,29 @@ def getBinaryPtsImage2(img_shape, corners):
 # return bin_img
 
 def sortKey(fname):
+    fname = os.path.splitext(os.path.basename(fname))[0]
+    # print('fname: ', fname)
+    # split_fname = fname.split('_')
+    # print('split_fname: ', split_fname)
+
+    split_list = fname.split('_')
+    key = ''
+
+    for s in split_list:
+        if s.isdigit():
+            if not key:
+                key = '{:08d}'.format(int(s))
+            else:
+                key = '{}_{:08d}'.format(key, int(s))
+        else:
+            if not key:
+                key = s
+            else:
+                key = '{}_{}'.format(key, s)
+    # print('fname: {}, key: {}'.format(fname, key))
+    return key
+
+def sortKeyOld(fname):
     fname = os.path.splitext(fname)[0]
     # print('fname: ', fname)
     # split_fname = fname.split('_')
