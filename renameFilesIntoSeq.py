@@ -1,37 +1,59 @@
 import sys
 import os
 import random
-from Misc import sortKey
+from Misc import sortKey, processArguments
 
-seq_prefix = 'Seq'
-seq_root_dir = '.'
-seq_start_id = 1
-shuffle_files = 1
-filename_fmt = 0
-write_log = 1
+params = {
+    'seq_prefix': 'Seq',
+    'seq_root_dir': '.',
+    'seq_start_id': -1,
+    'shuffle_files': 1,
+    'filename_fmt': 0,
+    'write_log': 1,
+    'target_ext': '',
+}
+processArguments(sys.argv[1:], params)
+seq_prefix = params['seq_prefix']
+_seq_root_dir = params['seq_root_dir']
+seq_start_id = params['seq_start_id']
+shuffle_files = params['shuffle_files']
+filename_fmt = params['filename_fmt']
+write_log = params['write_log']
+target_ext = params['target_ext']
 
-arg_id = 1
-if len(sys.argv) > arg_id:
-    seq_prefix = sys.argv[arg_id]
-    arg_id += 1
-if len(sys.argv) > arg_id:
-    seq_start_id = int(sys.argv[arg_id])
-    arg_id += 1
-if len(sys.argv) > arg_id:
-    shuffle_files = int(sys.argv[arg_id])
-    arg_id += 1
-if len(sys.argv) > arg_id:
-    filename_fmt = int(sys.argv[arg_id])
-    arg_id += 1
-if len(sys.argv) > arg_id:
-    _seq_root_dir = sys.argv[arg_id]
-    arg_id += 1
-if len(sys.argv) > arg_id:
-    write_log = int(sys.argv[arg_id])
-    arg_id += 1
+# seq_prefix = 'Seq'
+# seq_root_dir = '.'
+# seq_start_id = 1
+# shuffle_files = 1
+# filename_fmt = 0
+# write_log = 1
+# target_ext = ''
+#
+# arg_id = 1
+# if len(sys.argv) > arg_id:
+#     seq_prefix = sys.argv[arg_id]
+#     arg_id += 1
+# if len(sys.argv) > arg_id:
+#     seq_start_id = int(sys.argv[arg_id])
+#     arg_id += 1
+# if len(sys.argv) > arg_id:
+#     shuffle_files = int(sys.argv[arg_id])
+#     arg_id += 1
+# if len(sys.argv) > arg_id:
+#     filename_fmt = int(sys.argv[arg_id])
+#     arg_id += 1
+# if len(sys.argv) > arg_id:
+#     _seq_root_dir = sys.argv[arg_id]
+#     arg_id += 1
+# if len(sys.argv) > arg_id:
+#     write_log = int(sys.argv[arg_id])
+#     arg_id += 1
+# if len(sys.argv) > arg_id:
+#     target_ext = sys.argv[arg_id]
+#     arg_id += 1
 
-if len(sys.argv) < 3:
-    # extract start_id from name
+if seq_start_id < 0:
+    # extract seq_start_id from seq_prefix
     split_str = seq_prefix.split('_')
     seq_start_id = int(split_str[-1]) + 1
     seq_prefix = split_str[0]
@@ -42,6 +64,9 @@ print 'seq_prefix: {:s}'.format(seq_prefix)
 print 'seq_start_id: {:d}'.format(seq_start_id)
 print 'shuffle_files: {:d}'.format(shuffle_files)
 print 'file_fmt: {:d}'.format(filename_fmt)
+
+if target_ext:
+    print 'target_ext: {:s}'.format(target_ext)
 
 _seq_root_dir = os.path.abspath(_seq_root_dir)
 
@@ -78,6 +103,11 @@ for seq_root_dir in seq_root_dirs:
 
     for src_fname in src_file_names:
         filename, file_extension = os.path.splitext(src_fname)
+
+        if target_ext and file_extension[1:] != target_ext:
+            print('Ignoring file {} with invalid extension {}'.format(src_fname, file_extension))
+            continue
+
         src_path = os.path.join(seq_root_dir, src_fname)
         if filename_fmt == 0:
             dst_fname = '{:s}_{:d}{:s}'.format(seq_prefix, seq_id, file_extension)
