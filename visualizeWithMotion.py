@@ -94,6 +94,7 @@ if __name__ == '__main__':
         src_file_list = [os.path.join(src_dir, k) for k in os.listdir(src_dir) if
                          os.path.splitext(k.lower())[1] in img_exts]
 
+
     # src_file_list = [list(x) for x in src_file_list]
     # src_file_list = [x for x in src_file_list]
 
@@ -110,8 +111,6 @@ if __name__ == '__main__':
     if total_frames <= 0:
         raise SystemError('No input frames found')
     print('total_frames: {}'.format(total_frames))
-    if random_mode:
-        print('Random mode enabled')
 
     if img_fname is None:
         img_fname = src_file_list[img_id]
@@ -123,6 +122,10 @@ if __name__ == '__main__':
         src_file_list.sort()
 
     img_id = src_file_list.index(img_fname)
+
+    if random_mode:
+        print('Random mode enabled')
+        src_file_list_rand = list(np.random.permutation(src_file_list))
 
     src_img_ar, start_row, end_row, start_col, end_col, dst_height, dst_width = [None] * 7
     target_height, target_width, min_height, start_col, end_col, height_ratio = [None] * 6
@@ -175,22 +178,25 @@ if __name__ == '__main__':
         global src_start_row, src_start_col, src_end_row, src_end_col
 
         if _type == 1:
-            if random_mode:
-                img_id += random.randint(1, total_frames)
-            else:
-                img_id += 1
+            # if random_mode:
+            #     img_id += random.randint(1, total_frames)
+            # else:
+            img_id += 1
         elif _type == -1:
-            if random_mode:
-                img_id -= random.randint(1, total_frames)
-            else:
-                img_id -= 1
+            # if random_mode:
+            #     img_id -= random.randint(1, total_frames)
+            # else:
+            img_id -= 1
 
         if img_id >= total_frames:
             img_id -= total_frames
         elif img_id < 0:
             img_id += total_frames
 
-        img_fname = src_file_list[img_id]
+        if random_mode:
+            img_fname = src_file_list_rand[img_id]
+        else:
+            img_fname = src_file_list[img_id]
 
         # src_img_fname = os.path.join(src_dir, img_fname)
         src_img_fname = img_fname
@@ -347,7 +353,7 @@ if __name__ == '__main__':
 
         dst_img = cv2.resize(temp, (width, height))
 
-        if not fullscreen:
+        if mode == 0 and not fullscreen:
             temp_height, temp_width, _ = temp.shape
             temp_height_ratio = float(temp_height) / float(height)
 
@@ -373,6 +379,7 @@ if __name__ == '__main__':
             random_mode = 1 - random_mode
             if random_mode:
                 print('Random mode enabled')
+                src_file_list_rand = list(np.random.permutation(src_file_list))
             else:
                 print('Random mode disabled')
         elif k == ord('c'):
@@ -411,15 +418,15 @@ if __name__ == '__main__':
             decreaseSpeed()
         elif k == ord('i'):
             direction = -direction
-        elif k == ord('s') or k == ord('l') or k == ord('R') or k == ord('/') or k == ord('?'):
+        elif k == ord('s') or k == ord('l') or k == ord('R'):
             loadImage()
         elif k == 39 or k == ord('d'):
             loadImage(1)
         elif k == 40 or k == ord('a'):
             loadImage(-1)
-        elif k == ord('f'):
-            print(img_fname)
         elif k == ord('F'):
+            print(img_fname)
+        elif k == ord('f') or k == ord('/') or k == ord('?'):
             fullscreen = 1- fullscreen
             createWindow()
             if fullscreen:
