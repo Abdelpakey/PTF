@@ -83,7 +83,7 @@ if __name__ == '__main__':
 
     interface_name = 'PPP adapter PureVPN'
 
-    wait_time = 43200
+    wait_time = 10800
     post_wait_time = 10
     check_vpn_gap = 30
 
