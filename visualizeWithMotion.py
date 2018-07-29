@@ -369,6 +369,12 @@ if __name__ == '__main__':
             #     winUtils.hideBorder2(win_name)
 
         cv2.imshow(win_name, dst_img)
+        
+        # if win_utils_available:
+        #     winUtils.show(win_name, dst_img, 0)
+        # else:
+        #     cv2.imshow(win_name, dst_img)
+
         k = cv2.waitKey(1)
 
         if k == 27:
