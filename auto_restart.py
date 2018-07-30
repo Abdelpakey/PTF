@@ -3,12 +3,11 @@ import re, time, os, sys, msvcrt
 import bencode
 import codecs
 import psutil
+from Misc import processArguments
 
 
 def check_interface(interface_name):
     output = subprocess.check_output("ipconfig /all")
-
-
 
     lines = output.splitlines()
     lines = filter(lambda x: x, lines)
@@ -30,9 +29,8 @@ def check_interface(interface_name):
 
             # Check if there's previews values, if so - yield them
             if name and ip_address:
-                if name==interface_name:
+                if name == interface_name:
                     return ip_address
-
 
             ip_address = ''
             # mac_address = ''
@@ -78,21 +76,30 @@ def check_interface(interface_name):
     return None
 
 
-
 if __name__ == '__main__':
 
-    interface_name = 'PPP adapter PureVPN'
+    params = {
+        'interface_name': 'PPP adapter PureVPN',
+        'wait_time': 10800,
+        'post_wait_time': 10,
+        'check_vpn_gap': 30,
+        'vpn_path': 'C:\Users\Tommy\Desktop\purevpn.lnk',
+        'tor_path': 'C:\Users\Tommy\Desktop\uTorrent.lnk',
+        'settings_path': 'C:\Users\Tommy\AppData\Roaming\uTorrent\settings.dat',
+        'vpn_proc': 'purevpn.exe',
+        'tor_proc': 'uTorrent.exe',
+    }
 
-    wait_time = 10800
-    post_wait_time = 10
-    check_vpn_gap = 30
-
-    vpn_path = "C:\Users\Tommy\Desktop\purevpn.lnk"
-    tor_path = "C:\Users\Tommy\Desktop\uTorrent.lnk"
-    settings_path = "C:\Users\Tommy\AppData\Roaming\uTorrent\settings.dat"
-
-    vpn_proc = "purevpn.exe"
-    tor_proc = "uTorrent.exe"
+    processArguments(sys.argv[1:], params)
+    interface_name = params['interface_name']
+    wait_time = params['wait_time']
+    post_wait_time = params['post_wait_time']
+    check_vpn_gap = params['check_vpn_gap']
+    vpn_path = params['vpn_path']
+    tor_path = params['tor_path']
+    settings_path = params['settings_path']
+    vpn_proc = params['vpn_proc']
+    tor_proc = params['tor_proc']
 
     while True:
 
@@ -132,12 +139,11 @@ if __name__ == '__main__':
                 break
 
             time.sleep(1)
-            sys.stdout.write('\r{}'.format(i+1))
+            sys.stdout.write('\r{}'.format(i + 1))
             sys.stdout.flush()
 
         sys.stdout.write('\n')
         sys.stdout.flush()
-
 
         tor_killed = 0
         for proc in psutil.process_iter():
@@ -167,7 +173,7 @@ if __name__ == '__main__':
                 break
 
             time.sleep(1)
-            sys.stdout.write('\r{}'.format(i+1))
+            sys.stdout.write('\r{}'.format(i + 1))
             sys.stdout.flush()
 
         sys.stdout.write('\n')

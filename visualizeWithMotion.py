@@ -369,7 +369,9 @@ if __name__ == '__main__':
             #     winUtils.hideBorder2(win_name)
 
         cv2.imshow(win_name, dst_img)
-        
+
+        # winUtils.hideBorder2(win_name)
+        # winUtils.show2(win_name)
         # if win_utils_available:
         #     winUtils.show(win_name, dst_img, 0)
         # else:

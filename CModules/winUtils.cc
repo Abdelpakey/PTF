@@ -10,11 +10,13 @@ using namespace std;
 static PyObject* hideBorder(PyObject* self, PyObject* args);
 static PyObject* hideBorder2(PyObject* self, PyObject* args);
 static PyObject* show(PyObject* self, PyObject* args);
+static PyObject* show2(PyObject* self, PyObject* args);
 
 static PyMethodDef winUtilsMethods[] = {
 	{ "hideBorder", hideBorder, METH_VARARGS },
 	{ "hideBorder2", hideBorder2, METH_VARARGS },
 	{ "show", show, METH_VARARGS },
+	{ "show2", show2, METH_VARARGS },
 	{ NULL, NULL, 0, NULL }     /* Sentinel - marks the end of this structure */
 };
 
@@ -245,3 +247,17 @@ static PyObject* show(PyObject* self, PyObject* args) {
 	return Py_BuildValue("i", 1);
 }
 
+static PyObject* show2(PyObject* self, PyObject* args) {
+	char* win_name;
+	if(!PyArg_ParseTuple(args, "z", &win_name)) {
+		PySys_WriteStdout("\n----winUtils::show: Input argument could not be parsed----\n\n");
+		return Py_BuildValue("i", 0);
+	}
+	HWND win_handle = FindWindow(0, win_name);
+	if(!win_handle) {
+		PySys_WriteStdout("Failed FindWindow\n");
+		return Py_BuildValue("i", 0);
+	}
+	ShowWindow(win_handle, SW_SHOW);
+	return Py_BuildValue("i", 1);
+}
