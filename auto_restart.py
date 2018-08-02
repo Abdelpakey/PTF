@@ -80,6 +80,7 @@ if __name__ == '__main__':
 
     params = {
         'interface_name': 'PPP adapter PureVPN',
+        'restart_time': 86400,
         'wait_time': 10800,
         'post_wait_time': 10,
         'check_vpn_gap': 30,
@@ -92,6 +93,7 @@ if __name__ == '__main__':
 
     processArguments(sys.argv[1:], params)
     interface_name = params['interface_name']
+    restart_time = params['restart_time']
     wait_time = params['wait_time']
     post_wait_time = params['post_wait_time']
     check_vpn_gap = params['check_vpn_gap']
@@ -100,6 +102,8 @@ if __name__ == '__main__':
     settings_path = params['settings_path']
     vpn_proc = params['vpn_proc']
     tor_proc = params['tor_proc']
+
+    global_start_t = time.time()
 
     while True:
 
@@ -110,8 +114,14 @@ if __name__ == '__main__':
 
         while True:
             ip_address = check_interface(interface_name)
+            if time.time() - global_start_t > restart_time:
+                restart_now = 1
+                break
             if ip_address is not None:
                 break
+
+        if restart_now:
+            break
 
         print 'vpn started with ip_address: {}'.format(ip_address)
 
@@ -144,6 +154,13 @@ if __name__ == '__main__':
 
         sys.stdout.write('\n')
         sys.stdout.flush()
+
+        if time.time() - global_start_t > restart_time:
+            restart_now = 1
+            break
+
+        if restart_now:
+            break
 
         tor_killed = 0
         for proc in psutil.process_iter():
@@ -178,3 +195,6 @@ if __name__ == '__main__':
 
         sys.stdout.write('\n')
         sys.stdout.flush()
+
+    print "Restarting..."
+    os.system("shutdown -t 0 -r -f")
