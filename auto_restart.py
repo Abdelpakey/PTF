@@ -105,6 +105,8 @@ if __name__ == '__main__':
 
     global_start_t = time.time()
 
+    restart_now = 0
+
     while True:
 
         os.startfile(vpn_path)
@@ -196,5 +198,6 @@ if __name__ == '__main__':
         sys.stdout.write('\n')
         sys.stdout.flush()
 
-    print "Restarting..."
-    os.system("shutdown -t 0 -r -f")
+    if restart_now:
+        print "Restarting..."
+        os.system("shutdown -t 0 -r -f")
