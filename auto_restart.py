@@ -157,13 +157,6 @@ if __name__ == '__main__':
         sys.stdout.write('\n')
         sys.stdout.flush()
 
-        if time.time() - global_start_t > restart_time:
-            restart_now = 1
-            break
-
-        if restart_now:
-            break
-
         tor_killed = 0
         for proc in psutil.process_iter():
             if proc.name() == tor_proc:
@@ -184,6 +177,13 @@ if __name__ == '__main__':
         if not vpn_killed:
             raise IOError('VPN process {} not found'.format(vpn_proc))
 
+        if time.time() - global_start_t > restart_time:
+            restart_now = 1
+            break
+
+        if restart_now:
+            break
+            
         print 'Waiting for {} seconds. Press any key to continue'.format(post_wait_time)
         for i in xrange(post_wait_time):
             if msvcrt.kbhit():
