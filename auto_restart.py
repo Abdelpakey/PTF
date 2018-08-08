@@ -183,7 +183,7 @@ if __name__ == '__main__':
 
         if restart_now:
             break
-            
+
         print 'Waiting for {} seconds. Press any key to continue'.format(post_wait_time)
         for i in xrange(post_wait_time):
             if msvcrt.kbhit():

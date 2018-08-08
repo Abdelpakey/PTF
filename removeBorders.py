@@ -5,12 +5,12 @@ import numpy as np
 from Misc import processArguments
 
 params = {
-    'src_path': '/home/abhineet/N/Datasets/617',
+    'src_path': '.',
     'thresh': 0,
     'dst_path': '',
     'show_img': 0,
     'quality': 3,
-    'resize': 0,
+    'border_type': 2,
 }
 
 if __name__ == '__main__':
@@ -20,10 +20,12 @@ if __name__ == '__main__':
     dst_path = params['dst_path']
     show_img = params['show_img']
     quality = params['quality']
-    resize = params['resize']
+    border_type = params['border_type']
+    # 0: LHS, 1:RHS, 2: both
+
+    src_path = os.path.abspath(src_path)
 
     print('Reading source images from: {}'.format(src_path))
-
     img_exts = ('.jpg', '.bmp', '.jpeg', '.png', '.tif', '.tiff', '.gif')
     src_file_list = [k for k in os.listdir(src_path) if os.path.splitext(k.lower())[1] in img_exts]
 
@@ -36,6 +38,13 @@ if __name__ == '__main__':
     # total_frames = len(src_file_list)
     # print('total_frames after sorting: {}'.format(total_frames))
     # sys.exit()
+
+    if border_type == 0:
+        print('Removing only LHS borders')
+    elif border_type == 1:
+        print('Removing only RHS borders')
+    else:
+        print('Removing both LHS and RHS borders')
 
     if not dst_path:
         dst_path = '{:s}_no_borders'.format(src_path)
@@ -57,29 +66,32 @@ if __name__ == '__main__':
 
         src_height, src_width, n_channels = src_img.shape
 
-        patch_size = 0
-        while True:
-            patch = src_img[:patch_size, :patch_size, :]
-            if not np.all(patch <= thresh):
-                break
-            patch_size += 1
-        start_col_id = patch_size
+        if border_type == 1:
+            start_col_id = 0
+        else:
+            patch_size = 0
+            while True:
+                patch = src_img[:patch_size, :patch_size, :]
+                if not np.all(patch <= thresh):
+                    break
+                patch_size += 1
+            start_col_id = patch_size
 
-        patch_size = 0
-        while True:
-            patch = src_img[:patch_size, src_width - patch_size - 1:, :]
-            if not np.all(patch <= thresh):
-                break
-            patch_size += 1
+        if border_type == 0:
+            end_col_id = src_width
+        else:
+            patch_size = 0
+            while True:
+                patch = src_img[:patch_size, src_width - patch_size - 1:, :]
+                if not np.all(patch <= thresh):
+                    break
+                patch_size += 1
 
-        end_col_id = src_width - patch_size - 1
+            end_col_id = src_width - patch_size - 1
 
         dst_img = src_img[:, start_col_id:end_col_id, :].astype(np.uint8)
 
         dst_img_fname = os.path.join(dst_path, '{}.png'.format(img_fname_no_ext))
-
-        if resize:
-            dst_img = cv2.resize(dst_img, (width, height))
 
         cv2.imwrite(dst_img_fname, dst_img, [int(cv2.IMWRITE_PNG_COMPRESSION), quality])
 
