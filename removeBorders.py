@@ -12,8 +12,7 @@ params = {
     'quality': 3,
     'border_type': 2,
     'resize': 0,
-    'out_size': 0,
-    'out_height': 0,
+    'out_size': '',
 }
 
 if __name__ == '__main__':
@@ -26,8 +25,10 @@ if __name__ == '__main__':
     border_type = params['border_type']
     # 0: LHS, 1:RHS, 2: both
     resize = params['resize']
-    out_width = params['out_width']
-    out_height = params['out_height']
+    out_size = params['out_size']
+
+    if out_size:
+        resize = 1
 
     src_path = os.path.abspath(src_path)
 
@@ -55,7 +56,9 @@ if __name__ == '__main__':
     img_id = 0
 
     if resize:
-        if out_width < 0 or out_height < 0:
+        if out_size:
+            out_width, out_height = [int(x) for x in out_size.split('x')]
+        else:
             src_img = cv2.imread(os.path.join(src_path, src_file_list[0]))
             out_height, out_width = src_img.shape[:2]
         print('Resizing output images to : {}x{}'.format(out_width, out_height))
@@ -63,7 +66,7 @@ if __name__ == '__main__':
     if not dst_path:
         dst_path = '{:s}_no_borders'.format(src_path)
         if resize:
-            dst_path = '{:s}_{}x{}'.format(src_path, out_width, out_height)
+            dst_path = '{:s}_{}x{}'.format(dst_path, out_width, out_height)
 
     print('Writing output images to: {}'.format(dst_path))
     if not os.path.isdir(dst_path):
