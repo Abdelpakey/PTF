@@ -11,6 +11,9 @@ params = {
     'show_img': 0,
     'quality': 3,
     'border_type': 2,
+    'resize': 0,
+    'out_size': 0,
+    'out_height': 0,
 }
 
 if __name__ == '__main__':
@@ -22,6 +25,9 @@ if __name__ == '__main__':
     quality = params['quality']
     border_type = params['border_type']
     # 0: LHS, 1:RHS, 2: both
+    resize = params['resize']
+    out_width = params['out_width']
+    out_height = params['out_height']
 
     src_path = os.path.abspath(src_path)
 
@@ -46,14 +52,22 @@ if __name__ == '__main__':
     else:
         print('Removing both LHS and RHS borders')
 
+    img_id = 0
+
+    if resize:
+        if out_width < 0 or out_height < 0:
+            src_img = cv2.imread(os.path.join(src_path, src_file_list[0]))
+            out_height, out_width = src_img.shape[:2]
+        print('Resizing output images to : {}x{}'.format(out_width, out_height))
+
     if not dst_path:
         dst_path = '{:s}_no_borders'.format(src_path)
+        if resize:
+            dst_path = '{:s}_{}x{}'.format(src_path, out_width, out_height)
 
     print('Writing output images to: {}'.format(dst_path))
     if not os.path.isdir(dst_path):
         os.makedirs(dst_path)
-
-    img_id = 0
 
     for img_fname in src_file_list:
 
@@ -90,9 +104,9 @@ if __name__ == '__main__':
             end_col_id = src_width - patch_size - 1
 
         dst_img = src_img[:, start_col_id:end_col_id, :].astype(np.uint8)
-
+        if resize:
+            dst_img = cv2.resize(dst_img, (out_width, out_height))
         dst_img_fname = os.path.join(dst_path, '{}.png'.format(img_fname_no_ext))
-
         cv2.imwrite(dst_img_fname, dst_img, [int(cv2.IMWRITE_PNG_COMPRESSION), quality])
 
         img_id += 1
