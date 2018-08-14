@@ -174,7 +174,7 @@ if __name__ == '__main__':
         if mode == 0:
             if fullscreen:
                 cv2.namedWindow(win_name, cv2.WND_PROP_FULLSCREEN)
-                cv2.setWindowProperty(win_name, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
+                cv2.setWindowProperty(win_name, cv2.WND_PROP_FULLSCREEN, 1)
             else:
                 cv2.namedWindow(win_name, cv2.WINDOW_AUTOSIZE)
                 if win_utils_available:
