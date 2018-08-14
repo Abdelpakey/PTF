@@ -5,12 +5,36 @@ import numpy as np
 # from multiprocessing import Pool, Process
 from Misc import processArguments, sortKey
 import psutil
+
 win_utils_available = 1
 try:
     import winUtils
 except ImportError as e:
     win_utils_available = 0
     print('Failed to import winUtils: {}'.format(e))
+try:
+    from ctypes import windll, Structure, c_long, byref
+
+    # Get active window id
+    # https://msdn.microsoft.com/en-us/library/ms633505
+    winID = windll.user32.GetForegroundWindow()
+    print "This is your current window ID: ", winID
+
+
+    class POINT(Structure):
+        _fields_ = [("x", c_long), ("y", c_long)]
+
+
+    def queryMousePosition():
+        pt = POINT()
+        windll.user32.GetCursorPos(byref(pt))
+        return pt
+
+
+    mousePos = queryMousePosition()
+    print "mouse position x: ", mousePos.x, " y:", mousePos.y
+except ImportError as e:
+    mousePos = None
 
 params = {
     'src_path': '.',
@@ -52,14 +76,27 @@ if __name__ == '__main__':
     fullscreen = params['recursive']
 
     old_speed = speed
-    curr_monitor = 0
-
     monitors = [
         [0, 0],
         [-1920, 0],
         [0, -1080],
         [1920, 0],
     ]
+    if mousePos is None:
+        curr_monitor = 0
+    else:
+        curr_monitor = 0
+        min_dist = np.inf
+        for curr_id, monitor in enumerate(monitors):
+            centroid_x = (monitor[0] + monitor[0] + 1920) / 2.0
+            centroid_y = (monitor[1] + monitor[1] + 1920) / 2.0
+            dist = (mousePos.x -centroid_x)**2 + (mousePos.y -centroid_y)**2
+            if dist < min_dist:
+                min_dist = dist
+                curr_monitor = curr_id
+
+
+
     aspect_ratio = float(width) / float(height)
     direction = -1
     n_switches = 0
@@ -93,7 +130,6 @@ if __name__ == '__main__':
     else:
         src_file_list = [os.path.join(src_dir, k) for k in os.listdir(src_dir) if
                          os.path.splitext(k.lower())[1] in img_exts]
-
 
     # src_file_list = [list(x) for x in src_file_list]
     # src_file_list = [x for x in src_file_list]
@@ -150,7 +186,7 @@ if __name__ == '__main__':
         else:
             cv2.namedWindow(win_name)
             if win_utils_available:
-                winUtils.hideBorder(monitors[2][0],  monitors[2][1], width, height, win_name)
+                winUtils.hideBorder(monitors[2][0], monitors[2][1], width, height, win_name)
             else:
                 cv2.moveWindow(win_name, monitors[2][0], monitors[2][1])
 
@@ -435,7 +471,7 @@ if __name__ == '__main__':
         elif k == ord('F'):
             print(img_fname)
         elif k == ord('f') or k == ord('/') or k == ord('?'):
-            fullscreen = 1- fullscreen
+            fullscreen = 1 - fullscreen
             createWindow()
             if fullscreen:
                 print('fullscreen mode enabled')
