@@ -89,13 +89,12 @@ if __name__ == '__main__':
         min_dist = np.inf
         for curr_id, monitor in enumerate(monitors):
             centroid_x = (monitor[0] + monitor[0] + 1920) / 2.0
-            centroid_y = (monitor[1] + monitor[1] + 1920) / 2.0
-            dist = (mousePos.x -centroid_x)**2 + (mousePos.y -centroid_y)**2
+            centroid_y = (monitor[1] + monitor[1] + 1080) / 2.0
+            dist = (mousePos.x - centroid_x) ** 2 + (mousePos.y - centroid_y) ** 2
             if dist < min_dist:
                 min_dist = dist
                 curr_monitor = curr_id
-
-
+    print('curr_monitor: ', curr_monitor)
 
     aspect_ratio = float(width) / float(height)
     direction = -1
