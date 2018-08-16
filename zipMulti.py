@@ -16,6 +16,8 @@ if __name__ == '__main__':
     if len(dir_names) == 1:
         dir_names = dir_names[0].split('/')
 
+    print('dir_names: ', dir_names)
+
     zip_path = ''
     for _dir in dir_names:
         zip_path = os.path.join(zip_path, _dir) if zip_path else _dir

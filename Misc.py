@@ -289,8 +289,10 @@ def processArguments(args, params):
                     try:
                         _val_parsed = float(_val)
                     except ValueError:
-                        _val_parsed = _val
-                arg_vals_parsed.append(_val_parsed)
+                        _val_parsed = _val if _val else None
+
+                if _val_parsed is not None:
+                    arg_vals_parsed.append(_val_parsed)
             params[arg[0]] = arg_vals_parsed
         else:
             params[arg[0]] = type(params[arg[0]])(arg[1])
