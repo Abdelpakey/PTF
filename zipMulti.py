@@ -13,6 +13,9 @@ if __name__ == '__main__':
 
     print('dir_names: ', dir_names)
 
+    if len(dir_names) == 1:
+        dir_names = dir_names[0].split('/')
+
     zip_path = ''
     for _dir in dir_names:
         zip_path = os.path.join(zip_path, _dir) if zip_path else _dir
@@ -31,12 +34,3 @@ if __name__ == '__main__':
     print('\nrunning: {}\n'.format(zip_cmd))
     # subprocess.call(zip_cmd)
     os.system(zip_cmd)
-
-
-
-
-
-
-
-
-

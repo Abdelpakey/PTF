@@ -5,6 +5,8 @@ from Cython.Distutils import build_ext
 import numpy as np
 
 '''
+set python2 as the default one if python3 is also present
+
 SET VS90COMNTOOLS=%VS100COMNTOOLS%
 python setup_cython.py build_ext --inplace
 python ImageDirectoryTracking.py --esm "G:\UofA\Thesis\#Code\Datasets\Human\nl_bookI_s3\*.jpg" Results
