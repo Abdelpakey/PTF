@@ -1,15 +1,18 @@
-import os, sys, glob, re
+import os, sys
+from datetime import datetime
 
-from Misc import processArguments, sortKey
+from Misc import processArguments
 
 if __name__ == '__main__':
     params = {
         'dir_names': [],
         'out_name': '',
+        'postfix': '',
     }
     processArguments(sys.argv[1:], params)
     dir_names = params['dir_names']
     out_name = params['out_name']
+    postfix = params['postfix']
 
     print('dir_names: ', dir_names)
 
@@ -27,6 +30,12 @@ if __name__ == '__main__':
     if not out_name:
         for _dir in dir_names:
             out_name = '{}_{}'.format(out_name, _dir) if out_name else _dir
+
+    if postfix:
+        out_name = '{}_{}'.format(out_name, postfix)
+
+    time_stamp = datetime.now().strftime("%y%m%d%H%M%S")
+    out_name = '{}_{}'.format(out_name, time_stamp)
 
     print('out_name: ', out_name)
 
