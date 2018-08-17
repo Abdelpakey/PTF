@@ -35,13 +35,18 @@ if __name__ == '__main__':
         out_name = '{}_{}'.format(out_name, postfix)
 
     time_stamp = datetime.now().strftime("%y%m%d%H%M%S")
-    out_name = '{}_{}'.format(out_name, time_stamp)
+    out_name = '{}_{}.zip'.format(out_name, time_stamp)
 
     print('out_name: ', out_name)
 
-    zip_cmd = 'zip -r {:s}'.format(out_name)
+    zip_cmd = 'zip -r {:s}.zip'.format(out_name)
     zip_cmd = '{:s} {:s}'.format(zip_cmd, zip_path)
 
     print('\nrunning: {}\n'.format(zip_cmd))
     # subprocess.call(zip_cmd)
     os.system(zip_cmd)
+
+    mv_cmd = 'mv {:s} ~'.format(out_name)
+    print('\nrunning: {}\n'.format(mv_cmd))
+    # subprocess.call(zip_cmd)
+    os.system(mv_cmd)
