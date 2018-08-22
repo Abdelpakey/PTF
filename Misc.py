@@ -1,11 +1,11 @@
 __author__ = 'Tommy'
 import os
 import sys
+
 try:
     import cv2
 except ImportError as e:
     print('OpenCV import failed: {}'.format(e))
-
 
 import numpy as np
 import math
@@ -235,6 +235,7 @@ def sortKey(fname):
     # print('fname: {}, key: {}'.format(fname, key))
     return key
 
+
 def sortKeyOld(fname):
     fname = os.path.splitext(fname)[0]
     # print('fname: ', fname)
@@ -276,12 +277,13 @@ def processArguments(args, params):
             continue
 
         if isinstance(params[arg[0]], (list, tuple)):
-            if not ',' in arg[1]:
-                print('Invalid argument provided for list: {:s}'.format(arg[1]))
-                return
+            # if not ',' in arg[1]:
+            #     print('Invalid argument provided for list: {:s}'.format(arg[1]))
+            #     return
 
             if arg[1] and not ',' in arg[1]:
-                arg[1]='{},'.format(arg[1])
+                arg[1] = '{},'.format(arg[1])
+                
             arg_vals = arg[1].split(',')
             arg_vals_parsed = []
             for _val in arg_vals:
