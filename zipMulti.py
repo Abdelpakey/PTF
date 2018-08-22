@@ -39,7 +39,7 @@ if __name__ == '__main__':
 
     print('out_name: ', out_name)
 
-    zip_cmd = 'zip -r {:s}.zip'.format(out_name)
+    zip_cmd = 'zip -r {:s}'.format(out_name)
     zip_cmd = '{:s} {:s}'.format(zip_cmd, zip_path)
 
     print('\nrunning: {}\n'.format(zip_cmd))

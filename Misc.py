@@ -281,6 +281,8 @@ def processArguments(args, params):
                 return
 
             arg_vals = arg[1].split(',')
+            if not arg_vals:
+                arg_vals = [arg[1]]
             arg_vals_parsed = []
             for _val in arg_vals:
                 try:

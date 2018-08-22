@@ -5,7 +5,7 @@ src_names_fname = 'src_list.txt'
 dst_names_fname = 'dst_list.txt'
 src_root_dir = '.'
 dst_root_dir = '.'
-invert_list = 1
+invert_list = 0
 
 arg_id = 1
 if len(sys.argv) > arg_id:
