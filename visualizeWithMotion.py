@@ -184,10 +184,12 @@ if __name__ == '__main__':
             cv2.moveWindow(win_name, monitors[curr_monitor][0], monitors[curr_monitor][1])
         else:
             cv2.namedWindow(win_name)
+            winUtils.hideBorder2(win_name)
             if win_utils_available:
-                winUtils.hideBorder(monitors[2][0], monitors[2][1], width, height, win_name)
-            else:
-                cv2.moveWindow(win_name, monitors[2][0], monitors[2][1])
+                winUtils.hideBorder2(win_name)
+            #     winUtils.hideBorder(monitors[2][0], monitors[2][1], width, height, win_name)
+            # else:
+            cv2.moveWindow(win_name, monitors[2][0], monitors[2][1])
 
         cv2.setMouseCallback(win_name, mouseHandler)
 
@@ -439,20 +441,20 @@ if __name__ == '__main__':
             max_switches += 1
         elif k == ord('1'):
             curr_monitor = 0
-            # cv2.moveWindow(win_name, monitors[0][0], monitors[0][1])
-            createWindow()
+            cv2.moveWindow(win_name, monitors[0][0], monitors[0][1])
+            # createWindow()
         elif k == ord('2'):
             curr_monitor = 1
-            # cv2.moveWindow(win_name, monitors[1][0], monitors[1][1])
-            createWindow()
+            cv2.moveWindow(win_name, monitors[1][0], monitors[1][1])
+            # createWindow()
         elif k == ord('3'):
             curr_monitor = 2
-            # cv2.moveWindow(win_name, monitors[2][0], monitors[2][1])
-            createWindow()
+            cv2.moveWindow(win_name, monitors[2][0], monitors[2][1])
+            # createWindow()
         elif k == ord('4'):
             curr_monitor = 3
-            # cv2.moveWindow(win_name, monitors[3][0], monitors[3][1])
-            createWindow()
+            cv2.moveWindow(win_name, monitors[3][0], monitors[3][1])
+            # createWindow()
         elif k == ord('+'):
             increaseSpeed()
         elif k == ord('p') or k == 32:
