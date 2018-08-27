@@ -2205,6 +2205,9 @@ def parseArguments(args, params):
         arg_id += 2
     return params
 
+def write(str):
+    sys.stdout.write(str)
+    sys.stdout.flush()
 
 def arrangeCornersWithIDs(orig_corners):
     # print 'orig_corners:\n', orig_corners
