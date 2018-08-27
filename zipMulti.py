@@ -34,6 +34,7 @@ if __name__ == '__main__':
     if postfix:
         out_name = '{}_{}'.format(out_name, postfix)
 
+    out_name.replace('.', '_')
     time_stamp = datetime.now().strftime("%y%m%d%H%M%S")
     out_name = '{}_{}.zip'.format(out_name, time_stamp)
 

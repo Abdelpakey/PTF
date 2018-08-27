@@ -48,7 +48,7 @@ params = {
     'mode': 0,
     'auto_progress': 0,
     'max_switches': 1,
-    'max_duration': 5,
+    'max_duration': 30,
     'random_mode': 0,
     'recursive': 1,
     'fullscreen': 1,
