@@ -30,10 +30,10 @@ if __name__ == '__main__':
     else:
         zip_paths = [file_name]
 
-    zip_paths = [os.path.abspath(k) for k in zip_paths]
+    # zip_paths = [os.path.abspath(k) for k in zip_paths]
 
     if not out_name:
-        _root_dir = os.path.basename(os.path.dirname(zip_paths[0]))
+        _root_dir = os.path.basename(os.path.dirname(os.path.abspath(zip_paths[0])))
         list_fname_no_ext = os.path.splitext(os.path.basename(list_file))[0]
         out_name = '{}_{}'.format(_root_dir, list_fname_no_ext)
     else:
