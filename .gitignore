@@ -32,7 +32,6 @@ cython_trackers_old/
 *.back
 *.zip
 *.exe
-*.bat
 *.sdf
 *.opensdf
 *.suo
