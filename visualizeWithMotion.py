@@ -60,8 +60,8 @@ if __name__ == '__main__':
 
     processArguments(sys.argv[1:], params)
     src_path = params['src_path']
-    width = params['width']
-    height = params['height']
+    _width = width = params['width']
+    _height = height = params['height']
     min_height_ratio = params['min_height_ratio']
     speed = params['speed']
     show_img = params['show_img']
@@ -76,6 +76,7 @@ if __name__ == '__main__':
     fullscreen = params['recursive']
 
     old_speed = speed
+    speed = 0
     monitors = [
         [0, 0],
         [-1920, 0],
@@ -212,7 +213,9 @@ if __name__ == '__main__':
     def loadImage(_type=0):
         global src_img_ar, start_row, end_row, start_col, end_col, dst_height, dst_width, n_switches, img_id, direction
         global target_height, target_width, min_height, start_col, end_col, height_ratio, img_fname, start_time
-        global src_start_row, src_start_col, src_end_row, src_end_col
+        global src_start_row, src_start_col, src_end_row, src_end_col, aspect_ratio
+
+        aspect_ratio = float(width) / float(height)
 
         if _type == 1:
             # if random_mode:
@@ -463,6 +466,28 @@ if __name__ == '__main__':
             else:
                 old_speed = speed
                 speed = 0
+        elif k == ord(','):
+            height -= 5
+            if height < 10:
+                height = 10
+            loadImage()
+        elif k == ord('.'):
+            height += 5
+            loadImage()
+        elif k == ord('<'):
+            width -= 5
+            if width < 10:
+                width = 10
+            loadImage()
+        elif k == ord('>'):
+            width += 5
+            loadImage()
+        elif k == ord('/'):
+            height = _height
+            loadImage()
+        elif k == ord('?'):
+            width = _width
+            loadImage()
         elif k == ord('-'):
             decreaseSpeed()
         elif k == ord('i'):
