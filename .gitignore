@@ -11,7 +11,6 @@ C++/MTF/
 C++/MTF_LIB/
 C++/Eigen/
 C++/unsupported/
-scripts/
 Matlab/plots/
 log/
 MTF/
@@ -31,7 +30,8 @@ cython_trackers/*.c
 cython_trackers/*.so
 cython_trackers_old/
 *.back
-*.sh
+*.zip
+*.exe
 *.bat
 *.sdf
 *.opensdf
