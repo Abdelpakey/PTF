@@ -30,7 +30,9 @@ if __name__ == '__main__':
     if not out_name:
         for _dir in dir_names:
             out_name = '{}_{}'.format(out_name, _dir) if out_name else _dir
-
+    else:
+        out_name = os.path.splitext(out_name)[0]
+        
     if postfix:
         out_name = '{}_{}'.format(out_name, postfix)
 
