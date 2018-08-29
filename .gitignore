@@ -31,6 +31,7 @@ cython_trackers/*.so
 cython_trackers_old/
 *.back
 *.zip
+*.lnk
 *.exe
 *.sdf
 *.opensdf
