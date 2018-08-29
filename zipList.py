@@ -1,4 +1,5 @@
-import os, sys, glob, re
+import os, sys
+from datetime import datetime
 
 from Misc import processArguments, sortKey
 
@@ -8,12 +9,14 @@ if __name__ == '__main__':
         'file_name': '',
         'root_dir': '',
         'out_name': '',
+        'out_postfix': '',
     }
     processArguments(sys.argv[1:], params)
     list_file = params['list_file']
     root_dir = params['root_dir']
     file_name = params['file_name']
     out_name = params['out_name']
+    out_postfix = params['out_postfix']
 
     if list_file:
         if os.path.isdir(list_file):
@@ -27,10 +30,24 @@ if __name__ == '__main__':
     else:
         zip_paths = [file_name]
 
+    zip_paths = [os.path.abspath(k) for k in zip_paths]
+
+    if not out_name:
+        _root_dir = os.path.basename(os.path.dirname(zip_paths[0]))
+        list_fname_no_ext = os.path.splitext(os.path.basename(list_file))[0]
+        out_name = '{}_{}'.format(_root_dir, list_fname_no_ext)
+    else:
+        out_name = os.path.splitext(out_name)[0]
+
+    if out_postfix:
+        out_name = '{}_{}'.format(out_name, out_postfix)
+
+    time_stamp = datetime.now().strftime("%y%m%d%H%M%S")
+    out_name = '{}_{}.zip'.format(out_name, time_stamp)
+
     zip_cmd = 'zip -r {:s}'.format(out_name)
     for zip_path in zip_paths:
         zip_cmd = '{:s} {:s}'.format(zip_cmd, zip_path)
-
 
     print('\nrunning: {}\n'.format(zip_cmd))
     # subprocess.call(zip_cmd)

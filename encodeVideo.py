@@ -37,7 +37,7 @@ print('Reading source videos from: {}'.format(_src_path))
 vid_exts = ['.mkv', '.mp4', '.avi', '.mjpg', '.wmv']
 
 if os.path.isdir(_src_path):
-    src_file_list = [k for k in os.listdir(_src_path) for _ext in vid_exts if k.endswith(_ext)]
+    src_file_list = [os.path.join(_src_path, k) for k in os.listdir(_src_path) for _ext in vid_exts if k.endswith(_ext)]
     n_videos = len(src_file_list)
     if n_videos <= 0:
         raise SystemError('No input videos found')
