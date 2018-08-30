@@ -3,7 +3,7 @@ import sys
 import os, shutil
 import numpy as np
 
-from Misc import processArguments, sortKey
+from Misc import processArguments, sortKey, resizeAR
 
 params = {
     'src_path': '.',
@@ -19,6 +19,7 @@ params = {
     'codec': 'H264',
     'ext': 'mkv',
     'exp_base': 2.0,
+    'resize_factor': 1.0,
 }
 
 processArguments(sys.argv[1:], params)
@@ -35,6 +36,7 @@ fps = params['fps']
 codec = params['codec']
 ext = params['ext']
 exp_base = params['exp_base']
+resize_factor = params['resize_factor']
 
 img_exts = ['.jpg', '.jpeg', '.png', '.bmp', '.tif']
 
@@ -43,7 +45,8 @@ if os.path.isdir(_src_path):
     if src_file_list:
         src_paths = [_src_path]
     else:
-        src_paths = [os.path.join(_src_path, k) for k in os.listdir(_src_path) if os.path.isdir(os.path.join(_src_path, k))]
+        src_paths = [os.path.join(_src_path, k) for k in os.listdir(_src_path) if
+                     os.path.isdir(os.path.join(_src_path, k))]
 elif os.path.isfile(_src_path):
     print('Reading source image sequences from: {}'.format(_src_path))
     src_paths = [x.strip() for x in open(_src_path).readlines() if x.strip()]
@@ -54,7 +57,7 @@ elif os.path.isfile(_src_path):
 else:
     raise IOError('Invalid src_path: {}'.format(_src_path))
 
-out_norm_factor = (exp_base - 1.0) / (exp_base ** 8 - 1)
+out_norm_factor = 255.0 * (exp_base - 1.0) / (exp_base ** 8 - 1)
 
 for src_path in src_paths:
     seq_name = os.path.basename(src_path)
@@ -71,11 +74,12 @@ for src_path in src_paths:
     src_file_list.sort(key=sortKey)
 
     if not save_path:
-        save_path = os.path.join(os.path.dirname(src_path), os.path.basename(src_path) + '.' + ext)
+        save_path = os.path.join(os.path.dirname(src_path), os.path.basename(src_path) + '_gs')
 
-    save_dir = os.path.dirname(save_path)
-    if save_dir and not os.path.isdir(save_dir):
-        os.makedirs(save_dir)
+    if save_path and not os.path.isdir(save_path):
+        os.makedirs(save_path)
+
+    print('Writing output images to {}'.format(save_path))
 
     frame_id = start_id
     pause_after_frame = 0
@@ -86,13 +90,21 @@ for src_path in src_paths:
             raise SystemError('Image file {} does not exist'.format(file_path))
 
         src_img = cv2.imread(file_path)
+        h, w = [int(d*resize_factor) for d in src_img.shape[:2]]
+
+        w_rmd = w % 8
+        if w_rmd != 0:
+            print('Resized image width {} is not a multiple of 8'.format(w))
+
+        src_img = resizeAR(src_img, w - w_rmd, h)
+        w -= w_rmd
         src_img = src_img[:, :, 0].squeeze()
 
-        h, w = src_img.shape
-        if w % 8 != 0:
-            raise AssertionError('Image width {} is not a multiple of 8')
-
         dst_h, dst_w = h, int(w / 8)
+
+        print('src_size: {}x{}'.format(w, h))
+        print('dst_size: {}x{}'.format(dst_w, dst_h))
+
         dst_img = np.zeros((dst_h, dst_w), dtype=np.float64)
         for r in range(dst_h):
             curr_col = 0
@@ -102,12 +114,16 @@ for src_path in src_paths:
                     src_pix = src_img[r, curr_col]
                     curr_col += 1
 
-                    if src_pix > 0:
-                        curr_pix_val += exp_base ** k
+                    if src_pix > 127:
+                        curr_pix_val += np.power(exp_base, k)
 
-            dst_img[r, c] = curr_pix_val
+                # print('curr_pix_val: ', curr_pix_val)
+                dst_img[r, c] = curr_pix_val
+        dst_img = (dst_img * out_norm_factor).astype(np.uint8)
+        
+        dst_path = os.path.join(save_path, filename)
+        cv2.imwrite(dst_path, dst_img)
 
-        dst_img *= out_norm_factor
         if show_img:
             cv2.imshow(src_win_name, src_img)
             cv2.imshow(dst_win_name, dst_img)
@@ -129,8 +145,6 @@ for src_path in src_paths:
 
     sys.stdout.write('\n\n')
     sys.stdout.flush()
-
-    video_out.release()
 
     if show_img:
         cv2.destroyWindow(seq_name)
