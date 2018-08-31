@@ -147,7 +147,8 @@ for src_path in src_paths:
     sys.stdout.flush()
 
     if show_img:
-        cv2.destroyWindow(seq_name)
+        cv2.destroyWindow(src_win_name)
+        cv2.destroyWindow(dst_win_name)
 
     if del_src:
         print('Removing source folder {}'.format(src_path))

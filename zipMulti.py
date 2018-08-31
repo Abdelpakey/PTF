@@ -8,11 +8,13 @@ if __name__ == '__main__':
         'dir_names': [],
         'out_name': '',
         'postfix': '',
+        'switches': '-r',
     }
     processArguments(sys.argv[1:], params)
     dir_names = params['dir_names']
     out_name = params['out_name']
     postfix = params['postfix']
+    switches = params['switches']
 
     print('dir_names: ', dir_names)
 
@@ -42,7 +44,7 @@ if __name__ == '__main__':
 
     print('out_name: ', out_name)
 
-    zip_cmd = 'zip -r {:s}'.format(out_name)
+    zip_cmd = 'zip {:s} {:s}'.format(switches, out_name)
     zip_cmd = '{:s} {:s}'.format(zip_cmd, zip_path)
 
     print('\nrunning: {}\n'.format(zip_cmd))
