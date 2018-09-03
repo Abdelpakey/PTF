@@ -55,8 +55,11 @@ target_ext = params['target_ext']
 if seq_start_id < 0:
     # extract seq_start_id from seq_prefix
     split_str = seq_prefix.split('_')
-    seq_start_id = int(split_str[-1]) + 1
-    seq_prefix = split_str[0]
+    try:
+        seq_start_id = int(split_str[-1]) + 1
+        seq_prefix = split_str[0]
+    except ValueError:
+        seq_start_id = 1
     for _str in split_str[1:-1]:
         seq_prefix = '{}_{}'.format(seq_prefix, _str)
 

@@ -93,8 +93,8 @@ for src_path in src_paths:
         h, w = [int(d*resize_factor) for d in src_img.shape[:2]]
 
         w_rmd = w % 8
-        if w_rmd != 0:
-            print('Resized image width {} is not a multiple of 8'.format(w))
+        # if w_rmd != 0:
+        #     print('Resized image width {} is not a multiple of 8'.format(w))
 
         src_img = resizeAR(src_img, w - w_rmd, h)
         w -= w_rmd
@@ -102,8 +102,8 @@ for src_path in src_paths:
 
         dst_h, dst_w = h, int(w / 8)
 
-        print('src_size: {}x{}'.format(w, h))
-        print('dst_size: {}x{}'.format(dst_w, dst_h))
+        # print('src_size: {}x{}'.format(w, h))
+        # print('dst_size: {}x{}'.format(dst_w, dst_h))
 
         dst_img = np.zeros((dst_h, dst_w), dtype=np.float64)
         for r in range(dst_h):
