@@ -7,7 +7,7 @@ params = {
     'seq_prefix': 'Seq',
     'seq_root_dir': '.',
     'seq_start_id': -1,
-    'shuffle_files': 1,
+    'shuffle_files': 0,
     'filename_fmt': 0,
     'write_log': 1,
     'target_ext': '',

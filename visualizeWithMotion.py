@@ -52,6 +52,7 @@ params = {
     'random_mode': 0,
     'recursive': 1,
     'fullscreen': 1,
+    'reversed_pos': 0,
 }
 
 if __name__ == '__main__':
@@ -74,6 +75,7 @@ if __name__ == '__main__':
     random_mode = params['random_mode']
     recursive = params['recursive']
     fullscreen = params['recursive']
+    reversed_pos = params['reversed_pos']
 
     old_speed = speed
     speed = 0
@@ -185,7 +187,6 @@ if __name__ == '__main__':
             cv2.moveWindow(win_name, monitors[curr_monitor][0], monitors[curr_monitor][1])
         else:
             cv2.namedWindow(win_name)
-            winUtils.hideBorder2(win_name)
             if win_utils_available:
                 winUtils.hideBorder2(win_name)
             #     winUtils.hideBorder(monitors[2][0], monitors[2][1], width, height, win_name)
@@ -405,6 +406,11 @@ if __name__ == '__main__':
 
             dst_img = dst_img[win_start_row:win_end_row, win_start_col:win_end_col, :]
 
+            # print(':: reversed_pos: ', reversed_pos)
+
+            if reversed_pos:
+                cv2.moveWindow(win_name, monitors[curr_monitor][0] + width - dst_img.shape[1], monitors[curr_monitor][1])
+
             # if win_utils_available:
             #     winUtils.hideBorder2(win_name)
 
@@ -460,12 +466,17 @@ if __name__ == '__main__':
             # createWindow()
         elif k == ord('+'):
             increaseSpeed()
-        elif k == ord('p') or k == 32:
+        elif k == 32:
             if speed == 0:
                 speed = old_speed
             else:
                 old_speed = speed
                 speed = 0
+        elif k == ord('p') or k == ord('R'):
+            reversed_pos = 1 - reversed_pos
+            # print('reversed_pos: ', reversed_pos)
+            if not reversed_pos:
+                cv2.moveWindow(win_name, monitors[curr_monitor][0], monitors[curr_monitor][1])
         elif k == ord(','):
             height -= 5
             if height < 10:
