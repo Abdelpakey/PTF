@@ -53,6 +53,7 @@ params = {
     'recursive': 1,
     'fullscreen': 1,
     'reversed_pos': 0,
+    'double_click_interval': 0.1,
 }
 
 if __name__ == '__main__':
@@ -74,8 +75,9 @@ if __name__ == '__main__':
     max_duration = params['max_duration']
     random_mode = params['random_mode']
     recursive = params['recursive']
-    fullscreen = params['recursive']
+    fullscreen = params['fullscreen']
     reversed_pos = params['reversed_pos']
+    double_click_interval = params['double_click_interval']
 
     old_speed = speed
     speed = 0
@@ -104,6 +106,9 @@ if __name__ == '__main__':
     n_switches = 0
     start_time = end_time = 0
     src_start_row = src_start_col = src_end_row = src_end_col = 0
+
+    lc_start_t = rc_start_t = None
+    end_exec = 0
 
     img_id = 0
     if os.path.isdir(src_path):
@@ -355,12 +360,39 @@ if __name__ == '__main__':
 
 
     def mouseHandler(event, x, y, flags=None, param=None):
-        global img_id, start_row
-        if event == cv2.EVENT_LBUTTONDOWN:
+        global img_id, start_row, lc_start_t, rc_start_t, end_exec, fullscreen
+        if event == cv2.EVENT_MBUTTONDBLCLK:
+            end_exec = 1
+        elif event == cv2.EVENT_RBUTTONDBLCLK:
+            pass
+            # fullscreen = 1 - fullscreen
+            # createWindow()
+            # if fullscreen:
+            #     print('fullscreen mode enabled')
+            # else:
+            #     print('fullscreen mode disabled')
+            # loadImage(-1)
+        elif event == cv2.EVENT_LBUTTONDOWN:
+            # if lc_start_t is None:
+            #     lc_start_t = time.time()
+            # else:
+            #     lc_end_t = time.time()
+            #     click_interval = lc_end_t - lc_start_t
+            #     print('click_interval: ', click_interval)
+            #     if click_interval < double_click_interval:
+            #         lc_start_t = None
             loadImage(-1)
         elif event == cv2.EVENT_LBUTTONUP:
             pass
         elif event == cv2.EVENT_RBUTTONDOWN:
+            # if  rc_start_t is None:
+            #     rc_start_t = time.time()
+            # else:
+            #     rc_end_t = time.time()
+            #     click_interval = rc_end_t - rc_start_t
+            #     if click_interval < double_click_interval:
+            #         end_exec = 1
+            #     rc_start_t = None
             loadImage(1)
         elif event == cv2.EVENT_RBUTTONUP:
             pass
@@ -425,7 +457,7 @@ if __name__ == '__main__':
 
         k = cv2.waitKey(1)
 
-        if k == 27:
+        if k == 27 or end_exec:
             break
         elif k == 13 or k == ord('m'):
             changeMode()
