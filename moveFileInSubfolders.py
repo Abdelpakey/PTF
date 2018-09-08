@@ -53,21 +53,23 @@ for subfolder in subfolders:
 
     for i in range(n_files):
         src_path = os.path.join(subfolders_path, src_files[i])
-        dst_path = os.path.join(dst_path, dst_files[i])
+        _dst_path = os.path.join(dst_path, dst_files[i])
 
-        print('{} -> {}'.format(src_path, dst_path))
+        print('{} -> {}'.format(src_path, _dst_path))
         try:
-            shutil.move(src_path, dst_path)
-            out_fid.write('{}\t{}\n'.format(src_path, dst_path))
+            shutil.move(src_path, _dst_path)
+            out_fid.write('{}\t{}\n'.format(src_path, _dst_path))
         except shutil.Error as e:
-            print('Failure: {}'.format(e))
-            continue
-        except FileNotFoundError as e:
             print('Failure: {}'.format(e))
             continue
         except OSError as e:
             print('Failure: {}'.format(e))
             continue
+        except BaseException as e:
+            print('Failure: {}'.format(e))
+            continue
+        total_files += 1
+
 
 print('total_files: {}'.format(total_files))
 out_fid.close()

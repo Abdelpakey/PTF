@@ -361,55 +361,57 @@ if __name__ == '__main__':
 
     def mouseHandler(event, x, y, flags=None, param=None):
         global img_id, start_row, lc_start_t, rc_start_t, end_exec, fullscreen
-        if event == cv2.EVENT_MBUTTONDBLCLK:
-            end_exec = 1
-        elif event == cv2.EVENT_RBUTTONDBLCLK:
+        try:
+            if event == cv2.EVENT_MBUTTONDBLCLK:
+                end_exec = 1
+            elif event == cv2.EVENT_RBUTTONDBLCLK:
+                pass
+                # fullscreen = 1 - fullscreen
+                # createWindow()
+                # if fullscreen:
+                #     print('fullscreen mode enabled')
+                # else:
+                #     print('fullscreen mode disabled')
+                # loadImage(-1)
+            elif event == cv2.EVENT_LBUTTONDOWN:
+                # if lc_start_t is None:
+                #     lc_start_t = time.time()
+                # else:
+                #     lc_end_t = time.time()
+                #     click_interval = lc_end_t - lc_start_t
+                #     print('click_interval: ', click_interval)
+                #     if click_interval < double_click_interval:
+                #         lc_start_t = None
+                loadImage(-1)
+            elif event == cv2.EVENT_LBUTTONUP:
+                pass
+            elif event == cv2.EVENT_RBUTTONDOWN:
+                # if  rc_start_t is None:
+                #     rc_start_t = time.time()
+                # else:
+                #     rc_end_t = time.time()
+                #     click_interval = rc_end_t - rc_start_t
+                #     if click_interval < double_click_interval:
+                #         end_exec = 1
+                #     rc_start_t = None
+                loadImage(1)
+            elif event == cv2.EVENT_RBUTTONUP:
+                pass
+            elif event == cv2.EVENT_MBUTTONDOWN:
+                loadImage()
+            elif event == cv2.EVENT_MOUSEMOVE:
+                pass
+            elif event == cv2.EVENT_MOUSEWHEEL:
+                print('flags: ', flags)
+                # _delta = cv2.getMouseWheelDelta(flags)
+                if flags > 0:
+                    increaseSpeed()
+                    # motionStep(1)
+                else:
+                    decreaseSpeed()
+                    # motionStep(-1)
+        except AttributeError as e:
             pass
-            # fullscreen = 1 - fullscreen
-            # createWindow()
-            # if fullscreen:
-            #     print('fullscreen mode enabled')
-            # else:
-            #     print('fullscreen mode disabled')
-            # loadImage(-1)
-        elif event == cv2.EVENT_LBUTTONDOWN:
-            # if lc_start_t is None:
-            #     lc_start_t = time.time()
-            # else:
-            #     lc_end_t = time.time()
-            #     click_interval = lc_end_t - lc_start_t
-            #     print('click_interval: ', click_interval)
-            #     if click_interval < double_click_interval:
-            #         lc_start_t = None
-            loadImage(-1)
-        elif event == cv2.EVENT_LBUTTONUP:
-            pass
-        elif event == cv2.EVENT_RBUTTONDOWN:
-            # if  rc_start_t is None:
-            #     rc_start_t = time.time()
-            # else:
-            #     rc_end_t = time.time()
-            #     click_interval = rc_end_t - rc_start_t
-            #     if click_interval < double_click_interval:
-            #         end_exec = 1
-            #     rc_start_t = None
-            loadImage(1)
-        elif event == cv2.EVENT_RBUTTONUP:
-            pass
-        elif event == cv2.EVENT_MBUTTONDOWN:
-            loadImage()
-        elif event == cv2.EVENT_MOUSEMOVE:
-            pass
-        elif event == cv2.EVENT_MOUSEWHEEL:
-            print('flags: ', flags)
-            # _delta = cv2.getMouseWheelDelta(flags)
-            if flags > 0:
-                increaseSpeed()
-                # motionStep(1)
-            else:
-                decreaseSpeed()
-                # motionStep(-1)
-
 
     win_name = 'VWM'
     createWindow()
