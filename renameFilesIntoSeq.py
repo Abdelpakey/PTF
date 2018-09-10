@@ -54,6 +54,13 @@ target_ext = params['target_ext']
 
 if seq_start_id < 0:
     # extract seq_start_id from seq_prefix
+    if os.path.isdir(seq_prefix):
+        print('Looking for sequence prefix in {}'.format(os.path.abspath(seq_prefix)))
+        src_file_names = [f for f in os.listdir(seq_prefix) if
+                          os.path.isfile(os.path.join(seq_prefix, f)) and f != 'Thumbs.db']
+        src_file_names.sort(key=sortKey)
+        seq_prefix = os.path.splitext(src_file_names[-1])[0]
+        print('Found sequence prefix {}'.format(seq_prefix))
     split_str = seq_prefix.split('_')
     try:
         seq_start_id = int(split_str[-1]) + 1
@@ -88,7 +95,8 @@ else:
 
 for seq_root_dir in seq_root_dirs:
     print 'Processing: {}'.format(seq_root_dir)
-    src_file_names = [f for f in os.listdir(seq_root_dir) if os.path.isfile(os.path.join(seq_root_dir, f))]
+    src_file_names = [f for f in os.listdir(seq_root_dir) if os.path.isfile(os.path.join(seq_root_dir, f))
+                      and f != 'rseq_log.txt']
     if shuffle_files:
         print 'Shuffling files...'
         random.shuffle(src_file_names)

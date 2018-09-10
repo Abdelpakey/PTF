@@ -86,6 +86,7 @@ static PyObject* hideBorder2(PyObject* self, PyObject* args) {
 	DWORD style = ::GetWindowLong(win_handle, GWL_STYLE);
 	style &= ~WS_OVERLAPPEDWINDOW;
 	style |= WS_POPUP;
+	style |= WS_EX_TOPMOST;
 	::SetWindowLong(win_handle, GWL_STYLE, style);
 
 	// change style of the parent HighGui window
@@ -93,6 +94,7 @@ static PyObject* hideBorder2(PyObject* self, PyObject* args) {
 	style = ::GetWindowLong(hParent, GWL_STYLE);
 	style &= ~WS_OVERLAPPEDWINDOW;
 	style |= WS_POPUP;
+	style |= WS_EX_TOPMOST;
 	::SetWindowLong(hParent, GWL_STYLE, style);
 
 	return Py_BuildValue("i", 1);

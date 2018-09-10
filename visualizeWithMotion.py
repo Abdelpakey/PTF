@@ -192,11 +192,12 @@ if __name__ == '__main__':
             cv2.moveWindow(win_name, monitors[curr_monitor][0], monitors[curr_monitor][1])
         else:
             cv2.namedWindow(win_name)
-            if win_utils_available:
-                winUtils.hideBorder2(win_name)
+
             #     winUtils.hideBorder(monitors[2][0], monitors[2][1], width, height, win_name)
             # else:
             cv2.moveWindow(win_name, monitors[2][0], monitors[2][1])
+            if win_utils_available:
+                winUtils.hideBorder2(win_name)
 
         cv2.setMouseCallback(win_name, mouseHandler)
 
