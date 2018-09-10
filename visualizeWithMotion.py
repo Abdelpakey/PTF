@@ -198,6 +198,7 @@ if __name__ == '__main__':
             cv2.moveWindow(win_name, monitors[2][0], monitors[2][1])
             if win_utils_available:
                 winUtils.hideBorder2(win_name)
+                # winUtils.loseFocus(win_name)
 
         cv2.setMouseCallback(win_name, mouseHandler)
 
@@ -451,8 +452,12 @@ if __name__ == '__main__':
 
         cv2.imshow(win_name, dst_img)
 
+        # if win_utils_available:
+        #     winUtils.loseFocus(win_name)
+
         # winUtils.hideBorder2(win_name)
         # winUtils.show2(win_name)
+
         # if win_utils_available:
         #     winUtils.show(win_name, dst_img, 0)
         # else:
